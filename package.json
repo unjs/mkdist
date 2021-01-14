@@ -14,7 +14,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "siroc build",
+    "build": "yarn makedist --format cjs",
     "dev": "yarn makedist test/fixture",
     "lint": "eslint --ext .ts .",
     "makedist": "jiti src/cli",
@@ -26,18 +26,19 @@
     "esbuild": "^0.8.32",
     "fs-extra": "^9.0.1",
     "globby": "^11.0.2",
+    "mri": "^1.1.6",
     "upath": "^2.0.1",
     "vue-template-compiler": "^2.6.12"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
-    "@types/fs-extra": "^9.0.6",
+    "@types/fs-extra": "latest",
     "@types/jest": "latest",
+    "@types/mri": "^1.1.0",
     "@types/node": "latest",
     "eslint": "latest",
     "jest": "latest",
-    "jiti": "^1.1.0",
-    "siroc": "latest",
+    "jiti": "latest",
     "standard-version": "latest",
     "ts-jest": "latest",
     "typescript": "latest"
