@@ -1,0 +1,45 @@
+{
+  "name": "makedist",
+  "version": "0.0.0",
+  "description": "",
+  "repository": "nuxt-contrib/makedist",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "makedist": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "siroc build",
+    "dev": "yarn makedist test/fixture",
+    "lint": "eslint --ext .ts .",
+    "makedist": "jiti src/cli",
+    "release": "yarn test && yarn build && standard-version && git push --follow-tags && npm publish",
+    "test": "yarn lint && jest"
+  },
+  "dependencies": {
+    "defu": "^3.2.2",
+    "esbuild": "^0.8.32",
+    "fs-extra": "^9.0.1",
+    "globby": "^11.0.2",
+    "upath": "^2.0.1",
+    "vue-template-compiler": "^2.6.12"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-config-typescript": "latest",
+    "@types/fs-extra": "^9.0.6",
+    "@types/jest": "latest",
+    "@types/node": "latest",
+    "eslint": "latest",
+    "jest": "latest",
+    "jiti": "^1.1.0",
+    "siroc": "latest",
+    "standard-version": "latest",
+    "ts-jest": "latest",
+    "typescript": "latest"
+  }
+}
