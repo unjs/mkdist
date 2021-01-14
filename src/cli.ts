@@ -1,11 +1,19 @@
+import mri from 'mri'
 import { makeDist } from './index'
 
 async function main () {
-  const args = process.argv.splice(2)
-  const [rootDir] = args
+  const args = mri(process.argv.splice(2))
+
+  if (args.help) {
+    // eslint-disable-next-line no-console
+    console.log('Usage: npx makedist [rootDir] [--src=src] [--dist=dist]')
+    process.exit(0)
+  }
 
   const { writtenFiles } = await makeDist({
-    rootDir
+    rootDir: args._[0],
+    srcDir: args.src,
+    distDir: args.dist
   })
 
   // eslint-disable-next-line no-console
@@ -16,6 +24,7 @@ async function main () {
 
 main()
   .catch((err) => {
-    console.error(err) // eslint-disable-line no-console
+    // eslint-disable-next-line no-console
+    console.error(err)
     process.exit(1)
   })
