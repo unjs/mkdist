@@ -1,4 +1,4 @@
-import { vueLoader, esbuildLoader } from './loaders'
+import { vueLoader, jsLoader } from './loaders'
 
 export interface InputFile {
   path: string
@@ -30,7 +30,7 @@ export interface LoaderContext {
 export type Loader = (input: InputFile, context: LoaderContext)
   => LoaderResult | Promise<LoaderResult>
 
-export const defaultLoaders: Loader[] = [vueLoader, esbuildLoader]
+export const defaultLoaders: Loader[] = [vueLoader, jsLoader]
 
 export interface CreateLoaderOptions {
   loaders?: Loader[]

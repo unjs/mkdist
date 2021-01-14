@@ -1,2 +1,2 @@
-export * from './esbuild'
+export * from './js'
 export * from './vue'

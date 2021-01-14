@@ -3417,10 +3417,10 @@ jest@latest:
     import-local "^3.0.2"
     jest-cli "^26.6.3"
 
-jiti@latest:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.1.0.tgz#01b2d1b9ea01e80adcbafb08a7027d4681c6b270"
-  integrity sha512-bNQ+heLBltC/62UQnFY3qYSHx8bJ1+gwEk4j/c9KAM/S1xzS/hzakuZPQztkzU69imuTVrihJRzg6utaqd7pUA==
+jiti@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.2.0.tgz#15187ac6c49fb5ee4e04700bc05c1d5caed58546"
+  integrity sha512-9YR5zusNf4qmOZAIMqja5pTeuojl5mG2sE4IGogwBoxyclX+Wm2yBZDo2nvuwkUOzUg/nmXwiI2Hz7d/d1UCyw==
 
 js-tokens@^4.0.0:
   version "4.0.0"
