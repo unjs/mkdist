@@ -13,13 +13,14 @@ export function transform (input: string, options: TransformOptions) {
   return esbuildService.then(s => s.transform(input, options))
 }
 
-export const esbuildLoader: Loader = async (input) => {
+export const esbuildLoader: Loader = async (input, { options }) => {
   if (!['.ts', '.js'].includes(input.extension)) {
     return
   }
   const contents = await input.getContents()
+
   const { code } = await transform(contents, {
-    target: 'es2020',
+    format: options.format === 'cjs' ? 'cjs' : undefined/* esm */,
     loader: input.extension.slice(1) as 'ts'
   })
   return [

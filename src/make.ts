@@ -1,12 +1,13 @@
 import globby from 'globby'
 import { resolve, extname, join, basename, dirname } from 'upath'
 import { emptyDir, mkdirp, copyFile, readFile, writeFile } from 'fs-extra'
-import { InputFile, createLoader } from './loader'
+import { InputFile, CreateLoaderOptions, createLoader } from './loader'
 
 interface MakeDistOptions {
   rootDir?: string
   srcDir?: string
   distDir?: string
+  format?: CreateLoaderOptions['format']
 }
 
 export async function makeDist (options: MakeDistOptions /* istanbul ignore next */ = {}) {
@@ -33,7 +34,9 @@ export async function makeDist (options: MakeDistOptions /* istanbul ignore next
 
   const writtenFiles: string[] = []
 
-  const { loadFile } = createLoader({})
+  const { loadFile } = createLoader({
+    format: options.format
+  })
 
   for (const file of files) {
     const outputs = await loadFile(file)

@@ -1,6 +1,6 @@
 import type { Loader } from '../loader'
 
-export const vueLoader: Loader = async (input, loadFile) => {
+export const vueLoader: Loader = async (input, { loadFile }) => {
   if (input.extension !== '.vue') {
     return
   }

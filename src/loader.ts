@@ -20,21 +20,33 @@ export type LoaderResult = OutputFile[] | undefined
 
 export type LoadFile = (input: InputFile) => LoaderResult | Promise<LoaderResult>
 
-export type Loader = (input: InputFile, loadFile: LoadFile)
+export interface LoaderContext {
+  loadFile: LoadFile,
+  options: {
+    format?: 'cjs' | 'esm'
+  }
+}
+
+export type Loader = (input: InputFile, context: LoaderContext)
   => LoaderResult | Promise<LoaderResult>
 
 export const defaultLoaders: Loader[] = [vueLoader, esbuildLoader]
 
 export interface CreateLoaderOptions {
   loaders?: Loader[]
+  format?: LoaderContext['options']['format']
 }
 
 export function createLoader (loaderOptions: CreateLoaderOptions = {}) {
   const loaders = loaderOptions.loaders || defaultLoaders
 
   const loadFile: LoadFile = async function (input: InputFile) {
+    const context: LoaderContext = {
+      loadFile,
+      options: loaderOptions
+    }
     for (const loader of loaders) {
-      const outputs = await loader(input, loadFile)
+      const outputs = await loader(input, context)
       if (outputs?.length) {
         return outputs
       }
