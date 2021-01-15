@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/nuxt-contrib/makedist/compare/v0.0.3...v0.0.4) (2021-01-15)
+
+
+### Bug Fixes
+
+* use proper bin ([e763270](https://github.com/nuxt-contrib/makedist/commit/e763270155b006ce5d42522cd5172170b6c135a9))
+
 ### [0.0.3](https://github.com/nuxt-contrib/makedist/compare/v0.0.2...v0.0.3) (2021-01-14)
 
 ### [0.0.2](https://github.com/nuxt-contrib/makedist/compare/v0.0.1...v0.0.2) (2021-01-14)
