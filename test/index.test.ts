@@ -11,6 +11,7 @@ describe('makedist', () => {
       'dist/README.md',
       'dist/foo.js',
       'dist/index.js',
+      'dist/types.d.ts',
       'dist/components/blank.vue',
       'dist/components/js.vue',
       'dist/components/ts.vue'

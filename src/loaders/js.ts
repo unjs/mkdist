@@ -15,7 +15,7 @@ export function transform (input: string, options: TransformOptions) {
 }
 
 export const jsLoader: Loader = async (input, { options }) => {
-  if (!['.ts', '.js'].includes(input.extension)) {
+  if (!['.ts', '.js'].includes(input.extension) || input.path.endsWith('.d.ts')) {
     return
   }
 
