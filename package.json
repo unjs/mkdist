@@ -8,9 +8,10 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
-    "makedist": "./dist/cli.js"
+    "makedist": "./bin/makedist.js"
   },
   "files": [
+    "bin",
     "dist"
   ],
   "scripts": {
