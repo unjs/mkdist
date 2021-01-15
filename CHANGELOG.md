@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/nuxt-contrib/makedist/compare/v0.0.4...v0.0.5) (2021-01-15)
+
+
+### Bug Fixes
+
+* bypass `.d.ts` files ([142f0ce](https://github.com/nuxt-contrib/makedist/commit/142f0cea4f9a6f6cb90339e2bcc07197535f3ac4))
+
 ### [0.0.4](https://github.com/nuxt-contrib/makedist/compare/v0.0.3...v0.0.4) (2021-01-15)
 
 
