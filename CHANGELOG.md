@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0](https://github.com/nuxt-contrib/mkdist/compare/v0.0.5...v0.1.0) (2021-01-17)
+
+
+### Bug Fixes
+
+* fix binary name ([95e1695](https://github.com/nuxt-contrib/mkdist/commit/95e1695861b4495b7025800112d8eb6b574c1ed2))
+
 ### [0.0.5](https://github.com/nuxt-contrib/mkdist/compare/v0.0.4...v0.0.5) (2021-01-15)
 
 
