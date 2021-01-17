@@ -5,17 +5,15 @@
   "repository": "nuxt-contrib/mkdist",
   "license": "MIT",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
-    "mkdist": "./bin/mkdist.js"
+    "mkdist": "./dist/cli.js"
   },
   "files": [
-    "bin",
     "dist"
   ],
   "scripts": {
-    "build": "yarn mkdist --format cjs",
+    "build": "siroc build",
     "dev": "yarn mkdist test/fixture",
     "lint": "eslint --ext .ts .",
     "mkdist": "jiti src/cli",
@@ -40,6 +38,7 @@
     "@types/node": "latest",
     "eslint": "latest",
     "jest": "latest",
+    "siroc": "latest",
     "standard-version": "latest",
     "ts-jest": "latest",
     "typescript": "latest"
