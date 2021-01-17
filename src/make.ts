@@ -3,14 +3,14 @@ import { resolve, extname, join, basename, dirname } from 'upath'
 import { emptyDir, mkdirp, copyFile, readFile, writeFile } from 'fs-extra'
 import { InputFile, CreateLoaderOptions, createLoader } from './loader'
 
-interface MakeDistOptions {
+interface mkdistOptions {
   rootDir?: string
   srcDir?: string
   distDir?: string
   format?: CreateLoaderOptions['format']
 }
 
-export async function makeDist (options: MakeDistOptions /* istanbul ignore next */ = {}) {
+export async function mkdist (options: mkdistOptions /* istanbul ignore next */ = {}) {
   // Resolve srcDir and distDir relative to rootDir
   options.rootDir = resolve(process.cwd(), options.rootDir || '.')
   options.srcDir = resolve(options.rootDir, options.srcDir || 'src')

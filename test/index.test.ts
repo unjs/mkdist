@@ -1,12 +1,12 @@
 import { resolve } from 'upath'
-import { makeDist } from '../src/make'
+import { mkdist } from '../src/make'
 import { createLoader } from '../src/loader'
 import { vueLoader } from '../src/loaders'
 
-describe('makedist', () => {
-  it('makeDist', async () => {
+describe('mkdist', () => {
+  it('mkdist', async () => {
     const rootDir = resolve(__dirname, 'fixture')
-    const { writtenFiles } = await makeDist({ rootDir })
+    const { writtenFiles } = await mkdist({ rootDir })
     expect(writtenFiles).toEqual([
       'dist/README.md',
       'dist/foo.js',

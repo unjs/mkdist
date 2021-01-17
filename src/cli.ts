@@ -1,16 +1,16 @@
 import mri from 'mri'
-import { makeDist } from './index'
+import { mkdist } from './index'
 
 async function main () {
   const args = mri(process.argv.splice(2))
 
   if (args.help) {
     // eslint-disable-next-line no-console
-    console.log('Usage: npx makedist [rootDir] [--src=src] [--dist=dist] [--format=cjs|esm]')
+    console.log('Usage: npx mkdist [rootDir] [--src=src] [--dist=dist] [--format=cjs|esm]')
     process.exit(0)
   }
 
-  const { writtenFiles } = await makeDist({
+  const { writtenFiles } = await mkdist({
     rootDir: args._[0],
     srcDir: args.src,
     distDir: args.dist,

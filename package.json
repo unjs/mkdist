@@ -1,24 +1,24 @@
 {
-  "name": "makedist",
+  "name": "mkdist",
   "version": "0.0.5",
   "description": "",
-  "repository": "nuxt-contrib/makedist",
+  "repository": "nuxt-contrib/mkdist",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
-    "makedist": "./bin/makedist.js"
+    "mkdist": "./bin/mkdist.js"
   },
   "files": [
     "bin",
     "dist"
   ],
   "scripts": {
-    "build": "yarn makedist --format cjs",
-    "dev": "yarn makedist test/fixture",
+    "build": "yarn mkdist --format cjs",
+    "dev": "yarn mkdist test/fixture",
     "lint": "eslint --ext .ts .",
-    "makedist": "jiti src/cli",
+    "mkdist": "jiti src/cli",
     "release": "yarn test && yarn build && standard-version && git push --follow-tags && npm publish",
     "test": "yarn lint && jest"
   },
