@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/nuxt-contrib/mkdist/compare/v0.1.0...v0.1.1) (2021-01-17)
+
+
+### Bug Fixes
+
+* **pkg:** use siroc build ([ec85042](https://github.com/nuxt-contrib/mkdist/commit/ec85042c544d7dad09dbf13517dfa47f9feb04e2))
+
 ## [0.1.0](https://github.com/nuxt-contrib/mkdist/compare/v0.0.5...v0.1.0) (2021-01-17)
 
 
