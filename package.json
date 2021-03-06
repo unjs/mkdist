@@ -25,7 +25,7 @@
     "esbuild": "^0.8.56",
     "fs-extra": "^9.1.0",
     "globby": "^11.0.2",
-    "jiti": "^1.6.2",
+    "jiti": "^1.6.3",
     "mri": "^1.1.6",
     "upath": "^2.0.1",
     "vue-template-compiler": "^2.6.12"

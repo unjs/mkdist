@@ -3656,10 +3656,15 @@ jest@latest:
     import-local "^3.0.2"
     jest-cli "^26.6.3"
 
-jiti@^1.3.0, jiti@^1.6.2:
+jiti@^1.3.0:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.6.2.tgz#a04b768fad5506fe4e17e1397a8f535feba27536"
   integrity sha512-7/w7Oi5IC1WAT5Ej7KnooJuezBmhHMtva4VbJ2RP4ZCFCqZTvJawcPypPIvIiIksCkJYPwMxU8bBF/xNPBBR2w==
+
+jiti@^1.6.3:
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.6.3.tgz#722fb45ee03b01af87314f80aeae07762f9ffb7e"
+  integrity sha512-4oOM9K5MgVx9kiv8zo2B/8SIpKQ/rkaREskE+H8ymvF08mC8PAKnd0bbZ1FV5DTyoOOto9mapMpvZWA06reWKw==
 
 joycon@^2.2.5:
   version "2.2.5"
