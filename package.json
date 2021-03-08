@@ -42,5 +42,13 @@
     "standard-version": "latest",
     "ts-jest": "latest",
     "typescript": "latest"
+  },
+  "peerDependencies": {
+    "typescript": ">=3.7"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
   }
 }

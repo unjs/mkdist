@@ -8,6 +8,7 @@ interface mkdistOptions {
   srcDir?: string
   distDir?: string
   format?: CreateLoaderOptions['format']
+  emitTypes?: CreateLoaderOptions['emitTypes']
 }
 
 export async function mkdist (options: mkdistOptions /* istanbul ignore next */ = {}) {
@@ -35,7 +36,8 @@ export async function mkdist (options: mkdistOptions /* istanbul ignore next */ 
   const writtenFiles: string[] = []
 
   const { loadFile } = createLoader({
-    format: options.format
+    format: options.format,
+    emitTypes: options.emitTypes
   })
 
   for (const file of files) {
