@@ -6,7 +6,7 @@ async function main () {
 
   if (args.help) {
     // eslint-disable-next-line no-console
-    console.log('Usage: npx mkdist [rootDir] [--src=src] [--dist=dist] [--format=cjs|esm]')
+    console.log('Usage: npx mkdist [rootDir] [--src=src] [--dist=dist] [--format=cjs|esm] [--emit-types=true|ts|false]')
     process.exit(0)
   }
 
@@ -14,7 +14,8 @@ async function main () {
     rootDir: args._[0],
     srcDir: args.src,
     distDir: args.dist,
-    format: args.format
+    format: args.format,
+    emitTypes: args['emit-types'] === 'ts' ? 'ts' : args['emit-types'] === 'true'
   })
 
   // eslint-disable-next-line no-console
