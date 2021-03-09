@@ -1,8 +1,16 @@
 import type { CompilerOptions } from 'typescript'
 
 export async function getDeclaration (contents: string, path = '_contents.ts') {
+  let createCompilerHost: typeof import('typescript')['createCompilerHost']
+  let createProgram: typeof import('typescript')['createProgram']
   try {
-    const { createCompilerHost, createProgram } = await import('typescript')
+    ;({ createCompilerHost, createProgram } = await import('typescript'))
+  } catch {
+    console.warn('Could not load `typescript`. Do you have it installed?')
+    return ''
+  }
+
+  try {
     const options: CompilerOptions = {
       allowJs: true,
       declaration: true,
@@ -10,7 +18,7 @@ export async function getDeclaration (contents: string, path = '_contents.ts') {
     }
 
     const files: Record<string, string> = {}
-    const host = createCompilerHost(options)
+    const host = createCompilerHost!(options)
     host.writeFile = (fileName: string, declaration: string) => {
       files[fileName] = declaration
     }
@@ -22,12 +30,12 @@ export async function getDeclaration (contents: string, path = '_contents.ts') {
       return readFile(filename)
     }
 
-    const program = createProgram([path], options, host)
+    const program = createProgram!([path], options, host)
     program.emit()
 
     return files[path.replace(/\.(ts|js)$/, '.d.ts')]
-  } catch {
-    console.warn(`Could not generate declaration file for ${path}. Do you have \`typescript\` installed?`)
+  } catch (e) {
+    console.warn(`Could not generate declaration file for ${path}.`, e)
     return ''
   }
 }

@@ -115,6 +115,7 @@ describe('createLoader', () => {
       throw new Error('does not exist')
     })
     const spy = jest.spyOn(console, 'warn')
+
     const { loadFile } = createLoader({
       loaders: [jsLoader],
       emitTypes: true
@@ -126,7 +127,29 @@ describe('createLoader', () => {
       srcPath: 'test.ts'
     })
     expect(results![1]).toBeFalsy()
-    expect(spy).toHaveBeenCalledWith('Could not generate declaration file for test.ts. Do you have `typescript` installed?')
+    expect(spy).toHaveBeenCalledWith('Could not load `typescript`. Do you have it installed?')
+    jest.clearAllMocks()
+  })
+  it('dts loader handles unexpected error', async () => {
+    jest.mock('typescript', () => ({
+      createCompilerHost: () => {
+        throw new Error('does not exist')
+      }
+    }))
+    const spy = jest.spyOn(console, 'warn')
+
+    const { loadFile } = createLoader({
+      loaders: [jsLoader],
+      emitTypes: true
+    })
+    const results = await loadFile({
+      extension: '.ts',
+      getContents: () => 'export default bob = 42 as const',
+      path: 'test.ts',
+      srcPath: 'test.ts'
+    })
+    expect(results![1]).toBeFalsy()
+    expect(spy).toHaveBeenCalledWith('Could not generate declaration file for test.ts.', expect.anything())
     jest.clearAllMocks()
   })
 })
