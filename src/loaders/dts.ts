@@ -1,5 +1,13 @@
 import type { CompilerOptions } from 'typescript'
 
+const options: CompilerOptions = {
+  allowJs: true,
+  declaration: true,
+  incremental: true,
+  skipLibCheck: true,
+  emitDeclarationOnly: true
+}
+
 export async function getDeclaration (contents: string, path = '_contents.ts') {
   let createCompilerHost: typeof import('typescript')['createCompilerHost']
   let createProgram: typeof import('typescript')['createProgram']
@@ -11,12 +19,6 @@ export async function getDeclaration (contents: string, path = '_contents.ts') {
   }
 
   try {
-    const options: CompilerOptions = {
-      allowJs: true,
-      declaration: true,
-      emitDeclarationOnly: true
-    }
-
     const files: Record<string, string> = {}
     const host = createCompilerHost!(options)
     host.writeFile = (fileName: string, declaration: string) => {
