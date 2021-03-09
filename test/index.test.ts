@@ -1,7 +1,7 @@
 import { resolve } from 'upath'
 import { mkdist } from '../src/make'
 import { createLoader } from '../src/loader'
-import { vueLoader } from '../src/loaders'
+import { jsLoader, vueLoader } from '../src/loaders'
 
 describe('mkdist', () => {
   it('mkdist', async () => {
@@ -73,5 +73,60 @@ describe('createLoader', () => {
       path: 'test.vue'
     })
     expect(results).toBeFalsy()
+  })
+  it('vueLoader will generate dts file', async () => {
+    const { loadFile } = createLoader({
+      loaders: [vueLoader, jsLoader],
+      emitTypes: true
+    })
+    const results = await loadFile({
+      extension: '.vue',
+      getContents: () => '<script lang="ts">export default bob = 42 as const</script>',
+      path: 'test.vue'
+    })
+    expect(results![1]).toMatchSnapshot()
+  })
+  it('jsLoader will generate dts file (.js)', async () => {
+    const { loadFile } = createLoader({
+      loaders: [jsLoader],
+      emitTypes: true
+    })
+    const results = await loadFile({
+      extension: '.js',
+      getContents: () => 'export default bob = 42',
+      path: 'test.js'
+    })
+    expect(results![1]).toMatchSnapshot()
+  })
+  it('jsLoader will generate dts file (.ts)', async () => {
+    const { loadFile } = createLoader({
+      loaders: [jsLoader],
+      emitTypes: true
+    })
+    const results = await loadFile({
+      extension: '.ts',
+      getContents: () => 'export default bob = 42 as const',
+      path: 'test.ts'
+    })
+    expect(results![1]).toMatchSnapshot()
+  })
+  it('dts loader handles missing typescript dependency', async () => {
+    jest.mock('typescript', () => {
+      throw new Error('does not exist')
+    })
+    const spy = jest.spyOn(console, 'warn')
+    const { loadFile } = createLoader({
+      loaders: [jsLoader],
+      emitTypes: true
+    })
+    const results = await loadFile({
+      extension: '.ts',
+      getContents: () => 'export default bob = 42 as const',
+      path: 'test.ts',
+      srcPath: 'test.ts'
+    })
+    expect(results![1]).toBeFalsy()
+    expect(spy).toHaveBeenCalledWith('Could not generate declaration file for test.ts. Do you have `typescript` installed?')
+    jest.clearAllMocks()
   })
 })

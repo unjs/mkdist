@@ -27,6 +27,7 @@ export async function getDeclaration (contents: string, path = '_contents.ts') {
 
     return files[path.replace(/\.(ts|js)$/, '.d.ts')]
   } catch {
+    console.warn(`Could not generate declaration file for ${path}. Do you have \`typescript\` installed?`)
     return ''
   }
 }
