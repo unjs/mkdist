@@ -2,7 +2,7 @@ import { startService, Service, TransformOptions } from 'esbuild'
 import jiti from 'jiti'
 
 import type { Loader, LoaderResult } from '../loader'
-import { getDeclaration } from './dts'
+import { getDeclaration } from '../utils/dts'
 
 let esbuildService: Promise<Service>
 
