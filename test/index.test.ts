@@ -20,7 +20,7 @@ describe('mkdist', () => {
 
   it('mkdist (emit types)', async () => {
     const rootDir = resolve(__dirname, 'fixture')
-    const { writtenFiles } = await mkdist({ rootDir, emitTypes: true })
+    const { writtenFiles } = await mkdist({ rootDir, declaration: true })
     expect(writtenFiles).toEqual([
       'dist/README.md',
       'dist/foo.js',
@@ -38,7 +38,7 @@ describe('mkdist', () => {
 
   it('mkdist (emit .ts types only)', async () => {
     const rootDir = resolve(__dirname, 'fixture')
-    const { writtenFiles } = await mkdist({ rootDir, emitTypes: 'ts' })
+    const { writtenFiles } = await mkdist({ rootDir, declaration: 'ts' })
     expect(writtenFiles).toEqual([
       'dist/README.md',
       'dist/foo.js',
@@ -77,7 +77,7 @@ describe('createLoader', () => {
   it('vueLoader will generate dts file', async () => {
     const { loadFile } = createLoader({
       loaders: [vueLoader, jsLoader],
-      emitTypes: true
+      declaration: true
     })
     const results = await loadFile({
       extension: '.vue',
@@ -89,7 +89,7 @@ describe('createLoader', () => {
   it('jsLoader will generate dts file (.js)', async () => {
     const { loadFile } = createLoader({
       loaders: [jsLoader],
-      emitTypes: true
+      declaration: true
     })
     const results = await loadFile({
       extension: '.js',
@@ -101,7 +101,7 @@ describe('createLoader', () => {
   it('jsLoader will generate dts file (.ts)', async () => {
     const { loadFile } = createLoader({
       loaders: [jsLoader],
-      emitTypes: true
+      declaration: true
     })
     const results = await loadFile({
       extension: '.ts',
@@ -118,7 +118,7 @@ describe('createLoader', () => {
 
     const { loadFile } = createLoader({
       loaders: [jsLoader],
-      emitTypes: true
+      declaration: true
     })
     const results = await loadFile({
       extension: '.ts',
@@ -140,7 +140,7 @@ describe('createLoader', () => {
 
     const { loadFile } = createLoader({
       loaders: [jsLoader],
-      emitTypes: true
+      declaration: true
     })
     const results = await loadFile({
       extension: '.ts',

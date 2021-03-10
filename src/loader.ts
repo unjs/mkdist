@@ -24,7 +24,7 @@ export interface LoaderContext {
   loadFile: LoadFile,
   options: {
     format?: 'cjs' | 'esm',
-    emitTypes?: boolean | 'ts'
+    declaration?: boolean
   }
 }
 
@@ -36,7 +36,7 @@ export const defaultLoaders: Loader[] = [vueLoader, jsLoader]
 export interface CreateLoaderOptions {
   loaders?: Loader[]
   format?: LoaderContext['options']['format']
-  emitTypes?: LoaderContext['options']['emitTypes']
+  declaration?: LoaderContext['options']['declaration']
 }
 
 export function createLoader (loaderOptions: CreateLoaderOptions = {}) {

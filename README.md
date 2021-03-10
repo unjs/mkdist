@@ -18,7 +18,7 @@ Lightweight file-to-file transpiler
 ## Usage
 
 ```bash
-npx mkdist [rootDir] [--src=src] [--dist=dist] [--format=cjs|esm] [--emit-types=true|ts|false]
+npx mkdist [rootDir] [--src=src] [--dist=dist] [--format=cjs|esm] [-d|--declaration]
 ```
 
 ## Compared to `tsc` / `babel`

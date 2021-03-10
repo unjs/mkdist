@@ -25,7 +25,7 @@ export const jsLoader: Loader = async (input, { options }) => {
 
   const declaration: LoaderResult = []
 
-  if (options.emitTypes === true || (options.emitTypes === 'ts' && input.path.endsWith('.ts'))) {
+  if (options.declaration) {
     const dtsContents = await getDeclaration(contents, input.srcPath)
     if (dtsContents) {
       declaration.push({
