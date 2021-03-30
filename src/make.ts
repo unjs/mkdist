@@ -1,6 +1,6 @@
 import globby from 'globby'
 import { resolve, extname, join, basename, dirname } from 'upath'
-import { emptyDir, mkdirp, copyFile, readFile, writeFile } from 'fs-extra'
+import { emptyDir, mkdirp, copyFile, readFile, writeFile, unlink } from 'fs-extra'
 import { InputFile, CreateLoaderOptions, createLoader } from './loader'
 
 interface mkdistOptions {
@@ -17,6 +17,7 @@ export async function mkdist (options: mkdistOptions /* istanbul ignore next */ 
   options.distDir = resolve(options.rootDir, options.distDir || 'dist')
 
   // Setup dist
+  await unlink(options.distDir).catch(() => {})
   await emptyDir(options.distDir)
   await mkdirp(options.distDir)
 
