@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/nuxt-contrib/mkdist/compare/v0.1.2...v0.1.3) (2021-03-30)
+
+
+### Bug Fixes
+
+* unlink before cleaning up dist dir ([c8cb2b8](https://github.com/nuxt-contrib/mkdist/commit/c8cb2b8a30e7ada0ad2d7383bdb8e9efdb57120e))
+
 ### [0.1.2](https://github.com/nuxt-contrib/mkdist/compare/v0.1.1...v0.1.2) (2021-03-06)
 
 ### [0.1.1](https://github.com/nuxt-contrib/mkdist/compare/v0.1.0...v0.1.1) (2021-01-17)
