@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/nuxt-contrib/mkdist/compare/v0.1.3...v0.1.4) (2021-04-07)
+
+
+### Features
+
+* support cleanDist option ([f613c17](https://github.com/nuxt-contrib/mkdist/commit/f613c17b6a15c749c58ca395ef1358ff008311e3))
+
 ### [0.1.3](https://github.com/nuxt-contrib/mkdist/compare/v0.1.2...v0.1.3) (2021-03-30)
 
 
