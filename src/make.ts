@@ -1,12 +1,13 @@
 import globby from 'globby'
 import { resolve, extname, join, basename, dirname } from 'upath'
-import { emptyDir, mkdirp, copyFile, readFile, writeFile } from 'fs-extra'
+import { emptyDir, mkdirp, copyFile, readFile, writeFile, unlink } from 'fs-extra'
 import { InputFile, CreateLoaderOptions, createLoader } from './loader'
 
 interface mkdistOptions {
   rootDir?: string
   srcDir?: string
   distDir?: string
+  cleanDist?: boolean
   format?: CreateLoaderOptions['format']
   declaration?: CreateLoaderOptions['declaration']
 }
@@ -18,8 +19,11 @@ export async function mkdist (options: mkdistOptions /* istanbul ignore next */ 
   options.distDir = resolve(options.rootDir, options.distDir || 'dist')
 
   // Setup dist
-  await emptyDir(options.distDir)
-  await mkdirp(options.distDir)
+  if (options.cleanDist !== false) {
+    await unlink(options.distDir).catch(() => {})
+    await emptyDir(options.distDir)
+    await mkdirp(options.distDir)
+  }
 
   const filePaths = await globby('**', { absolute: false, cwd: options.srcDir })
 
