@@ -1,6 +1,6 @@
-import type { CompilerOptions } from 'typescript'
+import type { CompilerOptions, CompilerHost } from 'typescript'
 
-const options: CompilerOptions = {
+const compilerOptions: CompilerOptions = {
   allowJs: true,
   declaration: true,
   incremental: true,
@@ -8,36 +8,61 @@ const options: CompilerOptions = {
   emitDeclarationOnly: true
 }
 
-export async function getDeclaration (contents: string, path = '_contents.ts') {
-  let createCompilerHost: typeof import('typescript')['createCompilerHost']
-  let createProgram: typeof import('typescript')['createProgram']
-  try {
-    ;({ createCompilerHost, createProgram } = await import('typescript'))
-  } catch {
-    console.warn('Could not load `typescript`. Do you have it installed?')
-    return ''
+let _ts: typeof import('typescript')
+async function getTs () {
+  if (!_ts) {
+    try {
+      _ts = await import('typescript')
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.warn('[mkdist] Could not load `typescript` for generating types. Do you have it installed?')
+      throw err
+    }
+  }
+  return _ts
+}
+
+const vfs = new Map<string, string>()
+let _tsHost: CompilerHost
+async function getTsHost () {
+  if (!_tsHost) {
+    const ts = await getTs()
+    _tsHost = ts.createCompilerHost!(compilerOptions)
   }
 
+  // Use virtual filesystem
+  _tsHost.writeFile = (fileName: string, declaration: string) => {
+    vfs.set(fileName, declaration)
+  }
+  const _readFile = _tsHost.readFile
+  _tsHost.readFile = (filename) => {
+    if (vfs.has(filename)) { return vfs.get(filename) }
+    return _readFile(filename)
+  }
+
+  return _tsHost
+}
+
+export async function getDeclaration(contents: string, filename = '_input.ts') {
+  const dtsFilename = filename.replace(/\.(ts|js)$/, '.d.ts')
+  if (vfs.has(dtsFilename)) {
+    return vfs.get(dtsFilename)
+  }
   try {
-    const files: Record<string, string> = {}
-    const host = createCompilerHost!(options)
-    host.writeFile = (fileName: string, declaration: string) => {
-      files[fileName] = declaration
+    const ts = await getTs()
+    const host = await getTsHost()
+    if (vfs.has(filename)) {
+      throw new Error('Race condition for generating ' + filename)
     }
-    const { readFile } = host
-    host.readFile = (filename) => {
-      if (filename === path) {
-        return contents
-      }
-      return readFile(filename)
-    }
-
-    const program = createProgram!([path], options, host)
-    program.emit()
-
-    return files[path.replace(/\.(ts|js)$/, '.d.ts')]
-  } catch (e) {
-    console.warn(`Could not generate declaration file for ${path}.`, e)
+    vfs.set(filename, contents)
+    const program = ts.createProgram!([filename], compilerOptions, host)
+    await program.emit()
+    const result = vfs.get(dtsFilename)
+    vfs.delete(filename)
+    return result
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn(`Could not generate declaration file for ${filename}:`, err)
     return ''
   }
 }
