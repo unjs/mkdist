@@ -7,29 +7,35 @@
 
 <!-- ![...](.github/banner.svg) -->
 
-Lightweight file-to-file transpiler
+> Lightweight file-to-file transformer
 
 ## Features
 
-- Vue SFC support (`<script>` tag transpilation)
-- Typescript support (via [esbuild](https://github.com/evanw/esbuild))
-- Automatic copying of assets
+✅ Copies all assets
+
+✅ Supports [Vue Single File Components](https://vuejs.org/v2/guide/single-file-components.html)
+
+✅ Fast and minimal transform by [esbuild](https://github.com/evanw/esbuild)
+
+✅ `.d.ts` generation for `.ts`, `.js` and `.vue` files
+
+## Why?
+
+Bundling libraries isn't always the best choice:
+
+- We loose original file structures
+- Dependencies will be always imported from bundle even if not used
+  - A second bundling step might fix this but it usually won't happen in development and for dependencies with side-effect
+- We loose source-level optimizations
+- [Vue SFC] We loose critical-css by extracting css to a global dist
+
+While there are tools like [tsc](https://www.typescriptlang.org/docs/handbook/compiler-options.html) and [@babel/cli](https://babeljs.io/docs/en/babel-cli), they mostly focus on transpiling rather than keeping source level quality. Also they lack support for handling custom extensions like `.vue` and copying assets.
 
 ## Usage
 
 ```bash
 npx mkdist [rootDir] [--src=src] [--dist=dist] [--format=cjs|esm] [-d|--declaration]
 ```
-
-## Compared to `tsc` / `babel`
-
-✅ Copies all assets (not just TS)
-
-✅ Supports TypeScript for Vue SFC
-
-✅ Faster, thanks to esbuild
-
-✅ `.d.ts` generation
 
 ## License
 
