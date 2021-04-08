@@ -43,7 +43,7 @@ async function getTsHost () {
   return _tsHost
 }
 
-export async function getDeclaration(contents: string, filename = '_input.ts') {
+export async function getDeclaration (contents: string, filename = '_input.ts') {
   const dtsFilename = filename.replace(/\.(ts|js)$/, '.d.ts')
   if (vfs.has(dtsFilename)) {
     return vfs.get(dtsFilename)
