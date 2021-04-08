@@ -47,6 +47,7 @@ describe('createLoader', () => {
     })
     expect(results).toBeFalsy()
   })
+
   it('vueLoader handles no transpilation of script tag', async () => {
     const { loadFile } = createLoader({
       loaders: [vueLoader]
@@ -58,6 +59,7 @@ describe('createLoader', () => {
     })
     expect(results).toBeFalsy()
   })
+
   it('vueLoader will generate dts file', async () => {
     const { loadFile } = createLoader({
       loaders: [vueLoader, jsLoader],
@@ -70,6 +72,7 @@ describe('createLoader', () => {
     })
     expect(results![1]).toMatchSnapshot()
   })
+
   it('jsLoader will generate dts file (.js)', async () => {
     const { loadFile } = createLoader({
       loaders: [jsLoader],
@@ -82,6 +85,7 @@ describe('createLoader', () => {
     })
     expect(results![1]).toMatchSnapshot()
   })
+
   it('jsLoader will generate dts file (.ts)', async () => {
     const { loadFile } = createLoader({
       loaders: [jsLoader],
@@ -93,47 +97,5 @@ describe('createLoader', () => {
       path: 'test.ts'
     })
     expect(results![1]).toMatchSnapshot()
-  })
-  it('dts loader handles missing typescript dependency', async () => {
-    jest.mock('typescript', () => {
-      throw new Error('does not exist')
-    })
-    const spy = jest.spyOn(console, 'warn')
-
-    const { loadFile } = createLoader({
-      loaders: [jsLoader],
-      declaration: true
-    })
-    const results = await loadFile({
-      extension: '.ts',
-      getContents: () => 'export default bob = 42 as const',
-      path: 'test.ts',
-      srcPath: 'test.ts'
-    })
-    expect(results![1]).toBeFalsy()
-    expect(spy).toHaveBeenCalledWith('Could not load `typescript`. Do you have it installed?')
-    jest.clearAllMocks()
-  })
-  it('dts loader handles unexpected error', async () => {
-    jest.mock('typescript', () => ({
-      createCompilerHost: () => {
-        throw new Error('does not exist')
-      }
-    }))
-    const spy = jest.spyOn(console, 'warn')
-
-    const { loadFile } = createLoader({
-      loaders: [jsLoader],
-      declaration: true
-    })
-    const results = await loadFile({
-      extension: '.ts',
-      getContents: () => 'export default bob = 42 as const',
-      path: 'test.ts',
-      srcPath: 'test.ts'
-    })
-    expect(results![1]).toBeFalsy()
-    expect(spy).toHaveBeenCalledWith('Could not generate declaration file for test.ts.', expect.anything())
-    jest.clearAllMocks()
   })
 })
