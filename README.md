@@ -42,8 +42,8 @@ npx mkdist [rootDir] [--src=src] [--dist=dist] [--format=cjs|esm] [-d|--declarat
 [npm-downloads-src]: https://img.shields.io/npm/dm/mkdist?style=flat-square
 [npm-downloads-href]: https://npmjs.com/package/mkdist
 
-[github-actions-src]: https://img.shields.io/github/workflow/status/nuxt-contrib/mkdist/ci/main?style=flat-square
-[github-actions-href]: https://github.com/nuxt-contrib/mkdist/actions?query=workflow%3Aci
+[github-actions-src]: https://img.shields.io/github/workflow/status/unjs/mkdist/ci/main?style=flat-square
+[github-actions-href]: https://github.com/unjs/mkdist/actions?query=workflow%3Aci
 
-[codecov-src]: https://img.shields.io/codecov/c/gh/nuxt-contrib/mkdist/main?style=flat-square
-[codecov-href]: https://codecov.io/gh/nuxt-contrib/mkdist
+[codecov-src]: https://img.shields.io/codecov/c/gh/unjs/mkdist/main?style=flat-square
+[codecov-href]: https://codecov.io/gh/unjs/mkdist
