@@ -18,7 +18,7 @@ Lightweight file-to-file transpiler
 ## Usage
 
 ```bash
-npx mkdist [rootDir] [--src=src] [--dist=dist] [--format=cjs|esm]
+npx mkdist [rootDir] [--src=src] [--dist=dist] [--format=cjs|esm] [-d|--declaration]
 ```
 
 ## Compared to `tsc` / `babel`
@@ -29,7 +29,7 @@ npx mkdist [rootDir] [--src=src] [--dist=dist] [--format=cjs|esm]
 
 ✅ Faster, thanks to esbuild
 
-🚧 (WIP) `.d.ts` generation
+✅ `.d.ts` generation
 
 ## License
 

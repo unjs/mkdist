@@ -14,9 +14,10 @@ export const vueLoader: Loader = async (input, { loadFile }) => {
   const [, lang = 'js'] = attrs.match(/lang="([a-z]*)"/) || []
   const extension = '.' + lang
 
-  const [scriptFile] = await loadFile({
+  const [scriptFile, ...declaration] = await loadFile({
     getContents: () => script,
-    path: `_index${extension}`,
+    path: `${input.path}${extension}`,
+    srcPath: `${input.srcPath}${extension}`,
     extension
   }) || []
 
@@ -28,6 +29,7 @@ export const vueLoader: Loader = async (input, { loadFile }) => {
     {
       path: input.path,
       contents: contents.replace(scriptBlock, `<script>\n${scriptFile.contents}</script>`)
-    }
+    },
+    ...declaration
   ]
 }

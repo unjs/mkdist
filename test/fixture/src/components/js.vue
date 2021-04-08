@@ -3,11 +3,14 @@
 </template>
 
 <script>
-import { test } from '..'
+import test from '..'
+
+const str = 'test'
 
 export default {
-  data () {
-    test: test()
-  }
+  data: () => ({
+    test: test(),
+    str
+  })
 }
 </script>

@@ -1,6 +1,8 @@
 import { startService, Service, TransformOptions } from 'esbuild'
 import jiti from 'jiti'
-import type { Loader } from '../loader'
+
+import type { Loader, LoaderResult } from '../loader'
+import { getDeclaration } from '../utils/dts'
 
 let esbuildService: Promise<Service>
 
@@ -21,6 +23,19 @@ export const jsLoader: Loader = async (input, { options }) => {
 
   let contents = await input.getContents()
 
+  const declaration: LoaderResult = []
+
+  if (options.declaration && !input.srcPath?.endsWith('.d.ts')) {
+    const dtsContents = await getDeclaration(contents, input.srcPath)
+    if (dtsContents) {
+      declaration.push({
+        contents: dtsContents,
+        path: input.path,
+        extension: '.d.ts'
+      })
+    }
+  }
+
   // typescript => js
   if (input.extension === '.ts') {
     contents = await transform(contents, { loader: 'ts' }).then(r => r.code)
@@ -36,6 +51,7 @@ export const jsLoader: Loader = async (input, { options }) => {
       contents,
       path: input.path,
       extension: '.js'
-    }
+    },
+    ...declaration
   ]
 }
