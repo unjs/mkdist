@@ -1,20 +1,8 @@
-import { startService, Service, TransformOptions } from 'esbuild'
+import { transform } from 'esbuild'
 import jiti from 'jiti'
 
 import type { Loader, LoaderResult } from '../loader'
 import { getDeclaration } from '../utils/dts'
-
-let esbuildService: Promise<Service>
-
-export function transform (input: string, options: TransformOptions) {
-  if (!esbuildService) {
-    esbuildService = startService()
-    process.on('beforeExit', () => {
-    /* istanbul ignore next */ esbuildService.then(s => s.stop())
-    })
-  }
-  return esbuildService.then(s => s.transform(input, options))
-}
 
 export const jsLoader: Loader = async (input, { options }) => {
   if (!['.ts', '.js'].includes(input.extension) || input.path.endsWith('.d.ts')) {
