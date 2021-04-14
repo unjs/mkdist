@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "build": "siroc build",
-    "dev": "yarn mkdist test/fixture",
+    "dev": "yarn mkdist test/fixture -d",
     "lint": "eslint --ext .ts .",
     "mkdist": "jiti src/cli",
     "release": "yarn test && yarn build && standard-version && git push --follow-tags && npm publish",

@@ -7,7 +7,7 @@ describe('mkdist', () => {
   it('mkdist', async () => {
     const rootDir = resolve(__dirname, 'fixture')
     const { writtenFiles } = await mkdist({ rootDir })
-    expect(writtenFiles).toEqual([
+    expect(writtenFiles.sort()).toEqual([
       'dist/README.md',
       'dist/foo.js',
       'dist/index.js',
@@ -15,13 +15,13 @@ describe('mkdist', () => {
       'dist/components/blank.vue',
       'dist/components/js.vue',
       'dist/components/ts.vue'
-    ].map(f => resolve(rootDir, f)))
+    ].map(f => resolve(rootDir, f)).sort())
   })
 
   it('mkdist (emit types)', async () => {
     const rootDir = resolve(__dirname, 'fixture')
     const { writtenFiles } = await mkdist({ rootDir, declaration: true })
-    expect(writtenFiles).toEqual([
+    expect(writtenFiles.sort()).toEqual([
       'dist/README.md',
       'dist/foo.js',
       'dist/foo.d.ts',
@@ -33,7 +33,7 @@ describe('mkdist', () => {
       'dist/components/js.vue.d.ts',
       'dist/components/ts.vue',
       'dist/components/ts.vue.d.ts'
-    ].map(f => resolve(rootDir, f)))
+    ].map(f => resolve(rootDir, f)).sort())
   }, 50000)
 })
 
@@ -70,7 +70,9 @@ describe('createLoader', () => {
       getContents: () => '<script lang="ts">export default bob = 42 as const</script>',
       path: 'test.vue'
     })
-    expect(results![1]).toMatchSnapshot()
+    expect(results).toEqual(expect.arrayContaining([
+      expect.objectContaining({ declaration: true })
+    ]))
   })
 
   it('jsLoader will generate dts file (.js)', async () => {
@@ -83,7 +85,9 @@ describe('createLoader', () => {
       getContents: () => 'export default bob = 42',
       path: 'test.js'
     })
-    expect(results![1]).toMatchSnapshot()
+    expect(results).toEqual(expect.arrayContaining([
+      expect.objectContaining({ declaration: true })
+    ]))
   })
 
   it('jsLoader will generate dts file (.ts)', async () => {
@@ -96,6 +100,8 @@ describe('createLoader', () => {
       getContents: () => 'export default bob = 42 as const',
       path: 'test.ts'
     })
-    expect(results![1]).toMatchSnapshot()
+    expect(results).toEqual(expect.arrayContaining([
+      expect.objectContaining({ declaration: true })
+    ]))
   })
 })

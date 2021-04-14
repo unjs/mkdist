@@ -2,26 +2,25 @@ import { transform } from 'esbuild'
 import jiti from 'jiti'
 
 import type { Loader, LoaderResult } from '../loader'
-import { getDeclaration } from '../utils/dts'
 
 export const jsLoader: Loader = async (input, { options }) => {
   if (!['.ts', '.js'].includes(input.extension) || input.path.endsWith('.d.ts')) {
     return
   }
 
+  const output: LoaderResult = []
+
   let contents = await input.getContents()
 
-  const declaration: LoaderResult = []
-
+  // declaration
   if (options.declaration && !input.srcPath?.endsWith('.d.ts')) {
-    const dtsContents = await getDeclaration(contents, input.srcPath)
-    if (dtsContents) {
-      declaration.push({
-        contents: dtsContents,
-        path: input.path,
-        extension: '.d.ts'
-      })
-    }
+    output.push({
+      contents,
+      srcPath: input.srcPath,
+      path: input.path,
+      extension: '.d.ts',
+      declaration: true
+    })
   }
 
   // typescript => js
@@ -34,12 +33,11 @@ export const jsLoader: Loader = async (input, { options }) => {
     contents = jiti().transform({ source: contents, retainLines: false })
   }
 
-  return [
-    {
-      contents,
-      path: input.path,
-      extension: '.js'
-    },
-    ...declaration
-  ]
+  output.push({
+    contents,
+    path: input.path,
+    extension: '.js'
+  })
+
+  return output
 }

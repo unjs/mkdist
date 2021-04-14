@@ -12,8 +12,10 @@ export interface OutputFile {
    * relative to distDir
    */
   path: string
+  srcPath?: string
   extension?: string
   contents: string
+  declaration?: boolean
 }
 
 export type LoaderResult = OutputFile[] | undefined

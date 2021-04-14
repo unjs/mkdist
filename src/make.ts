@@ -1,7 +1,8 @@
 import globby from 'globby'
 import { resolve, extname, join, basename, dirname } from 'upath'
 import { emptyDir, mkdirp, copyFile, readFile, writeFile, unlink } from 'fs-extra'
-import { InputFile, CreateLoaderOptions, createLoader } from './loader'
+import { InputFile, CreateLoaderOptions, createLoader, OutputFile, LoaderResult } from './loader'
+import { getDeclarations } from './utils/dts'
 
 interface mkdistOptions {
   rootDir?: string
@@ -44,6 +45,17 @@ export async function mkdist (options: mkdistOptions /* istanbul ignore next */ 
     declaration: options.declaration
   })
 
+  const writeOutput = async (output: OutputFile) => {
+    let outFile = join(options.distDir, output.path)
+    if (typeof output.extension === 'string') {
+      outFile = join(dirname(outFile), basename(outFile, extname(outFile)) + output.extension)
+    }
+    await mkdirp(dirname(outFile))
+    await writeFile(outFile, output.contents, 'utf8')
+    writtenFiles.push(outFile)
+  }
+
+  const declarations: LoaderResult = []
   for (const file of files) {
     const outputs = await loadFile(file)
     if (file.srcPath && (!outputs || !outputs.length)) {
@@ -53,13 +65,25 @@ export async function mkdist (options: mkdistOptions /* istanbul ignore next */ 
       writtenFiles.push(outFile)
     } else {
       for (const output of outputs /* istanbul ignore next */ || []) {
-        let outFile = join(options.distDir, output.path)
-        if (typeof output.extension === 'string') {
-          outFile = join(dirname(outFile), basename(outFile, extname(outFile)) + output.extension)
+        if (output.declaration) {
+          declarations.push(output)
+          continue
         }
-        await mkdirp(dirname(outFile))
-        await writeFile(outFile, output.contents, 'utf8')
-        writtenFiles.push(outFile)
+        await writeOutput(output)
+      }
+    }
+  }
+
+  if (declarations.length) {
+    const input: Record<string, string> = {}
+    for (const d of declarations) {
+      input[d.srcPath!] = d.contents
+    }
+    const res = await getDeclarations(input)
+    for (const d of declarations) {
+      if (res[d.srcPath!]) {
+        d.contents = res[d.srcPath!]
+        await writeOutput(d)
       }
     }
   }
