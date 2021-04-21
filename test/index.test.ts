@@ -9,8 +9,8 @@ describe('mkdist', () => {
     const { writtenFiles } = await mkdist({ rootDir })
     expect(writtenFiles.sort()).toEqual([
       'dist/README.md',
-      'dist/foo.js',
-      'dist/index.js',
+      'dist/foo.mjs',
+      'dist/index.mjs',
       'dist/types.d.ts',
       'dist/components/blank.vue',
       'dist/components/js.vue',
@@ -23,9 +23,9 @@ describe('mkdist', () => {
     const { writtenFiles } = await mkdist({ rootDir, declaration: true })
     expect(writtenFiles.sort()).toEqual([
       'dist/README.md',
-      'dist/foo.js',
+      'dist/foo.mjs',
       'dist/foo.d.ts',
-      'dist/index.js',
+      'dist/index.mjs',
       'dist/index.d.ts',
       'dist/types.d.ts',
       'dist/components/blank.vue',
@@ -83,7 +83,7 @@ describe('createLoader', () => {
     const results = await loadFile({
       extension: '.js',
       getContents: () => 'export default bob = 42',
-      path: 'test.js'
+      path: 'test.mjs'
     })
     expect(results).toEqual(expect.arrayContaining([
       expect.objectContaining({ declaration: true })

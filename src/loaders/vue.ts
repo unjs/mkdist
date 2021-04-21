@@ -21,7 +21,7 @@ export const vueLoader: Loader = async (input, { loadFile }) => {
     extension
   }) || []
 
-  const scriptFile = files.find(f => f.extension === '.js')
+  const scriptFile = files.find(f => ['.js', '.mjs'].includes(f.extension!))
   if (!scriptFile) {
     return
   }

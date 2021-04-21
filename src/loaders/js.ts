@@ -4,7 +4,7 @@ import jiti from 'jiti'
 import type { Loader, LoaderResult } from '../loader'
 
 export const jsLoader: Loader = async (input, { options }) => {
-  if (!['.ts', '.js'].includes(input.extension) || input.path.endsWith('.d.ts')) {
+  if (!['.ts', '.js', '.mjs'].includes(input.extension) || input.path.endsWith('.d.ts')) {
     return
   }
 
@@ -29,14 +29,15 @@ export const jsLoader: Loader = async (input, { options }) => {
   }
 
   // esm => cjs
-  if (options.format === 'cjs') {
+  const isCjs = options.format === 'cjs'
+  if (isCjs) {
     contents = jiti().transform({ source: contents, retainLines: false })
   }
 
   output.push({
     contents,
     path: input.path,
-    extension: '.js'
+    extension: isCjs ? '.js' : '.mjs'
   })
 
   return output
