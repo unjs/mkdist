@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/unjs/mkdist/compare/v0.1.7...v0.2.0) (2021-04-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* emit `.mjs` files whn format is mjs
+
+### Features
+
+* emit `.mjs` files whn format is mjs ([ec5fcc4](https://github.com/unjs/mkdist/commit/ec5fcc478c4bab95b89a70645a90e518327b845a))
+
 ### [0.1.7](https://github.com/unjs/mkdist/compare/v0.1.6...v0.1.7) (2021-04-14)
 
 ### [0.1.6](https://github.com/unjs/mkdist/compare/v0.1.5...v0.1.6) (2021-04-09)
