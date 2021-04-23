@@ -22,12 +22,15 @@ export type LoaderResult = OutputFile[] | undefined
 
 export type LoadFile = (input: InputFile) => LoaderResult | Promise<LoaderResult>
 
+export interface LoaderOptions {
+  ext?: 'mjs' | 'js' | 'ts',
+  format?: 'cjs' | 'esm',
+  declaration?: boolean
+}
+
 export interface LoaderContext {
   loadFile: LoadFile,
-  options: {
-    format?: 'cjs' | 'esm',
-    declaration?: boolean
-  }
+  options: LoaderOptions
 }
 
 export type Loader = (input: InputFile, context: LoaderContext)
@@ -35,10 +38,8 @@ export type Loader = (input: InputFile, context: LoaderContext)
 
 export const defaultLoaders: Loader[] = [vueLoader, jsLoader]
 
-export interface CreateLoaderOptions {
+export interface CreateLoaderOptions extends LoaderOptions {
   loaders?: Loader[]
-  format?: LoaderContext['options']['format']
-  declaration?: LoaderContext['options']['declaration']
 }
 
 export function createLoader (loaderOptions: CreateLoaderOptions = {}) {

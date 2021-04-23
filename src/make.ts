@@ -1,19 +1,17 @@
 import globby from 'globby'
 import { resolve, extname, join, basename, dirname } from 'upath'
 import { emptyDir, mkdirp, copyFile, readFile, writeFile, unlink } from 'fs-extra'
-import { InputFile, CreateLoaderOptions, createLoader, OutputFile, LoaderResult } from './loader'
+import { InputFile, LoaderOptions, createLoader, OutputFile, LoaderResult } from './loader'
 import { getDeclarations } from './utils/dts'
 
-interface mkdistOptions {
+export interface MkdistOptions extends LoaderOptions {
   rootDir?: string
   srcDir?: string
   distDir?: string
   cleanDist?: boolean
-  format?: CreateLoaderOptions['format']
-  declaration?: CreateLoaderOptions['declaration']
 }
 
-export async function mkdist (options: mkdistOptions /* istanbul ignore next */ = {}) {
+export async function mkdist (options: MkdistOptions /* istanbul ignore next */ = {}) {
   // Resolve srcDir and distDir relative to rootDir
   options.rootDir = resolve(process.cwd(), options.rootDir || '.')
   options.srcDir = resolve(options.rootDir, options.srcDir || 'src')
@@ -42,6 +40,7 @@ export async function mkdist (options: mkdistOptions /* istanbul ignore next */ 
 
   const { loadFile } = createLoader({
     format: options.format,
+    ext: options.ext,
     declaration: options.declaration
   })
 

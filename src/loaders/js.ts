@@ -37,7 +37,7 @@ export const jsLoader: Loader = async (input, { options }) => {
   output.push({
     contents,
     path: input.path,
-    extension: isCjs ? '.js' : '.mjs'
+    extension: options.ext ? `.${options.ext}` : (isCjs ? '.js' : '.mjs')
   })
 
   return output
