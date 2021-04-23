@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/unjs/mkdist/compare/v0.2.0...v0.2.1) (2021-04-23)
+
+
+### Features
+
+* ext option ([f2c1bc6](https://github.com/unjs/mkdist/commit/f2c1bc62ee10922b36d2750dd79d34c748477c09))
+
 ## [0.2.0](https://github.com/unjs/mkdist/compare/v0.1.7...v0.2.0) (2021-04-21)
 
 
