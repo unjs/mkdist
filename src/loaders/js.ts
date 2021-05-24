@@ -32,6 +32,7 @@ export const jsLoader: Loader = async (input, { options }) => {
   const isCjs = options.format === 'cjs'
   if (isCjs) {
     contents = jiti().transform({ source: contents, retainLines: false })
+      .replace(/^exports.default = /mg, 'module.exports = ')
   }
 
   output.push({
