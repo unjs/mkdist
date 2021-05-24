@@ -1,5 +1,7 @@
-const a: string = 'works'
+import bar from './bar'
+
+const foo: string = 'foo'
 
 export const importFoo = () => import('path')
 
-export default () => a
+export default () => foo + bar

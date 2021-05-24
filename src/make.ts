@@ -1,7 +1,7 @@
 import globby from 'globby'
 import { resolve, extname, join, basename, dirname } from 'upath'
 import { emptyDir, mkdirp, copyFile, readFile, writeFile, unlink } from 'fs-extra'
-import { InputFile, LoaderOptions, createLoader, OutputFile, LoaderResult } from './loader'
+import { InputFile, LoaderOptions, createLoader, OutputFile } from './loader'
 import { getDeclarations } from './utils/dts'
 
 export interface MkdistOptions extends LoaderOptions {
@@ -49,6 +49,12 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
     outputs.push(...await loadFile(file) || [])
   }
 
+  // Normalize output extensions
+  for (const output of outputs.filter(o => o.extension)) {
+    const renamed = basename(output.path, extname(output.path)) + output.extension
+    output.path = join(dirname(output.path), renamed)
+  }
+
   // Generate declarations
   const dtsOutputs = outputs.filter(o => o.declaration)
   if (dtsOutputs.length) {
@@ -58,13 +64,33 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
     }
   }
 
+  // Resolve relative imports
+  const outPaths = new Set(outputs.map(o => o.path))
+  const resolveExts = ['', '/index.mjs', '/index.js', '.mjs', '.ts']
+  const resolveId = (from: string, id: string = '') => {
+    if (!id.startsWith('.')) {
+      return id
+    }
+    for (const ext of resolveExts) {
+      // TODO: Resolve relative ../ via ufo
+      if (outPaths.has(join(dirname(from), id + ext))) {
+        return id + ext
+      }
+    }
+    return id
+  }
+  for (const output of outputs.filter(o => o.extension === '.mjs')) {
+    // Resolve import statements
+    output.contents = output.contents!.replace(
+      /(import|export)(.* from ['"])(.*)(['"])/g,
+      (_, type, head, id, tail) => type + head + resolveId(output.path, id) + tail
+    )
+  }
+
   // Write outputs
   const writtenFiles: string[] = []
   await Promise.all(outputs.map(async (output) => {
-    let outFile = join(options.distDir, output.path)
-    if (typeof output.extension === 'string') {
-      outFile = join(dirname(outFile), basename(outFile, extname(outFile)) + output.extension)
-    }
+    const outFile = join(options.distDir, output.path)
     await mkdirp(dirname(outFile))
     if (output.raw) {
       await copyFile(output.srcPath!, outFile)
