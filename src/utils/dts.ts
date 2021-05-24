@@ -1,7 +1,7 @@
-export async function getDeclarations (input: Record<string, string>) {
-  const vfs: Map<string, string> = new Map(Object.entries(input))
-
+export async function getDeclarations (vfs: Map<string, string>) {
   const ts = await import('typescript')
+
+  const inputFiles = [...vfs.keys()]
 
   const compilerOptions = {
     allowJs: true,
@@ -21,12 +21,12 @@ export async function getDeclarations (input: Record<string, string>) {
     return _readFile(filename)
   }
 
-  const program = ts.createProgram!(Object.keys(input), compilerOptions, tsHost)
+  const program = ts.createProgram!(inputFiles, compilerOptions, tsHost)
   await program.emit()
 
   const output: Record<string, string> = {}
 
-  for (const filename in input) {
+  for (const filename of inputFiles) {
     const dtsFilename = filename.replace(/\.(ts|js)$/, '.d.ts')
     output[filename] = vfs.get(dtsFilename) || ''
   }

@@ -24,8 +24,8 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
     await mkdirp(options.distDir)
   }
 
+  // Scan input files
   const filePaths = await globby('**', { absolute: false, cwd: options.srcDir })
-
   const files: InputFile[] = filePaths.map((path) => {
     const srcPath = resolve(options.srcDir, path)
     return {
@@ -36,56 +36,43 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
     }
   })
 
-  const writtenFiles: string[] = []
-
+  // Create loader
   const { loadFile } = createLoader({
     format: options.format,
     ext: options.ext,
     declaration: options.declaration
   })
 
-  const writeOutput = async (output: OutputFile) => {
+  // Use loaders to get output files
+  const outputs: OutputFile[] = []
+  for (const file of files) {
+    outputs.push(...await loadFile(file) || [])
+  }
+
+  // Generate declarations
+  const dtsOutputs = outputs.filter(o => o.declaration)
+  if (dtsOutputs.length) {
+    const declarations = await getDeclarations(new Map(dtsOutputs.map(o => [o.srcPath!, o.contents || ''])))
+    for (const output of dtsOutputs) {
+      output.contents = declarations[output.srcPath!] || ''
+    }
+  }
+
+  // Write outputs
+  const writtenFiles: string[] = []
+  await Promise.all(outputs.map(async (output) => {
     let outFile = join(options.distDir, output.path)
     if (typeof output.extension === 'string') {
       outFile = join(dirname(outFile), basename(outFile, extname(outFile)) + output.extension)
     }
     await mkdirp(dirname(outFile))
-    await writeFile(outFile, output.contents, 'utf8')
-    writtenFiles.push(outFile)
-  }
-
-  const declarations: LoaderResult = []
-  for (const file of files) {
-    const outputs = await loadFile(file)
-    if (file.srcPath && (!outputs || !outputs.length)) {
-      const outFile = join(options.distDir, file.path)
-      await mkdirp(dirname(outFile))
-      await copyFile(file.srcPath, outFile)
-      writtenFiles.push(outFile)
+    if (output.raw) {
+      await copyFile(output.srcPath!, outFile)
     } else {
-      for (const output of outputs /* istanbul ignore next */ || []) {
-        if (output.declaration) {
-          declarations.push(output)
-          continue
-        }
-        await writeOutput(output)
-      }
+      await writeFile(outFile, output.contents, 'utf8')
     }
-  }
-
-  if (declarations.length) {
-    const input: Record<string, string> = {}
-    for (const d of declarations) {
-      input[d.srcPath!] = d.contents
-    }
-    const res = await getDeclarations(input)
-    for (const d of declarations) {
-      if (res[d.srcPath!]) {
-        d.contents = res[d.srcPath!]
-        await writeOutput(d)
-      }
-    }
-  }
+    writtenFiles.push(outFile)
+  }))
 
   return {
     writtenFiles

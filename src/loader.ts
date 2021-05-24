@@ -14,8 +14,9 @@ export interface OutputFile {
   path: string
   srcPath?: string
   extension?: string
-  contents: string
+  contents?: string
   declaration?: boolean
+  raw?: boolean
 }
 
 export type LoaderResult = OutputFile[] | undefined
@@ -56,6 +57,13 @@ export function createLoader (loaderOptions: CreateLoaderOptions = {}) {
         return outputs
       }
     }
+    return [
+      {
+        path: input.path,
+        srcPath: input.srcPath,
+        raw: true
+      }
+    ]
   }
 
   return {
