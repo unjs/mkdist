@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/unjs/mkdist/compare/v0.3.0...v0.3.1) (2021-05-24)
+
+
+### Bug Fixes
+
+* use default export with cjs transform ([68e1ed1](https://github.com/unjs/mkdist/commit/68e1ed13d217983be2560eba399161e05f283106))
+
 ## [0.3.0](https://github.com/unjs/mkdist/compare/v0.2.1...v0.3.0) (2021-05-24)
 
 
