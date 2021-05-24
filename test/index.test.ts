@@ -14,7 +14,8 @@ describe('mkdist', () => {
       'dist/types.d.ts',
       'dist/components/blank.vue',
       'dist/components/js.vue',
-      'dist/components/ts.vue'
+      'dist/components/ts.vue',
+      'dist/bar/index.mjs'
     ].map(f => resolve(rootDir, f)).sort())
   })
 
@@ -32,7 +33,9 @@ describe('mkdist', () => {
       'dist/components/js.vue',
       'dist/components/js.vue.d.ts',
       'dist/components/ts.vue',
-      'dist/components/ts.vue.d.ts'
+      'dist/components/ts.vue.d.ts',
+      'dist/bar/index.mjs',
+      'dist/bar/index.d.ts'
     ].map(f => resolve(rootDir, f)).sort())
   }, 50000)
 })
@@ -45,7 +48,7 @@ describe('createLoader', () => {
       getContents: () => new Error('this should not be called') as any,
       path: 'another.noth'
     })
-    expect(results).toBeFalsy()
+    expect(results).toMatchObject([{ raw: true }])
   })
 
   it('vueLoader handles no transpilation of script tag', async () => {
@@ -57,7 +60,7 @@ describe('createLoader', () => {
       getContents: () => '<script>Test</script>',
       path: 'test.vue'
     })
-    expect(results).toBeFalsy()
+    expect(results).toMatchObject([{ raw: true }])
   })
 
   it('vueLoader will generate dts file', async () => {
