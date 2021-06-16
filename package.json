@@ -21,14 +21,14 @@
     "test": "yarn lint && jest"
   },
   "dependencies": {
-    "defu": "^3.2.2",
-    "esbuild": "^0.11.6",
-    "fs-extra": "^9.1.0",
+    "defu": "^5.0.0",
+    "esbuild": "^0.12.9",
+    "fs-extra": "^10.0.0",
     "globby": "^11.0.3",
-    "jiti": "^1.9.1",
+    "jiti": "^1.10.1",
     "mri": "^1.1.6",
     "upath": "^2.0.1",
-    "vue-template-compiler": "^2.6.12"
+    "vue-template-compiler": "^2.6.14"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
