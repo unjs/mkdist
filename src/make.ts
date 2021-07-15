@@ -53,10 +53,14 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
   for (const output of outputs.filter(o => o.extension)) {
     const renamed = basename(output.path, extname(output.path)) + output.extension
     output.path = join(dirname(output.path), renamed)
+    // Avoid overriding files with original extension
+    if (outputs.find(o => o !== output && o.path === output.path)) {
+      output.skip = true
+    }
   }
 
   // Generate declarations
-  const dtsOutputs = outputs.filter(o => o.declaration)
+  const dtsOutputs = outputs.filter(o => o.declaration && !o.skip)
   if (dtsOutputs.length) {
     const declarations = await getDeclarations(new Map(dtsOutputs.map(o => [o.srcPath!, o.contents || ''])))
     for (const output of dtsOutputs) {
@@ -89,7 +93,7 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
 
   // Write outputs
   const writtenFiles: string[] = []
-  await Promise.all(outputs.map(async (output) => {
+  await Promise.all(outputs.filter(o => !o.skip).map(async (output) => {
     const outFile = join(options.distDir, output.path)
     await mkdirp(dirname(outFile))
     if (output.raw) {

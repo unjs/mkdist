@@ -17,6 +17,7 @@ export interface OutputFile {
   contents?: string
   declaration?: boolean
   raw?: boolean
+  skip?: boolean
 }
 
 export type LoaderResult = OutputFile[] | undefined

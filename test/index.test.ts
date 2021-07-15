@@ -1,4 +1,5 @@
 import { resolve } from 'upath'
+import { readFile } from 'fs-extra'
 import { mkdist } from '../src/make'
 import { createLoader } from '../src/loader'
 import { jsLoader, vueLoader } from '../src/loaders'
@@ -10,6 +11,7 @@ describe('mkdist', () => {
     expect(writtenFiles.sort()).toEqual([
       'dist/README.md',
       'dist/foo.mjs',
+      'dist/foo.d.ts', // manual
       'dist/index.mjs',
       'dist/types.d.ts',
       'dist/components/blank.vue',
@@ -37,6 +39,8 @@ describe('mkdist', () => {
       'dist/bar/index.mjs',
       'dist/bar/index.d.ts'
     ].map(f => resolve(rootDir, f)).sort())
+
+    expect(await readFile(resolve(rootDir, 'dist/foo.d.ts'), 'utf8')).toMatch('manual declaration')
   }, 50000)
 })
 
