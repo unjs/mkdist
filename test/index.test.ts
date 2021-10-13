@@ -67,6 +67,18 @@ describe('createLoader', () => {
     expect(results).toMatchObject([{ raw: true }])
   })
 
+  it('vueLoader handles script tags with attributes', async () => {
+    const { loadFile } = createLoader({
+      loaders: [vueLoader, jsLoader]
+    })
+    const results = await loadFile({
+      extension: '.vue',
+      getContents: () => '<script setup lang="ts">Test</script>',
+      path: 'test.vue'
+    })
+    expect(results).toMatchObject([{ contents: ['<script setup>', 'Test;', '</script>'].join('\n') }])
+  })
+
   it('vueLoader will generate dts file', async () => {
     const { loadFile } = createLoader({
       loaders: [vueLoader, jsLoader],
