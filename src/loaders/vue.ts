@@ -6,7 +6,8 @@ export const vueLoader: Loader = async (input, { loadFile }) => {
   }
 
   const contents = await input.getContents()
-  const [scriptBlock, attrs = '', script] = contents.match(/<script(\s[^>\s]*)*>([\S\s.]*?)<\/script>/) || []
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [scriptBlock, attrs = '', _lastAttr, script] = contents.match(/<script((\s[^>\s]*)*)>([\S\s.]*?)<\/script>/) || []
   if (!scriptBlock || !script) {
     return
   }
@@ -26,10 +27,12 @@ export const vueLoader: Loader = async (input, { loadFile }) => {
     return
   }
 
+  const newAttrs = attrs.replace(new RegExp(`\\s?lang="${lang}"`), '')
+
   return [
     {
       path: input.path,
-      contents: contents.replace(scriptBlock, `<script>\n${scriptFile.contents}</script>`)
+      contents: contents.replace(scriptBlock, `<script${newAttrs}>\n${scriptFile.contents}</script>`)
     },
     ...files.filter(f => f !== scriptFile)
   ]
