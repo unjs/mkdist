@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.4](https://github.com/unjs/mkdist/compare/v0.3.3...v0.3.4) (2021-10-13)
+
+
+### Bug Fixes
+
+* handle script tags with attributes ([#12](https://github.com/unjs/mkdist/issues/12)) ([19f9d5d](https://github.com/unjs/mkdist/commit/19f9d5d9987d72f29c7362a94f59990768903358))
+
 ### [0.3.3](https://github.com/unjs/mkdist/compare/v0.3.2...v0.3.3) (2021-07-15)
 
 
