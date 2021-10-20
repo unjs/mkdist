@@ -27,7 +27,7 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
   // Scan input files
   const filePaths = await globby('**', { absolute: false, cwd: options.srcDir })
   const files: InputFile[] = filePaths.map((path) => {
-    const srcPath = resolve(options.srcDir, path)
+    const srcPath = resolve(options.srcDir!, path)
     return {
       path,
       srcPath,
@@ -94,7 +94,7 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
   // Write outputs
   const writtenFiles: string[] = []
   await Promise.all(outputs.filter(o => !o.skip).map(async (output) => {
-    const outFile = join(options.distDir, output.path)
+    const outFile = join(options.distDir!, output.path)
     await mkdirp(dirname(outFile))
     if (output.raw) {
       await copyFile(output.srcPath!, outFile)
