@@ -1,4 +1,4 @@
-import { resolve } from 'upath'
+import { resolve } from 'pathe'
 import { readFile } from 'fs-extra'
 import { mkdist } from '../src/make'
 import { createLoader } from '../src/loader'

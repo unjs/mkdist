@@ -1,5 +1,5 @@
 import globby from 'globby'
-import { resolve, extname, join, basename, dirname } from 'upath'
+import { resolve, extname, join, basename, dirname } from 'pathe'
 import { emptyDir, mkdirp, copyFile, readFile, writeFile, unlink } from 'fs-extra'
 import { InputFile, LoaderOptions, createLoader, OutputFile } from './loader'
 import { getDeclarations } from './utils/dts'
@@ -19,7 +19,7 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
 
   // Setup dist
   if (options.cleanDist !== false) {
-    await unlink(options.distDir).catch(() => {})
+    await unlink(options.distDir).catch(() => { })
     await emptyDir(options.distDir)
     await mkdirp(options.distDir)
   }

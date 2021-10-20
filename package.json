@@ -27,7 +27,7 @@
     "globby": "^11.0.3",
     "jiti": "^1.12.9",
     "mri": "^1.2.0",
-    "upath": "^2.0.1"
+    "pathe": "^0.2.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
