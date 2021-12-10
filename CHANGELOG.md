@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.6](https://github.com/unjs/mkdist/compare/v0.3.5...v0.3.6) (2021-12-10)
+
+
+### Bug Fixes
+
+* multiline regex to replace import extensions ([#17](https://github.com/unjs/mkdist/issues/17)) ([7a2690c](https://github.com/unjs/mkdist/commit/7a2690cab3b3ede4bfb1d40817a89ac4c9ea620f))
+* **vue:** skip transforming for `<script setup>` ([#15](https://github.com/unjs/mkdist/issues/15)) ([93cb489](https://github.com/unjs/mkdist/commit/93cb48970fb5f8a708866dbcf2b021f87773bbac)), closes [#14](https://github.com/unjs/mkdist/issues/14)
+
 ### [0.3.5](https://github.com/unjs/mkdist/compare/v0.3.4...v0.3.5) (2021-10-20)
 
 
