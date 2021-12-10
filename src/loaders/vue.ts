@@ -12,6 +12,11 @@ export const vueLoader: Loader = async (input, { loadFile }) => {
     return
   }
 
+  // do not transpile `<script setup>`, #14
+  if (attrs.split(/\s+/g).includes('setup')) {
+    return
+  }
+
   const [, lang = 'js'] = attrs.match(/lang="([a-z]*)"/) || []
   const extension = '.' + lang
 

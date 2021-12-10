@@ -16,6 +16,7 @@ describe('mkdist', () => {
       'dist/types.d.ts',
       'dist/components/blank.vue',
       'dist/components/js.vue',
+      'dist/components/script-setup-ts.vue',
       'dist/components/ts.vue',
       'dist/bar/index.mjs'
     ].map(f => resolve(rootDir, f)).sort())
@@ -34,6 +35,7 @@ describe('mkdist', () => {
       'dist/components/blank.vue',
       'dist/components/js.vue',
       'dist/components/js.vue.d.ts',
+      'dist/components/script-setup-ts.vue',
       'dist/components/ts.vue',
       'dist/components/ts.vue.d.ts',
       'dist/bar/index.mjs',
@@ -73,10 +75,22 @@ describe('createLoader', () => {
     })
     const results = await loadFile({
       extension: '.vue',
-      getContents: () => '<script setup lang="ts">Test</script>',
+      getContents: () => '<script foo lang="ts">Test</script>',
       path: 'test.vue'
     })
-    expect(results).toMatchObject([{ contents: ['<script setup>', 'Test;', '</script>'].join('\n') }])
+    expect(results).toMatchObject([{ contents: ['<script foo>', 'Test;', '</script>'].join('\n') }])
+  })
+
+  it('vueLoader bypass <script setup>', async () => {
+    const { loadFile } = createLoader({
+      loaders: [vueLoader, jsLoader]
+    })
+    const results = await loadFile({
+      extension: '.vue',
+      getContents: () => '<script lang="ts" setup>Test</script>',
+      path: 'test.vue'
+    })
+    expect(results).toMatchObject([{ raw: true }])
   })
 
   it('vueLoader will generate dts file', async () => {
