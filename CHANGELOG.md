@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.7](https://github.com/unjs/mkdist/compare/v0.3.6...v0.3.7) (2021-12-13)
+
+
+### Bug Fixes
+
+* multiline regex for exports ([#19](https://github.com/unjs/mkdist/issues/19)) ([d877ddb](https://github.com/unjs/mkdist/commit/d877ddbbf30fb5e986054c33c41102099068b486))
+
 ### [0.3.6](https://github.com/unjs/mkdist/compare/v0.3.5...v0.3.6) (2021-12-10)
 
 
