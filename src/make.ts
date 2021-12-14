@@ -86,7 +86,7 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
   for (const output of outputs.filter(o => o.extension === '.mjs')) {
     // Resolve import statements
     output.contents = output.contents!.replace(
-      /(import|export)([\s\S]*?)\s?from\s?['"](.*)(['"])/g,
+      /(import|export)(.* from ['"])(.*)(['"])/g,
       (_, type, head, id, tail) => type + head + resolveId(output.path, id) + tail
     )
   }
