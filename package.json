@@ -1,6 +1,6 @@
 {
   "name": "mkdist",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "Lightweight file-to-file transformer",
   "repository": "unjs/mkdist",
   "license": "MIT",

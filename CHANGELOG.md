@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.9](https://github.com/unjs/mkdist/compare/v0.3.8...v0.3.9) (2022-01-21)
+
+
+### Features
+
+* support filtering input files ([#21](https://github.com/unjs/mkdist/issues/21)) ([caa5401](https://github.com/unjs/mkdist/commit/caa54014df78310cd52a233c5ca8b2782ed2f5ac))
+
 ### [0.3.8](https://github.com/unjs/mkdist/compare/v0.3.7...v0.3.8) (2021-12-14)
 
 
