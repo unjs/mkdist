@@ -22,6 +22,17 @@ describe('mkdist', () => {
     ].map(f => resolve(rootDir, f)).sort())
   })
 
+  it('mkdist (custom glob pattern)', async () => {
+    const rootDir = resolve(__dirname, 'fixture')
+    const { writtenFiles } = await mkdist({ rootDir, pattern: 'components/**' })
+    expect(writtenFiles.sort()).toEqual([
+      'dist/components/blank.vue',
+      'dist/components/js.vue',
+      'dist/components/script-setup-ts.vue',
+      'dist/components/ts.vue'
+    ].map(f => resolve(rootDir, f)).sort())
+  })
+
   it('mkdist (emit types)', async () => {
     const rootDir = resolve(__dirname, 'fixture')
     const { writtenFiles } = await mkdist({ rootDir, declaration: true })
