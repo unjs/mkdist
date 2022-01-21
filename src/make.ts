@@ -7,6 +7,7 @@ import { getDeclarations } from './utils/dts'
 export interface MkdistOptions extends LoaderOptions {
   rootDir?: string
   srcDir?: string
+  pattern?: string
   distDir?: string
   cleanDist?: boolean
 }
@@ -25,7 +26,7 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
   }
 
   // Scan input files
-  const filePaths = await globby('**', { absolute: false, cwd: options.srcDir })
+  const filePaths = await globby(options.pattern || '**', { absolute: false, cwd: options.srcDir })
   const files: InputFile[] = filePaths.map((path) => {
     const srcPath = resolve(options.srcDir!, path)
     return {
