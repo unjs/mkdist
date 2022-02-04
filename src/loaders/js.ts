@@ -3,8 +3,11 @@ import jiti from 'jiti'
 
 import type { Loader, LoaderResult } from '../loader'
 
+const DECLARATION_RE = /\.d\.[cm]?ts$/
+const CM_LETTER_RE = /(?<=\.)(c|m)(?=[tj]s$)/
+
 export const jsLoader: Loader = async (input, { options }) => {
-  if (!['.ts', '.js', '.mjs'].includes(input.extension) || input.path.endsWith('.d.ts')) {
+  if (!['.ts', '.js', '.cjs', '.mjs'].includes(input.extension) || input.path.match(DECLARATION_RE)) {
     return
   }
 
@@ -13,12 +16,14 @@ export const jsLoader: Loader = async (input, { options }) => {
   let contents = await input.getContents()
 
   // declaration
-  if (options.declaration && !input.srcPath?.endsWith('.d.ts')) {
+  if (options.declaration && !input.srcPath?.match(DECLARATION_RE)) {
+    const cm = input.srcPath?.match(CM_LETTER_RE)?.[0] || ''
+    const extension = `.d.${cm}ts`
     output.push({
       contents,
       srcPath: input.srcPath,
       path: input.path,
-      extension: '.d.ts',
+      extension,
       declaration: true
     })
   }

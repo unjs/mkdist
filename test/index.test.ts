@@ -18,7 +18,8 @@ describe('mkdist', () => {
       'dist/components/js.vue',
       'dist/components/script-setup-ts.vue',
       'dist/components/ts.vue',
-      'dist/bar/index.mjs'
+      'dist/bar/index.mjs',
+      'dist/bar/esm.mjs'
     ].map(f => resolve(rootDir, f)).sort())
   })
 
@@ -50,10 +51,13 @@ describe('mkdist', () => {
       'dist/components/ts.vue',
       'dist/components/ts.vue.d.ts',
       'dist/bar/index.mjs',
-      'dist/bar/index.d.ts'
+      'dist/bar/index.d.ts',
+      'dist/bar/esm.mjs',
+      'dist/bar/esm.d.mts'
     ].map(f => resolve(rootDir, f)).sort())
 
     expect(await readFile(resolve(rootDir, 'dist/foo.d.ts'), 'utf8')).toMatch('manual declaration')
+    expect(await readFile(resolve(rootDir, 'dist/bar/esm.d.mts'), 'utf8')).toMatch('declare')
   }, 50000)
 })
 
