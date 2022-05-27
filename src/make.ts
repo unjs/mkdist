@@ -7,7 +7,7 @@ import { getDeclarations } from './utils/dts'
 export interface MkdistOptions extends LoaderOptions {
   rootDir?: string
   srcDir?: string
-  pattern?: string
+  pattern?: string | readonly string[]
   distDir?: string
   cleanDist?: boolean
 }
