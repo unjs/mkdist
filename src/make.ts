@@ -1,6 +1,7 @@
 import globby from 'globby'
 import { resolve, extname, join, basename, dirname } from 'pathe'
-import { emptyDir, mkdirp, copyFile, readFile, writeFile, unlink } from 'fs-extra'
+import { emptyDir, mkdirp, readFile, writeFile, unlink } from 'fs-extra'
+import { copyFileInStream } from './stream'
 import { InputFile, LoaderOptions, createLoader, OutputFile } from './loader'
 import { getDeclarations } from './utils/dts'
 
@@ -98,7 +99,7 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
     const outFile = join(options.distDir!, output.path)
     await mkdirp(dirname(outFile))
     if (output.raw) {
-      await copyFile(output.srcPath!, outFile)
+      await copyFileInStream(output.srcPath!, outFile)
     } else {
       await writeFile(outFile, output.contents, 'utf8')
     }
