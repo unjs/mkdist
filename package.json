@@ -22,12 +22,12 @@
   },
   "dependencies": {
     "defu": "^6.0.0",
-    "esbuild": "^0.13.8",
-    "fs-extra": "^10.0.0",
-    "globby": "^11.0.3",
-    "jiti": "^1.12.9",
+    "esbuild": "^0.14.45",
+    "fs-extra": "^10.1.0",
+    "globby": "^11.1.0",
+    "jiti": "^1.13.0",
     "mri": "^1.2.0",
-    "pathe": "^0.2.0"
+    "pathe": "^0.3.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
@@ -40,10 +40,10 @@
     "siroc": "latest",
     "standard-version": "latest",
     "ts-jest": "latest",
-    "typescript": "^4.5.5"
+    "typescript": "^4.7.4"
   },
   "peerDependencies": {
-    "typescript": ">=3.7"
+    "typescript": ">=3.9.10"
   },
   "peerDependenciesMeta": {
     "typescript": {
