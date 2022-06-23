@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.12](https://github.com/unjs/mkdist/compare/v0.3.11...v0.3.12) (2022-06-23)
+
 ### [0.3.11](https://github.com/unjs/mkdist/compare/v0.3.10...v0.3.11) (2022-06-23)
 
 
