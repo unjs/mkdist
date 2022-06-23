@@ -1,5 +1,5 @@
 export async function getDeclarations (vfs: Map<string, string>) {
-  const ts = await import('typescript')
+  const ts = await import('typescript').then(r => r.default || r)
 
   const inputFiles = [...vfs.keys()]
 
