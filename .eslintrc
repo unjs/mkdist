@@ -1,5 +1,8 @@
 {
   "extends": [
     "@nuxtjs/eslint-config-typescript"
-  ]
+  ],
+  "rules": {
+    "import/no-named-as-default-member": 0
+  }
 }

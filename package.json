@@ -4,43 +4,48 @@
   "description": "Lightweight file-to-file transformer",
   "repository": "unjs/mkdist",
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "types": "./dist/index.d.ts",
   "bin": {
-    "mkdist": "./dist/cli.js"
+    "mkdist": "./dist/cli.cjs"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "siroc build",
-    "dev": "yarn mkdist test/fixture -d",
+    "build": "unbuild",
+    "dev": "pnpm mkdist test/fixture -d",
     "lint": "eslint --ext .ts .",
     "mkdist": "jiti src/cli",
-    "release": "yarn test && yarn build && standard-version && git push --follow-tags && npm publish",
-    "test": "yarn lint && jest"
+    "release": "pnpm test && pnpm build && standard-version && git push --follow-tags && pnpm publish",
+    "test": "pnpm lint && vitest run --coverage"
   },
   "dependencies": {
     "defu": "^6.0.0",
-    "esbuild": "^0.13.8",
+    "esbuild": "^0.14.47",
     "fs-extra": "^10.0.0",
     "globby": "^11.0.3",
     "jiti": "^1.12.9",
     "mri": "^1.2.0",
-    "pathe": "^0.2.0"
+    "pathe": "^0.3.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/fs-extra": "latest",
-    "@types/jest": "latest",
     "@types/mri": "latest",
     "@types/node": "latest",
-    "eslint": "^7",
-    "jest": "latest",
-    "siroc": "latest",
+    "c8": "latest",
+    "eslint": "latest",
     "standard-version": "latest",
-    "ts-jest": "latest",
-    "typescript": "^4.5.5"
+    "typescript": "latest",
+    "unbuild": "latest",
+    "vitest": "latest"
   },
   "peerDependencies": {
     "typescript": ">=3.7"
@@ -49,5 +54,6 @@
     "typescript": {
       "optional": true
     }
-  }
+  },
+  "packageManager": "pnpm@6.32.3"
 }

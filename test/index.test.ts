@@ -1,5 +1,6 @@
 import { resolve } from 'pathe'
 import { readFile } from 'fs-extra'
+import { describe, it, expect } from 'vitest'
 import { mkdist } from '../src/make'
 import { createLoader } from '../src/loader'
 import { jsLoader, vueLoader } from '../src/loaders'

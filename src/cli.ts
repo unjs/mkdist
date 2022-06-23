@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import mri from 'mri'
 import { mkdist } from './index'
 
