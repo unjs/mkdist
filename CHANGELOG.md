@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.11](https://github.com/unjs/mkdist/compare/v0.3.10...v0.3.11) (2022-06-23)
+
+
+### Features
+
+* resolve full path to cjs cunks ([df2a548](https://github.com/unjs/mkdist/commit/df2a548cd2d1a7b5f173817ae634fa3f6d5d884b))
+
+
+### Bug Fixes
+
+* downgrade pathe to 0.2.x ([659f7e9](https://github.com/unjs/mkdist/commit/659f7e97b0fdc4d0187deade839705597287a895))
+
 ### [0.3.10](https://github.com/unjs/mkdist/compare/v0.3.9...v0.3.10) (2022-02-04)
 
 
