@@ -48,7 +48,7 @@
     "vitest": "latest"
   },
   "peerDependencies": {
-    "typescript": ">=3.7"
+    "typescript": ">=4.7.4"
   },
   "peerDependenciesMeta": {
     "typescript": {
