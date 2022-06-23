@@ -71,8 +71,7 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
 
   // Resolve relative imports
   const outPaths = new Set(outputs.map(o => o.path))
-  const resolveExts = ['', '/index.mjs', '/index.js', '.mjs', '.ts']
-  const resolveId = (from: string, id: string = '') => {
+  const resolveId = (from: string, id: string = '', resolveExts: string[]) => {
     if (!id.startsWith('.')) {
       return id
     }
@@ -84,11 +83,20 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
     }
     return id
   }
+  const esmResolveExts = ['', '/index.mjs', '/index.js', '.mjs', '.ts']
   for (const output of outputs.filter(o => o.extension === '.mjs')) {
     // Resolve import statements
     output.contents = output.contents!.replace(
       /(import|export)(.* from ['"])(.*)(['"])/g,
-      (_, type, head, id, tail) => type + head + resolveId(output.path, id) + tail
+      (_, type, head, id, tail) => type + head + resolveId(output.path, id, esmResolveExts) + tail
+    )
+  }
+  const cjsResolveExts = ['', '/index.cjs', '.cjs']
+  for (const output of outputs.filter(o => o.extension === '.cjs')) {
+    // Resolve require statements
+    output.contents = output.contents!.replace(
+      /require\((['"])(.*)(['"])\)/g,
+      (_, head, id, tail) => 'require(' + head + resolveId(output.path, id, cjsResolveExts) + tail + ')'
     )
   }
 
