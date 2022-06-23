@@ -13,7 +13,7 @@ specifiers:
   globby: ^11.0.3
   jiti: ^1.12.9
   mri: ^1.2.0
-  pathe: ^0.3.0
+  pathe: ^0.2.0
   standard-version: latest
   typescript: latest
   unbuild: latest
@@ -26,7 +26,7 @@ dependencies:
   globby: 11.1.0
   jiti: 1.14.0
   mri: 1.2.0
-  pathe: 0.3.0
+  pathe: 0.2.0
 
 devDependencies:
   '@nuxtjs/eslint-config-typescript': 10.0.0_eslint@8.18.0+typescript@4.7.4
@@ -3044,10 +3044,10 @@ packages:
 
   /pathe/0.2.0:
     resolution: {integrity: sha512-sTitTPYnn23esFR3RlqYBWn4c45WGeLcsKzQiUpXJAyfcWkolvlYpV8FLo7JishK946oQwMFUCHXQ9AjGPKExw==}
-    dev: true
 
   /pathe/0.3.0:
     resolution: {integrity: sha512-3vUjp552BJzCw9vqKsO5sttHkbYqqsZtH0x1PNtItgqx8BXEXzoY1SYRKcL6BTyVh4lGJGLj0tM42elUDMvcYA==}
+    dev: true
 
   /pathval/1.1.1:
     resolution: {integrity: sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==}
