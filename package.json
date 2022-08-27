@@ -49,7 +49,7 @@
     "vitest": "latest"
   },
   "peerDependencies": {
-    "typescript": ">=4.7.4"
+    "typescript": ">=4.8.2"
   },
   "peerDependenciesMeta": {
     "typescript": {
