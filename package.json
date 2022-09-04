@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "defu": "^6.1.0",
-    "esbuild": "^0.15.5",
+    "esbuild": "^0.15.6",
     "fs-extra": "^10.1.0",
     "globby": "^11.1.0",
     "jiti": "^1.14.0",
@@ -40,7 +40,7 @@
     "@types/fs-extra": "latest",
     "@types/mri": "latest",
     "@types/node": "latest",
-    "@vitest/coverage-c8": "^0.22.1",
+    "@vitest/coverage-c8": "^0.23.0",
     "c8": "latest",
     "eslint": "latest",
     "standard-version": "latest",
@@ -49,12 +49,12 @@
     "vitest": "latest"
   },
   "peerDependencies": {
-    "typescript": ">=4.7.4"
+    "typescript": ">=4.8.2"
   },
   "peerDependenciesMeta": {
     "typescript": {
       "optional": true
     }
   },
-  "packageManager": "pnpm@7.9.5"
+  "packageManager": "pnpm@7.10.0"
 }
