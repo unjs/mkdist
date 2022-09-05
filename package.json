@@ -40,7 +40,7 @@
     "@types/fs-extra": "latest",
     "@types/mri": "latest",
     "@types/node": "latest",
-    "@vitest/coverage-c8": "^0.23.0",
+    "@vitest/coverage-c8": "^0.23.1",
     "c8": "latest",
     "eslint": "latest",
     "standard-version": "latest",
@@ -56,5 +56,5 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@7.10.0"
+  "packageManager": "pnpm@7.11.0"
 }
