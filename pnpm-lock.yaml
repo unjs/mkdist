@@ -12,9 +12,9 @@ specifiers:
   eslint: latest
   fs-extra: ^10.1.0
   globby: ^11.1.0
-  jiti: ^1.14.0
+  jiti: ^1.15.0
   mri: ^1.2.0
-  pathe: ^0.3.5
+  pathe: ^0.3.7
   standard-version: latest
   typescript: latest
   unbuild: latest
@@ -25,9 +25,9 @@ dependencies:
   esbuild: 0.15.7
   fs-extra: 10.1.0
   globby: 11.1.0
-  jiti: 1.14.0
+  jiti: 1.15.0
   mri: 1.2.0
-  pathe: 0.3.5
+  pathe: 0.3.7
 
 devDependencies:
   '@nuxtjs/eslint-config-typescript': 11.0.0_yqf6kl63nyoq5megxukfnom5rm
@@ -2743,8 +2743,8 @@ packages:
       istanbul-lib-report: 3.0.0
     dev: true
 
-  /jiti/1.14.0:
-    resolution: {integrity: sha512-4IwstlaKQc9vCTC+qUXLM1hajy2ImiL9KnLvVYiaHOtS/v3wRjhLlGl121AmgDgx/O43uKmxownJghS5XMya2A==}
+  /jiti/1.15.0:
+    resolution: {integrity: sha512-cClBkETOCVIpPMjX3ULlivuBvmt8l2Xtz+SHrULO06OqdtV0QFR2cuhc4FJnXByjUUX4CY0pl1nph0aFh9D3yA==}
     hasBin: true
 
   /joycon/3.1.1:
@@ -3006,7 +3006,7 @@ packages:
       esbuild: 0.14.47
       fs-extra: 10.1.0
       globby: 11.1.0
-      jiti: 1.14.0
+      jiti: 1.15.0
       mri: 1.2.0
       pathe: 0.2.0
       typescript: 4.8.2
@@ -3016,7 +3016,7 @@ packages:
     resolution: {integrity: sha512-DgRgNUSX9NIxxCxygX4Xeg9C7GX7OUx1wuQ8cXx9o9LE0e9wrH+OZ9fcnrlEedsC/rtqry3ZhUddC759XD/L0w==}
     dependencies:
       acorn: 8.8.0
-      pathe: 0.3.5
+      pathe: 0.3.7
       pkg-types: 0.3.4
       ufo: 0.8.5
     dev: true
@@ -3263,8 +3263,8 @@ packages:
     resolution: {integrity: sha512-sTitTPYnn23esFR3RlqYBWn4c45WGeLcsKzQiUpXJAyfcWkolvlYpV8FLo7JishK946oQwMFUCHXQ9AjGPKExw==}
     dev: true
 
-  /pathe/0.3.5:
-    resolution: {integrity: sha512-grU/QeYP0ChuE5kjU2/k8VtAeODzbernHlue0gTa27+ayGIu3wqYBIPGfP9r5xSqgCgDd4nWrjKXEfxMillByg==}
+  /pathe/0.3.7:
+    resolution: {integrity: sha512-yz7GK+kSsS27x727jtXpd5VT4dDfP/JDIQmaowfxyWCnFjOWtE1VIh7i6TzcSfzW0n4+bRQztj1VdKnITNq/MA==}
 
   /pathval/1.1.1:
     resolution: {integrity: sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==}
@@ -3293,7 +3293,7 @@ packages:
     dependencies:
       jsonc-parser: 3.2.0
       mlly: 0.5.14
-      pathe: 0.3.5
+      pathe: 0.3.7
     dev: true
 
   /pluralize/8.0.0:
@@ -3929,13 +3929,13 @@ packages:
       esbuild: 0.15.7
       globby: 13.1.2
       hookable: 5.3.0
-      jiti: 1.14.0
+      jiti: 1.15.0
       magic-string: 0.26.3
       mkdirp: 1.0.4
       mkdist: 0.3.13_typescript@4.8.2
       mlly: 0.5.14
       mri: 1.2.0
-      pathe: 0.3.5
+      pathe: 0.3.7
       pkg-types: 0.3.4
       pretty-bytes: 6.0.0
       rimraf: 3.0.2
