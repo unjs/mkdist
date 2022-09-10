@@ -40,7 +40,7 @@
     "@types/fs-extra": "latest",
     "@types/mri": "latest",
     "@types/node": "latest",
-    "@vitest/coverage-c8": "^0.23.1",
+    "@vitest/coverage-c8": "^0.23.2",
     "c8": "latest",
     "eslint": "latest",
     "standard-version": "latest",
@@ -49,7 +49,7 @@
     "vitest": "latest"
   },
   "peerDependencies": {
-    "typescript": ">=4.8.2"
+    "typescript": ">=4.8.3"
   },
   "peerDependenciesMeta": {
     "typescript": {
