@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "defu": "^6.1.0",
-    "esbuild": "^0.15.9",
+    "esbuild": "^0.15.10",
     "fs-extra": "^10.1.0",
     "globby": "^11.1.0",
     "jiti": "^1.16.0",
@@ -49,7 +49,7 @@
     "vitest": "latest"
   },
   "peerDependencies": {
-    "typescript": ">=4.8.3"
+    "typescript": ">=4.8.4"
   },
   "peerDependenciesMeta": {
     "typescript": {
