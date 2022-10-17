@@ -1,11 +1,11 @@
-import { compileString } from 'sass'
-
 import type { Loader, LoaderResult } from '../loader'
 
 export const sassLoader: Loader = async (input, { options }) => {
   if (!['.sass', '.scss'].includes(input.extension)) {
     return
   }
+
+  const compileString = await import('sass').then(r => r.compileString || r.default.compileString)
 
   const output: LoaderResult = []
 
