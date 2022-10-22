@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "defu": "^6.1.0",
-    "esbuild": "^0.15.11",
+    "esbuild": "^0.15.12",
     "fs-extra": "^10.1.0",
     "globby": "^11.1.0",
     "jiti": "^1.16.0",
@@ -56,5 +56,5 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@7.13.5"
+  "packageManager": "pnpm@7.14.0"
 }
