@@ -1,4 +1,3 @@
-import globby from 'globby'
 import { resolve, extname, join, basename, dirname } from 'pathe'
 import fse from 'fs-extra'
 import { InputFile, LoaderOptions, createLoader, OutputFile } from './loader'
@@ -7,7 +6,7 @@ import { getDeclarations } from './utils/dts'
 export interface MkdistOptions extends LoaderOptions {
   rootDir?: string
   srcDir?: string
-  pattern?: string
+  pattern?: string | string[]
   distDir?: string
   cleanDist?: boolean
 }
@@ -26,6 +25,7 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
   }
 
   // Scan input files
+  const { globby } = await import('globby')
   const filePaths = await globby(options.pattern || '**', { absolute: false, cwd: options.srcDir })
   const files: InputFile[] = filePaths.map((path) => {
     const srcPath = resolve(options.srcDir!, path)

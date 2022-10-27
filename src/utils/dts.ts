@@ -8,6 +8,7 @@ export async function getDeclarations (vfs: Map<string, string>) {
     declaration: true,
     incremental: true,
     skipLibCheck: true,
+    strictNullChecks: true,
     emitDeclarationOnly: true
   }
   const tsHost = ts.createCompilerHost!(compilerOptions)

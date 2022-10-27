@@ -7,7 +7,7 @@ async function main () {
 
   if (args.help) {
     // eslint-disable-next-line no-console
-    console.log('Usage: npx mkdist [rootDir] [--src=src] [--dist=dist] [--pattern=glob] [--format=cjs|esm] [-d|--declaration] [--ext=mjs|js|ts]')
+    console.log('Usage: npx mkdist [rootDir] [--src=src] [--dist=dist] [--pattern=glob [--pattern=more-glob]] [--format=cjs|esm] [-d|--declaration] [--ext=mjs|js|ts]')
     process.exit(0)
   }
 
