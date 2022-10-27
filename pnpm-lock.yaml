@@ -1,24 +1,24 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@nuxtjs/eslint-config-typescript': latest
-  '@types/fs-extra': latest
-  '@types/mri': latest
-  '@types/node': latest
+  '@nuxtjs/eslint-config-typescript': ^11.0.0
+  '@types/fs-extra': ^9.0.13
+  '@types/mri': ^1.1.1
+  '@types/node': ^18.11.7
   '@vitest/coverage-c8': ^0.24.3
   c8: latest
   defu: ^6.1.0
   esbuild: ^0.15.12
-  eslint: latest
+  eslint: ^8.26.0
   fs-extra: ^10.1.0
   globby: ^11.1.0
   jiti: ^1.16.0
   mri: ^1.2.0
   pathe: ^0.3.9
-  standard-version: latest
-  typescript: latest
-  unbuild: latest
-  vitest: latest
+  standard-version: ^9.5.0
+  typescript: ^4.8.4
+  unbuild: ^0.9.4
+  vitest: ^0.24.3
 
 dependencies:
   defu: 6.1.0
@@ -33,7 +33,7 @@ devDependencies:
   '@nuxtjs/eslint-config-typescript': 11.0.0_wyqvi574yv7oiwfeinomdzmc3m
   '@types/fs-extra': 9.0.13
   '@types/mri': 1.1.1
-  '@types/node': 18.11.3
+  '@types/node': 18.11.7
   '@vitest/coverage-c8': 0.24.3
   c8: 7.12.0
   eslint: 8.26.0
@@ -538,7 +538,7 @@ packages:
   /@types/fs-extra/9.0.13:
     resolution: {integrity: sha512-nEnwB++1u5lVDM2UI4c1+5R+FYaKfaAzS4OococimjVm3nQw3TuzH5UNsocrcTBbhnerblyHj4A49qXbIiZdpA==}
     dependencies:
-      '@types/node': 18.11.3
+      '@types/node': 18.11.7
     dev: true
 
   /@types/istanbul-lib-coverage/2.0.4:
@@ -561,8 +561,8 @@ packages:
     resolution: {integrity: sha512-nJOuiTlsvmClSr3+a/trTSx4DTuY/VURsWGKSf/eeavh0LRMqdsK60ti0TlwM5iHiGOK3/Ibkxsbr7i9rzGreA==}
     dev: true
 
-  /@types/node/18.11.3:
-    resolution: {integrity: sha512-fNjDQzzOsZeKZu5NATgXUPsaFaTxeRgFXoosrHivTl8RGeV733OLawXsGfEk9a8/tySyZUyiZ6E8LcjPFZ2y1A==}
+  /@types/node/18.11.7:
+    resolution: {integrity: sha512-LhFTglglr63mNXUSRYD8A+ZAIu5sFqNJ4Y2fPuY7UlrySJH87rRRlhtVmMHplmfk5WkoJGmDjE9oiTfyX94CpQ==}
     dev: true
 
   /@types/normalize-package-data/2.4.1:
@@ -4073,7 +4073,7 @@ packages:
     dependencies:
       '@types/chai': 4.3.3
       '@types/chai-subset': 1.3.3
-      '@types/node': 18.11.3
+      '@types/node': 18.11.7
       chai: 4.3.6
       debug: 4.3.4
       local-pkg: 0.4.2
