@@ -1,6 +1,6 @@
 import { resolve, extname, join, basename, dirname } from 'pathe'
 import fse from 'fs-extra'
-import { copyFileInStream } from './utils/stream'
+import { copyFileWithStream } from './utils/fs'
 import { InputFile, LoaderOptions, createLoader, OutputFile } from './loader'
 import { getDeclarations } from './utils/dts'
 
@@ -107,7 +107,7 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
     const outFile = join(options.distDir!, output.path)
     await fse.mkdirp(dirname(outFile))
     if (output.raw) {
-      await copyFileInStream(output.srcPath!, outFile)
+      await copyFileWithStream(output.srcPath!, outFile)
     } else {
       await fse.writeFile(outFile, output.contents, 'utf8')
     }
