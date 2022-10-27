@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/unjs/mkdist/compare/v0.3.13...v0.4.0) (2022-10-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade globby
+
+### Features
+
+* support multiple glob patterns ([#41](https://github.com/unjs/mkdist/issues/41)) ([b339163](https://github.com/unjs/mkdist/commit/b3391633adc16a524787b24963110da76c3293c7))
+* **vue:** support transpilation of `<style>` blocks with `sass` ([#27](https://github.com/unjs/mkdist/issues/27)) ([36e5b4f](https://github.com/unjs/mkdist/commit/36e5b4f6e76fd1f46a0758480bb83a7bba55a705))
+
+
+### Bug Fixes
+
+* add `strictNullChecks` ([#68](https://github.com/unjs/mkdist/issues/68)) ([12709f6](https://github.com/unjs/mkdist/commit/12709f65eb152b36eb7659ee27adb9bbf91d6b13))
+
+
+* upgrade globby ([8f3a513](https://github.com/unjs/mkdist/commit/8f3a51352f2947481236b8f2735f511a3f088bf0))
+
 ### [0.3.13](https://github.com/unjs/mkdist/compare/v0.3.12...v0.3.13) (2022-06-23)
 
 
