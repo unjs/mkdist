@@ -28,7 +28,7 @@ export async function getDeclarations (vfs: Map<string, string>) {
   const output: Record<string, string> = {}
 
   for (const filename of inputFiles) {
-    const dtsFilename = filename.replace(/\.(m|c)?(ts|js)$/, '.d.$1ts')
+    const dtsFilename = filename.replace(/\.(m|c)?(ts|js)x?$/, '.d.$1ts')
     output[filename] = vfs.get(dtsFilename) || ''
   }
 

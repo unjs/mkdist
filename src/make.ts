@@ -10,6 +10,8 @@ export interface MkdistOptions extends LoaderOptions {
   pattern?: string | string[]
   distDir?: string
   cleanDist?: boolean
+  jsxFactory?: string
+  jsxFragment?: string
 }
 
 export async function mkdist (options: MkdistOptions /* istanbul ignore next */ = {}) {

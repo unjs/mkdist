@@ -28,6 +28,8 @@ export interface LoaderOptions {
   ext?: 'mjs' | 'js' | 'ts'
   format?: 'cjs' | 'esm'
   declaration?: boolean
+  jsxFactory?: string
+  jsxFragment?: string
 }
 
 export interface LoaderContext {

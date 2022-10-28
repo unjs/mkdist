@@ -175,4 +175,34 @@ describe('createLoader', () => {
       expect.objectContaining({ declaration: true })
     ]))
   })
+
+  it('jsLoader will generate dts file (.jsx)', async () => {
+    const { loadFile } = createLoader({
+      loaders: [jsLoader],
+      declaration: true
+    })
+    const results = await loadFile({
+      extension: '.jsx',
+      getContents: () => 'export const Test = () => <div>42</div>',
+      path: 'test.jsx'
+    })
+    expect(results).toEqual(expect.arrayContaining([
+      expect.objectContaining({ declaration: true })
+    ]))
+  })
+
+  it('jsLoader will generate dts file (.tsx)', async () => {
+    const { loadFile } = createLoader({
+      loaders: [jsLoader],
+      declaration: true
+    })
+    const results = await loadFile({
+      extension: '.tsx',
+      getContents: () => 'export const Test = () => <div>42</div>',
+      path: 'test.tsx'
+    })
+    expect(results).toEqual(expect.arrayContaining([
+      expect.objectContaining({ declaration: true })
+    ]))
+  })
 })
