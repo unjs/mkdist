@@ -33,7 +33,7 @@
     "globby": "^13.1.2",
     "jiti": "^1.16.0",
     "mri": "^1.2.0",
-    "pathe": "^0.3.9"
+    "pathe": "^1.0.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "^11.0.0",
