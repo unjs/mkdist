@@ -1,8 +1,8 @@
-import { resolve, extname, join, basename, dirname } from 'pathe'
-import fse from 'fs-extra'
-import { copyFileWithStream } from './utils/fs'
-import { InputFile, LoaderOptions, createLoader, OutputFile } from './loader'
-import { getDeclarations } from './utils/dts'
+import { resolve, extname, join, basename, dirname } from "pathe";
+import fse from "fs-extra";
+import { copyFileWithStream } from "./utils/fs";
+import { InputFile, LoaderOptions, createLoader, OutputFile } from "./loader";
+import { getDeclarations } from "./utils/dts";
 
 export interface MkdistOptions extends LoaderOptions {
   rootDir?: string
@@ -14,107 +14,103 @@ export interface MkdistOptions extends LoaderOptions {
 
 export async function mkdist (options: MkdistOptions /* istanbul ignore next */ = {}) {
   // Resolve srcDir and distDir relative to rootDir
-  options.rootDir = resolve(process.cwd(), options.rootDir || '.')
-  options.srcDir = resolve(options.rootDir, options.srcDir || 'src')
-  options.distDir = resolve(options.rootDir, options.distDir || 'dist')
+  options.rootDir = resolve(process.cwd(), options.rootDir || ".");
+  options.srcDir = resolve(options.rootDir, options.srcDir || "src");
+  options.distDir = resolve(options.rootDir, options.distDir || "dist");
 
   // Setup dist
   if (options.cleanDist !== false) {
-    await fse.unlink(options.distDir).catch(() => { })
-    await fse.emptyDir(options.distDir)
-    await fse.mkdirp(options.distDir)
+    await fse.unlink(options.distDir).catch(() => {});
+    await fse.emptyDir(options.distDir);
+    await fse.mkdirp(options.distDir);
   }
 
   // Scan input files
-  const { globby } = await import('globby')
-  const filePaths = await globby(options.pattern || '**', { absolute: false, cwd: options.srcDir })
+  const { globby } = await import("globby");
+  const filePaths = await globby(options.pattern || "**", { absolute: false, cwd: options.srcDir });
   const files: InputFile[] = filePaths.map((path) => {
-    const srcPath = resolve(options.srcDir!, path)
+    const sourcePath = resolve(options.srcDir!, path);
     return {
       path,
-      srcPath,
+      srcPath: sourcePath,
       extension: extname(path),
-      getContents: () => fse.readFile(srcPath, { encoding: 'utf8' })
-    }
-  })
+      getContents: () => fse.readFile(sourcePath, { encoding: "utf8" })
+    };
+  });
 
   // Create loader
   const { loadFile } = createLoader({
     format: options.format,
     ext: options.ext,
     declaration: options.declaration
-  })
+  });
 
   // Use loaders to get output files
-  const outputs: OutputFile[] = []
+  const outputs: OutputFile[] = [];
   for (const file of files) {
-    outputs.push(...await loadFile(file) || [])
+    outputs.push(...await loadFile(file) || []);
   }
 
   // Normalize output extensions
   for (const output of outputs.filter(o => o.extension)) {
-    const renamed = basename(output.path, extname(output.path)) + output.extension
-    output.path = join(dirname(output.path), renamed)
+    const renamed = basename(output.path, extname(output.path)) + output.extension;
+    output.path = join(dirname(output.path), renamed);
     // Avoid overriding files with original extension
-    if (outputs.find(o => o !== output && o.path === output.path)) {
-      output.skip = true
+    if (outputs.some(o => o !== output && o.path === output.path)) {
+      output.skip = true;
     }
   }
 
   // Generate declarations
-  const dtsOutputs = outputs.filter(o => o.declaration && !o.skip)
-  if (dtsOutputs.length) {
-    const declarations = await getDeclarations(new Map(dtsOutputs.map(o => [o.srcPath!, o.contents || ''])))
+  const dtsOutputs = outputs.filter(o => o.declaration && !o.skip);
+  if (dtsOutputs.length > 0) {
+    const declarations = await getDeclarations(new Map(dtsOutputs.map(o => [o.srcPath!, o.contents || ""])));
     for (const output of dtsOutputs) {
-      output.contents = declarations[output.srcPath!] || ''
+      output.contents = declarations[output.srcPath!] || "";
     }
   }
 
   // Resolve relative imports
-  const outPaths = new Set(outputs.map(o => o.path))
-  const resolveId = (from: string, id: string = '', resolveExts: string[]) => {
-    if (!id.startsWith('.')) {
-      return id
+  const outPaths = new Set(outputs.map(o => o.path));
+  const resolveId = (from: string, id: string = "", resolveExtensions: string[]) => {
+    if (!id.startsWith(".")) {
+      return id;
     }
-    for (const ext of resolveExts) {
+    for (const extension of resolveExtensions) {
       // TODO: Resolve relative ../ via ufo
-      if (outPaths.has(join(dirname(from), id + ext))) {
-        return id + ext
+      if (outPaths.has(join(dirname(from), id + extension))) {
+        return id + extension;
       }
     }
-    return id
-  }
-  const esmResolveExts = ['', '/index.mjs', '/index.js', '.mjs', '.ts']
-  for (const output of outputs.filter(o => o.extension === '.mjs')) {
+    return id;
+  };
+  const esmResolveExtensions = ["", "/index.mjs", "/index.js", ".mjs", ".ts"];
+  for (const output of outputs.filter(o => o.extension === ".mjs")) {
     // Resolve import statements
     output.contents = output.contents!.replace(
-      /(import|export)(.* from ['"])(.*)(['"])/g,
-      (_, type, head, id, tail) => type + head + resolveId(output.path, id, esmResolveExts) + tail
-    )
+      /(import|export)(.* from ["'])(.*)(["'])/g,
+      (_, type, head, id, tail) => type + head + resolveId(output.path, id, esmResolveExtensions) + tail
+    );
   }
-  const cjsResolveExts = ['', '/index.cjs', '.cjs']
-  for (const output of outputs.filter(o => o.extension === '.cjs')) {
+  const cjsResolveExtensions = ["", "/index.cjs", ".cjs"];
+  for (const output of outputs.filter(o => o.extension === ".cjs")) {
     // Resolve require statements
     output.contents = output.contents!.replace(
-      /require\((['"])(.*)(['"])\)/g,
-      (_, head, id, tail) => 'require(' + head + resolveId(output.path, id, cjsResolveExts) + tail + ')'
-    )
+      /require\((["'])(.*)(["'])\)/g,
+      (_, head, id, tail) => "require(" + head + resolveId(output.path, id, cjsResolveExtensions) + tail + ")"
+    );
   }
 
   // Write outputs
-  const writtenFiles: string[] = []
+  const writtenFiles: string[] = [];
   await Promise.all(outputs.filter(o => !o.skip).map(async (output) => {
-    const outFile = join(options.distDir!, output.path)
-    await fse.mkdirp(dirname(outFile))
-    if (output.raw) {
-      await copyFileWithStream(output.srcPath!, outFile)
-    } else {
-      await fse.writeFile(outFile, output.contents, 'utf8')
-    }
-    writtenFiles.push(outFile)
-  }))
+    const outFile = join(options.distDir!, output.path);
+    await fse.mkdirp(dirname(outFile));
+    await (output.raw ? copyFileWithStream(output.srcPath!, outFile) : fse.writeFile(outFile, output.contents, "utf8"));
+    writtenFiles.push(outFile);
+  }));
 
   return {
     writtenFiles
-  }
+  };
 }

@@ -1,16 +1,16 @@
-import { pipeline } from 'stream'
-import { createReadStream, createWriteStream } from 'fs'
+import { pipeline } from "node:stream";
+import { createReadStream, createWriteStream } from "node:fs";
 
-export function copyFileWithStream (srcPath: string, outPath: string) {
-  const srcStream = createReadStream(srcPath)
-  const outStream = createWriteStream(outPath)
+export function copyFileWithStream (sourcePath: string, outPath: string) {
+  const sourceStream = createReadStream(sourcePath);
+  const outStream = createWriteStream(outPath);
   return new Promise((resolve, reject) => {
-    pipeline(srcStream, outStream, (err) => {
-      if (err) {
-        reject(err)
+    pipeline(sourceStream, outStream, (error) => {
+      if (error) {
+        reject(error);
       } else {
-        resolve(undefined)
+        resolve();
       }
-    })
-  })
+    });
+  });
 }

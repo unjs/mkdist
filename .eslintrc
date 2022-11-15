@@ -1,8 +1,9 @@
 {
   "extends": [
-    "@nuxtjs/eslint-config-typescript"
+    "eslint-config-unjs"
   ],
   "rules": {
-    "import/no-named-as-default-member": 0
+    "unicorn/prefer-module": 0,
+    "unicorn/prevent-abbreviations": 0,
   }
 }

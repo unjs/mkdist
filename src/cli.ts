@@ -1,35 +1,35 @@
 #!/usr/bin/env node
-import mri from 'mri'
-import { mkdist } from './index'
+import mri from "mri";
+import { mkdist } from "./index";
 
 async function main () {
-  const args = mri(process.argv.splice(2))
+  const arguments_ = mri(process.argv.splice(2));
 
-  if (args.help) {
+  if (arguments_.help) {
     // eslint-disable-next-line no-console
-    console.log('Usage: npx mkdist [rootDir] [--src=src] [--dist=dist] [--pattern=glob [--pattern=more-glob]] [--format=cjs|esm] [-d|--declaration] [--ext=mjs|js|ts]')
-    process.exit(0)
+    console.log("Usage: npx mkdist [rootDir] [--src=src] [--dist=dist] [--pattern=glob [--pattern=more-glob]] [--format=cjs|esm] [-d|--declaration] [--ext=mjs|js|ts]");
+    process.exit(0);
   }
 
   const { writtenFiles } = await mkdist({
-    rootDir: args._[0],
-    srcDir: args.src,
-    distDir: args.dist,
-    format: args.format,
-    pattern: args.pattern,
-    ext: args.ext,
-    declaration: Boolean(args.declaration || args.d)
-  })
+    rootDir: arguments_._[0],
+    srcDir: arguments_.src,
+    distDir: arguments_.dist,
+    format: arguments_.format,
+    pattern: arguments_.pattern,
+    ext: arguments_.ext,
+    declaration: Boolean(arguments_.declaration || arguments_.d)
+  });
 
   // eslint-disable-next-line no-console
-  console.log(writtenFiles.map(f => `- ${f}`).join('\n'))
+  console.log(writtenFiles.map(f => `- ${f}`).join("\n"));
 
-  process.exit(0)
+  process.exit(0);
 }
 
-main()
-  .catch((err) => {
-    // eslint-disable-next-line no-console
-    console.error(err)
-    process.exit(1)
-  })
+// eslint-disable-next-line unicorn/prefer-top-level-await
+main().catch((error) => {
+  // eslint-disable-next-line no-console
+  console.error(error);
+  process.exit(1);
+});
