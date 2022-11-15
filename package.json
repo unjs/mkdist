@@ -27,7 +27,7 @@
     "test": "pnpm lint && vitest run --coverage"
   },
   "dependencies": {
-    "defu": "^6.1.0",
+    "defu": "^6.1.1",
     "esbuild": "^0.15.13",
     "fs-extra": "^10.1.0",
     "globby": "^13.1.2",
@@ -40,17 +40,17 @@
     "@types/fs-extra": "^9.0.13",
     "@types/mri": "^1.1.1",
     "@types/node": "^18.11.9",
-    "@vitest/coverage-c8": "^0.24.5",
+    "@vitest/coverage-c8": "^0.25.2",
     "c8": "latest",
-    "eslint": "^8.26.0",
-    "sass": "^1.56.0",
+    "eslint": "^8.27.0",
+    "sass": "^1.56.1",
     "standard-version": "^9.5.0",
     "typescript": "^4.8.4",
     "unbuild": "^0.9.4",
-    "vitest": "^0.24.5"
+    "vitest": "^0.25.2"
   },
   "peerDependencies": {
-    "sass": "^1.56.0",
+    "sass": "^1.56.1",
     "typescript": ">=4.8.4"
   },
   "peerDependenciesMeta": {
@@ -61,5 +61,5 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@7.14.2"
+  "packageManager": "pnpm@7.16.0"
 }
