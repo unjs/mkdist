@@ -62,5 +62,5 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@7.16.1"
+  "packageManager": "pnpm@7.17.0"
 }
