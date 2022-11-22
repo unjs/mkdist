@@ -40,7 +40,7 @@
     "@types/fs-extra": "^9.0.13",
     "@types/mri": "^1.1.1",
     "@types/node": "^18.11.9",
-    "@vitest/coverage-c8": "^0.25.2",
+    "@vitest/coverage-c8": "^0.25.3",
     "c8": "latest",
     "eslint": "^8.28.0",
     "eslint-config-unjs": "^0.0.2",
@@ -48,7 +48,7 @@
     "standard-version": "^9.5.0",
     "typescript": "^4.9.3",
     "unbuild": "^0.9.4",
-    "vitest": "^0.25.2"
+    "vitest": "^0.25.3"
   },
   "peerDependencies": {
     "sass": "^1.56.1",
