@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "defu": "^6.1.1",
-    "esbuild": "^0.15.15",
+    "esbuild": "^0.15.16",
     "fs-extra": "^10.1.0",
     "globby": "^13.1.2",
     "jiti": "^1.16.0",
