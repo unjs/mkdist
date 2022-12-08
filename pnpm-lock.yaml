@@ -10,7 +10,7 @@ specifiers:
   esbuild: ^0.16.2
   eslint: ^8.29.0
   eslint-config-unjs: ^0.0.2
-  fs-extra: ^10.1.0
+  fs-extra: ^11.1.0
   globby: ^13.1.2
   jiti: ^1.16.0
   mri: ^1.2.0
@@ -24,7 +24,7 @@ specifiers:
 dependencies:
   defu: 6.1.1
   esbuild: 0.16.2
-  fs-extra: 10.1.0
+  fs-extra: 11.1.0
   globby: 13.1.2
   jiti: 1.16.0
   mri: 1.2.0
@@ -2310,6 +2310,16 @@ packages:
       graceful-fs: 4.2.10
       jsonfile: 6.1.0
       universalify: 2.0.0
+    dev: true
+
+  /fs-extra/11.1.0:
+    resolution: {integrity: sha512-0rcTq621PD5jM/e0a3EJoGC/1TC5ZBCERW82LQuwfGnCa1V8w7dpYH1yNu+SLb6E5dkeCBzKEyLGlFrnr+dUyw==}
+    engines: {node: '>=14.14'}
+    dependencies:
+      graceful-fs: 4.2.10
+      jsonfile: 6.1.0
+      universalify: 2.0.0
+    dev: false
 
   /fs.realpath/1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
