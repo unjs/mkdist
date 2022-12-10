@@ -39,7 +39,7 @@
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
     "@types/mri": "^1.1.1",
-    "@types/node": "^18.11.12",
+    "@types/node": "^18.11.13",
     "@vitest/coverage-c8": "^0.25.6",
     "c8": "latest",
     "eslint": "^8.29.0",
