@@ -24,6 +24,26 @@ describe("mkdist", () => {
     ].map(f => resolve(rootDir, f)).sort());
   });
 
+  it("mkdist (cjs)", async () => {
+    const rootDir = resolve(__dirname, "fixture");
+    const { writtenFiles } = await mkdist({ rootDir, format: "cjs" });
+    expect(writtenFiles.sort()).toEqual([
+      "dist/README.md",
+      "dist/foo.js",
+      "dist/foo.d.ts", // manual
+      "dist/index.js",
+      "dist/types.d.ts",
+      "dist/components/blank.vue",
+      "dist/components/js.vue",
+      "dist/components/script-setup-ts.vue",
+      "dist/components/ts.vue",
+      "dist/bar/index.js",
+      "dist/bar/esm.js"
+    ].map(f => resolve(rootDir, f)).sort());
+
+    expect(await readFile(resolve(rootDir, "dist/index.js"), "utf8")).toMatch("module.exports = _default;");
+  });
+
   it("mkdist (custom glob pattern)", async () => {
     const rootDir = resolve(__dirname, "fixture");
     const { writtenFiles } = await mkdist({ rootDir, pattern: "components/**" });
@@ -70,6 +90,36 @@ describe("mkdist", () => {
     expect(await readFile(resolve(rootDir, "dist/foo.d.ts"), "utf8")).toMatch("manual declaration");
     expect(await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8")).toMatch("declare");
   }, 50_000);
+
+  it("mkdist (emit types + maps)", async () => {
+    const rootDir = resolve(__dirname, "fixture");
+    const { writtenFiles } = await mkdist({ rootDir, declaration: true, declarationMap: true });
+    expect(writtenFiles.sort()).toEqual([
+      "dist/README.md",
+      "dist/foo.mjs",
+      "dist/foo.d.ts",
+      "dist/index.mjs",
+      "dist/index.d.ts",
+      "dist/index.d.ts.map",
+      "dist/types.d.ts",
+      "dist/components/blank.vue",
+      "dist/components/js.vue",
+      "dist/components/js.vue.d.ts",
+      "dist/components/js.vue.d.ts.map",
+      "dist/components/script-setup-ts.vue",
+      "dist/components/ts.vue",
+      "dist/components/ts.vue.d.ts",
+      "dist/components/ts.vue.d.ts.map",
+      "dist/bar/index.mjs",
+      "dist/bar/index.d.ts",
+      "dist/bar/index.d.ts.map",
+      "dist/bar/esm.mjs",
+      "dist/bar/esm.d.mts",
+      "dist/bar/esm.d.mts.map"
+    ].map(f => resolve(rootDir, f)).sort());
+
+    expect(await readFile(resolve(rootDir, "dist/index.d.ts.map"), "utf8")).toMatch("{\"version\":3,\"file\":\"index.d.ts\"");
+  }, 50_000);
 });
 
 describe("createLoader", () => {
@@ -80,7 +130,7 @@ describe("createLoader", () => {
       getContents: () => new Error("this should not be called") as any,
       path: "another.noth"
     });
-    expect(results).toMatchObject([{ raw: true }]);
+    expect(results).toMatchObject([{ type: "raw" }]);
   });
 
   it("vueLoader handles no transpilation of script tag", async () => {
@@ -92,7 +142,7 @@ describe("createLoader", () => {
       getContents: () => "<script>Test</script>",
       path: "test.vue"
     });
-    expect(results).toMatchObject([{ raw: true }]);
+    expect(results).toMatchObject([{ type: "raw" }]);
   });
 
   it("vueLoader handles script tags with attributes", async () => {
@@ -128,7 +178,7 @@ describe("createLoader", () => {
       getContents: () => "<script lang=\"ts\" setup>Test</script>",
       path: "test.vue"
     });
-    expect(results).toMatchObject([{ raw: true }]);
+    expect(results).toMatchObject([{ type: "raw" }]);
   });
 
   it("vueLoader will generate dts file", async () => {
@@ -142,7 +192,7 @@ describe("createLoader", () => {
       path: "test.vue"
     });
     expect(results).toEqual(expect.arrayContaining([
-      expect.objectContaining({ declaration: true })
+      expect.objectContaining({ type: "dts" })
     ]));
   });
 
@@ -157,7 +207,7 @@ describe("createLoader", () => {
       path: "test.mjs"
     });
     expect(results).toEqual(expect.arrayContaining([
-      expect.objectContaining({ declaration: true })
+      expect.objectContaining({ type: "dts" })
     ]));
   });
 
@@ -172,7 +222,7 @@ describe("createLoader", () => {
       path: "test.ts"
     });
     expect(results).toEqual(expect.arrayContaining([
-      expect.objectContaining({ declaration: true })
+      expect.objectContaining({ type: "dts" })
     ]));
   });
 });

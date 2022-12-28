@@ -14,6 +14,7 @@ export const sassLoader: Loader = async (input, { options }) => {
   output.push({
     contents: compileString(contents).css,
     path: input.path,
+    type: "sass",
     extension: `.${options.ext || "css"}`
   });
 

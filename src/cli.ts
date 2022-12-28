@@ -7,7 +7,7 @@ async function main () {
 
   if (arguments_.help) {
     // eslint-disable-next-line no-console
-    console.log("Usage: npx mkdist [rootDir] [--src=src] [--dist=dist] [--pattern=glob [--pattern=more-glob]] [--format=cjs|esm] [-d|--declaration] [--ext=mjs|js|ts]");
+    console.log("Usage: npx mkdist [rootDir] [--src=src] [--dist=dist] [--pattern=glob [--pattern=more-glob]] [--format=cjs|esm] [-d|--declaration] [-m|--declarationMap] [--ext=mjs|js|ts]");
     process.exit(0);
   }
 
@@ -18,7 +18,8 @@ async function main () {
     format: arguments_.format,
     pattern: arguments_.pattern,
     ext: arguments_.ext,
-    declaration: Boolean(arguments_.declaration || arguments_.d)
+    declaration: Boolean(arguments_.declaration || arguments_.d),
+    declarationMap: Boolean(arguments_.declarationMap || arguments_.m)
   });
 
   // eslint-disable-next-line no-console

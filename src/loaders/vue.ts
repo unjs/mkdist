@@ -67,6 +67,7 @@ const vueBlockLoader = (options: BlockLoaderOptions): Loader => async (input, { 
   return [
     {
       path: input.path,
+      type: "vue",
       contents: contents.replace(block, `<${options.type}${newAttributes}>\n${blockOutputFile.contents?.trim()}\n</${options.type}>`)
     },
     ...files.filter(f => f !== blockOutputFile)

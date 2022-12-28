@@ -13,11 +13,9 @@ export interface OutputFile {
    */
   path: string
   srcPath?: string
+  type?: string
   extension?: string
   contents?: string
-  declaration?: boolean
-  raw?: boolean
-  skip?: boolean
 }
 
 export type LoaderResult = OutputFile[] | undefined
@@ -28,6 +26,7 @@ export interface LoaderOptions {
   ext?: "mjs" | "js" | "ts"
   format?: "cjs" | "esm"
   declaration?: boolean
+  declarationMap?: boolean
 }
 
 export interface LoaderContext {
@@ -62,7 +61,7 @@ export function createLoader (loaderOptions: CreateLoaderOptions = {}) {
       {
         path: input.path,
         srcPath: input.srcPath,
-        raw: true
+        type: "raw"
       }
     ];
   };

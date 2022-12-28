@@ -16,15 +16,15 @@ export const jsLoader: Loader = async (input, { options }) => {
   let contents = await input.getContents();
 
   // declaration
-  if (options.declaration && !input.srcPath?.match(DECLARATION_RE)) {
+  if (options.declaration) {
     const cm = input.srcPath?.match(CM_LETTER_RE)?.[0] || "";
     const extension = `.d.${cm}ts`;
     output.push({
       contents,
       srcPath: input.srcPath,
       path: input.path,
-      extension,
-      declaration: true
+      type: "dts",
+      extension
     });
   }
 
@@ -36,13 +36,14 @@ export const jsLoader: Loader = async (input, { options }) => {
   // esm => cjs
   const isCjs = options.format === "cjs";
   if (isCjs) {
-    contents = jiti().transform({ source: contents, retainLines: false })
+    contents = jiti("").transform({ source: contents, retainLines: false })
       .replace(/^exports.default = /gm, "module.exports = ");
   }
 
   output.push({
     contents,
     path: input.path,
+    type: isCjs ? "cjs" : "mjs",
     extension: options.ext ? `.${options.ext}` : (isCjs ? ".js" : ".mjs")
   });
 
