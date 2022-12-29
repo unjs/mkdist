@@ -11,7 +11,6 @@ export async function getDeclarations (input: Map<string, OutputFile>, output: M
     declarationMap: options.declarationMap,
     declarationDir: options.distDir,
     rootDir: options.srcDir,
-    incremental: true,
     skipLibCheck: true,
     strictNullChecks: true,
     emitDeclarationOnly: true
