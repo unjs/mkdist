@@ -1,6 +1,6 @@
 import { resolve } from "pathe";
 import { readFile } from "fs-extra";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { mkdist } from "../src/make";
 import { createLoader } from "../src/loader";
 import { jsLoader, sassLoader, vueLoader } from "../src/loaders";
@@ -11,6 +11,7 @@ describe("mkdist", () => {
     const { writtenFiles } = await mkdist({ rootDir });
     expect(writtenFiles.sort()).toEqual([
       "dist/README.md",
+      "dist/demo.css",
       "dist/foo.mjs",
       "dist/foo.d.ts", // manual
       "dist/index.mjs",
@@ -50,6 +51,7 @@ describe("mkdist", () => {
     const { writtenFiles } = await mkdist({ rootDir, declaration: true });
     expect(writtenFiles.sort()).toEqual([
       "dist/README.md",
+      "dist/demo.css",
       "dist/foo.mjs",
       "dist/foo.d.ts",
       "dist/index.mjs",
@@ -70,6 +72,33 @@ describe("mkdist", () => {
     expect(await readFile(resolve(rootDir, "dist/foo.d.ts"), "utf8")).toMatch("manual declaration");
     expect(await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8")).toMatch("declare");
   }, 50_000);
+
+  describe("mkdist (sass compilation)", () => {
+    const rootDir = resolve(__dirname, "fixture");
+    let writtenFiles: string[];
+    beforeEach(async () => {
+      const results = await mkdist({ rootDir });
+      writtenFiles = results.writtenFiles;
+    });
+
+    it("resolves local imports and excludes partials ", async () => {
+      const css = await readFile(resolve(rootDir, "dist/demo.css"), "utf8");
+
+      expect(writtenFiles).not.toContain("dist/_base.css");
+      expect(css).toMatch("color: green");
+    });
+
+    it("resolves node_modules imports", async () => {
+      const css = await readFile(resolve(rootDir, "dist/demo.css"), "utf8");
+      expect(css).toMatch("box-sizing: border-box;");
+    });
+
+    it("compiles sass blocks in vue SFC", async () => {
+      const vue = await readFile(resolve(rootDir, "dist/components/js.vue"), "utf8");
+
+      expect(vue).toMatch("color: green;\n  background-color: red");
+    });
+  });
 });
 
 describe("createLoader", () => {

@@ -1,10 +1,19 @@
+import { dirname, basename } from "pathe";
 import type { Loader, LoaderResult } from "../loader";
 
 export const sassLoader: Loader = async (input, { options }) => {
   if (![".sass", ".scss"].includes(input.extension)) {
     return;
   }
-
+  if (basename(input.srcPath).startsWith("_")) {
+    // sass files starting with "_" are always considered partials
+    // and should not be compiled to standalone CSS
+    return [{
+      contents: "",
+      path: input.path,
+      skip: true
+    }];
+  }
   const compileString = await import("sass").then(r => r.compileString || r.default.compileString);
 
   const output: LoaderResult = [];
@@ -12,7 +21,7 @@ export const sassLoader: Loader = async (input, { options }) => {
   const contents = await input.getContents();
 
   output.push({
-    contents: compileString(contents).css,
+    contents: compileString(contents, { loadPaths: [dirname(input.srcPath), "node_modules"] }).css,
     path: input.path,
     extension: `.${options.ext || "css"}`
   });
