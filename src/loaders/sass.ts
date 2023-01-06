@@ -1,6 +1,6 @@
 import type { Loader, LoaderResult } from "../loader";
 
-export const sassLoader: Loader = async (input, { options }) => {
+export const sassLoader: Loader = async (input) => {
   if (![".sass", ".scss"].includes(input.extension)) {
     return;
   }
@@ -15,7 +15,7 @@ export const sassLoader: Loader = async (input, { options }) => {
     contents: compileString(contents).css,
     path: input.path,
     type: "sass",
-    extension: `.${options.ext || "css"}`
+    extension: ".css"
   });
 
   return output;

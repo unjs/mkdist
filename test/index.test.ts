@@ -11,6 +11,7 @@ describe("mkdist", () => {
     const { writtenFiles } = await mkdist({ rootDir });
     expect(writtenFiles.sort()).toEqual([
       "dist/README.md",
+      "dist/demo.css",
       "dist/foo.mjs",
       "dist/foo.d.ts", // manual
       "dist/index.mjs",
@@ -70,6 +71,7 @@ describe("mkdist", () => {
     const { writtenFiles } = await mkdist({ rootDir, declaration: true });
     expect(writtenFiles.sort()).toEqual([
       "dist/README.md",
+      "dist/demo.css",
       "dist/foo.mjs",
       "dist/foo.d.ts",
       "dist/index.mjs",
@@ -120,6 +122,14 @@ describe("mkdist", () => {
 
     expect(await readFile(resolve(rootDir, "dist/index.d.ts.map"), "utf8")).toMatch("{\"version\":3,\"file\":\"index.d.ts\"");
   }, 50_000);
+
+  it("mkdist (sass compilation)", async () => {
+    const rootDir = resolve(__dirname, "fixture");
+    await mkdist({ rootDir });
+    const css = await readFile(resolve(rootDir, "dist/demo.css"), "utf8");
+
+    expect(css).toMatch("color: green");
+  });
 });
 
 describe("createLoader", () => {
