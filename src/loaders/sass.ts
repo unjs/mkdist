@@ -5,7 +5,9 @@ export const sassLoader: Loader = async (input) => {
     return;
   }
 
-  const compileString = await import("sass").then(r => r.compileString || r.default.compileString);
+  const compileString = await import("sass").then(
+    (r) => r.compileString || r.default.compileString
+  );
 
   const output: LoaderResult = [];
 
@@ -14,7 +16,7 @@ export const sassLoader: Loader = async (input) => {
   output.push({
     contents: compileString(contents).css,
     path: input.path,
-    extension: ".css"
+    extension: ".css",
   });
 
   return output;
