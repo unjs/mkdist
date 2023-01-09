@@ -2,5 +2,5 @@
 @use 'base';
 
 .test {
-  color: base.$color;
+  color: $color;
 }

@@ -1,7 +1,7 @@
 import { dirname, basename } from "pathe";
 import type { Loader, LoaderResult } from "../loader";
 
-export const sassLoader: Loader = async (input, { options }) => {
+export const sassLoader: Loader = async (input) => {
   if (![".sass", ".scss"].includes(input.extension)) {
     return;
   }
@@ -23,7 +23,7 @@ export const sassLoader: Loader = async (input, { options }) => {
   output.push({
     contents: compileString(contents, { loadPaths: [dirname(input.srcPath), "node_modules"] }).css,
     path: input.path,
-    extension: `.${options.ext || "css"}`
+    extension: ".css"
   });
 
   return output;
