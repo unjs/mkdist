@@ -64,6 +64,7 @@ export async function mkdist(
 
   // Process outputs
   for (const output of outputs) {
+    // Filter out skipped outputs
     if (output.skip) {
       continue;
     }
