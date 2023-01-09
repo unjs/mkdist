@@ -1,5 +1,5 @@
 import { pathToFileURL } from "node:url";
-import { dirname, basename } from "pathe";
+import { basename } from "pathe";
 import type { Loader, LoaderResult } from "../loader";
 
 export const sassLoader: Loader = async (input) => {
