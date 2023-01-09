@@ -7,7 +7,10 @@ const DECLARATION_RE = /\.d\.[cm]?ts$/;
 const CM_LETTER_RE = /(?<=\.)(c|m)(?=[jt]s$)/;
 
 export const jsLoader: Loader = async (input, { options }) => {
-  if (![".ts", ".js", ".cjs", ".mjs"].includes(input.extension) || DECLARATION_RE.test(input.path)) {
+  if (
+    ![".ts", ".js", ".cjs", ".mjs"].includes(input.extension) ||
+    DECLARATION_RE.test(input.path)
+  ) {
     return;
   }
 
@@ -24,19 +27,20 @@ export const jsLoader: Loader = async (input, { options }) => {
       srcPath: input.srcPath,
       path: input.path,
       type: "dts",
-      extension
+      extension,
     });
   }
 
   // typescript => js
   if (input.extension === ".ts") {
-    contents = await transform(contents, { loader: "ts" }).then(r => r.code);
+    contents = await transform(contents, { loader: "ts" }).then((r) => r.code);
   }
 
   // esm => cjs
   const isCjs = options.format === "cjs";
   if (isCjs) {
-    contents = jiti("").transform({ source: contents, retainLines: false })
+    contents = jiti("")
+      .transform({ source: contents, retainLines: false })
       .replace(/^exports.default = /gm, "module.exports = ");
   }
 
@@ -44,7 +48,7 @@ export const jsLoader: Loader = async (input, { options }) => {
     contents,
     path: input.path,
     type: isCjs ? "cjs" : "mjs",
-    extension: options.ext ? `.${options.ext}` : (isCjs ? ".js" : ".mjs")
+    extension: options.ext ? `.${options.ext}` : isCjs ? ".js" : ".mjs",
   });
 
   return output;

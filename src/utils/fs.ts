@@ -1,7 +1,7 @@
 import { pipeline } from "node:stream";
 import { createReadStream, createWriteStream } from "node:fs";
 
-export function copyFileWithStream (sourcePath: string, outPath: string) {
+export function copyFileWithStream(sourcePath: string, outPath: string) {
   const sourceStream = createReadStream(sourcePath);
   const outStream = createWriteStream(outPath);
   return new Promise<void>((resolve, reject) => {

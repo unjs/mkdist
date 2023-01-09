@@ -1,3 +1,3 @@
-const a = undefined
+const a = undefined;
 
-export const test = () => a ?? 2
+export const test = () => a ?? 2;

@@ -2,8 +2,12 @@ import type { CompilerOptions } from "typescript";
 import type { OutputFile } from "../loader";
 import type { MkdistOptions } from "../make";
 
-export async function getDeclarations (input: Map<string, OutputFile>, output: Map<string, OutputFile>, options: MkdistOptions) {
-  const ts = await import("typescript").then(r => r.default || r);
+export async function getDeclarations(
+  input: Map<string, OutputFile>,
+  output: Map<string, OutputFile>,
+  options: MkdistOptions
+) {
+  const ts = await import("typescript").then((r) => r.default || r);
 
   const compilerOptions: CompilerOptions = {
     allowJs: true,
@@ -13,7 +17,7 @@ export async function getDeclarations (input: Map<string, OutputFile>, output: M
     rootDir: options.srcDir,
     skipLibCheck: true,
     strictNullChecks: true,
-    emitDeclarationOnly: true
+    emitDeclarationOnly: true,
   };
   const tsHost = ts.createCompilerHost(compilerOptions);
 

@@ -5,14 +5,16 @@ import { InputFile, LoaderOptions, createLoader, OutputFile } from "./loader";
 import { getDeclarations } from "./utils/dts";
 
 export interface MkdistOptions extends LoaderOptions {
-  rootDir?: string
-  srcDir?: string
-  pattern?: string | string[]
-  distDir?: string
-  cleanDist?: boolean
+  rootDir?: string;
+  srcDir?: string;
+  pattern?: string | string[];
+  distDir?: string;
+  cleanDist?: boolean;
 }
 
-export async function mkdist (options: MkdistOptions /* istanbul ignore next */ = {}) {
+export async function mkdist(
+  options: MkdistOptions /* istanbul ignore next */ = {}
+) {
   // Resolve srcDir and distDir relative to rootDir
   options.rootDir = resolve(process.cwd(), options.rootDir || ".");
   options.srcDir = resolve(options.rootDir, options.srcDir || "src");
@@ -27,14 +29,17 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
 
   // Scan input files
   const { globby } = await import("globby");
-  const filePaths = await globby(options.pattern || "**", { absolute: false, cwd: options.srcDir });
+  const filePaths = await globby(options.pattern || "**", {
+    absolute: false,
+    cwd: options.srcDir,
+  });
   const files: InputFile[] = filePaths.map((path) => {
     const sourcePath = resolve(options.srcDir, path);
     return {
       path,
       srcPath: sourcePath,
       extension: extname(path),
-      getContents: () => fse.readFile(sourcePath, { encoding: "utf8" })
+      getContents: () => fse.readFile(sourcePath, { encoding: "utf8" }),
     };
   });
 
@@ -42,16 +47,16 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
   const { loadFile } = createLoader({
     format: options.format,
     ext: options.ext,
-    declaration: options.declaration
+    declaration: options.declaration,
   });
 
   // Use loaders to get output files
   const outputs: OutputFile[] = [];
   for (const file of files) {
-    outputs.push(...await loadFile(file) || []);
+    outputs.push(...((await loadFile(file)) || []));
   }
 
-  const outputPaths = new Set(outputs.map(o => o.path));
+  const outputPaths = new Set(outputs.map((o) => o.path));
   const esmOutputs: OutputFile[] = [];
   const cjsOutputs: OutputFile[] = [];
   const dtsInputs = new Map();
@@ -62,7 +67,8 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
     // Normalize output extensions
     if (output.extension) {
       const originPath = output.path;
-      const renamed = basename(originPath, extname(originPath)) + output.extension;
+      const renamed =
+        basename(originPath, extname(originPath)) + output.extension;
       output.path = join(dirname(originPath), renamed);
       if (output.path !== originPath) {
         // Avoid overriding files with original extension (e.g. manual declaration)
@@ -96,18 +102,18 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
 
   // Generate declarations
   if (dtsInputs.size > 0) {
-    await getDeclarations(
-      dtsInputs,
-      finalOutputs,
-      options
-    );
+    await getDeclarations(dtsInputs, finalOutputs, options);
   }
 
   // Resolve relative imports
-  const resolveId = (from: string, id: string = "", resolveExtensions: string[]) => {
+  const resolveId = (
+    from: string,
+    id: string = "",
+    resolveExtensions: string[]
+  ) => {
     if (id.startsWith(".")) {
       for (const extension of resolveExtensions) {
-      // TODO: Resolve relative ../ via ufo
+        // TODO: Resolve relative ../ via ufo
         if (outputPaths.has(join(dirname(from), id + extension))) {
           return id + extension;
         }
@@ -120,7 +126,8 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
     // Resolve import statements
     output.contents = output.contents.replace(
       /(import|export)(.* from ["'])(.*)(["'])/g,
-      (_, type, head, id, tail) => type + head + resolveId(output.path, id, esmResolveExtensions) + tail
+      (_, type, head, id, tail) =>
+        type + head + resolveId(output.path, id, esmResolveExtensions) + tail
     );
   }
   const cjsResolveExtensions = ["", "/index.cjs", ".cjs"];
@@ -128,7 +135,12 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
     // Resolve require statements
     output.contents = output.contents.replace(
       /require\((["'])(.*)(["'])\)/g,
-      (_, head, id, tail) => "require(" + head + resolveId(output.path, id, cjsResolveExtensions) + tail + ")"
+      (_, head, id, tail) =>
+        "require(" +
+        head +
+        resolveId(output.path, id, cjsResolveExtensions) +
+        tail +
+        ")"
     );
   }
 
@@ -139,12 +151,14 @@ export async function mkdist (options: MkdistOptions /* istanbul ignore next */ 
   const writtenFiles = await Promise.all(writePromises);
 
   return {
-    writtenFiles
+    writtenFiles,
   };
 }
 
 const writeFile = async (dstPath: string, output: OutputFile) => {
   await fse.mkdirp(dirname(dstPath));
-  await (output.type === "raw" ? copyFileWithStream(output.srcPath, dstPath) : fse.writeFile(dstPath, output.contents || ""));
+  await (output.type === "raw"
+    ? copyFileWithStream(output.srcPath, dstPath)
+    : fse.writeFile(dstPath, output.contents || ""));
   return dstPath;
 };
