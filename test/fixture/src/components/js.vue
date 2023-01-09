@@ -1,22 +1,22 @@
 <template>
-  <div>{{ test }} </div>
+  <div>{{ test }}</div>
 </template>
 
 <script>
-import test from '..'
+import test from "..";
 
-const str = 'test'
+const str = "test";
 
 export default {
   data: () => ({
     test: test(),
-    str
-  })
-}
+    str,
+  }),
+};
 </script>
 
 <style lang="scss" scoped>
-@use '../base' as base;
+@use "../base" as base;
 
 $bg-color: red;
 

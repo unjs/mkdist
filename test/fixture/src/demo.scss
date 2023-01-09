@@ -1,6 +1,7 @@
 @use 'modern-normalize/modern-normalize.css';
-@use 'base';
+// @use 'base'; // TODO
+@use "base" as base;
 
 .test {
-  color: $color;
+  color: base.$color;
 }

@@ -125,7 +125,7 @@ describe("mkdist", () => {
         "utf8"
       );
 
-      expect(vue).toMatch("color: green;\n  background-color: red");
+      expect(vue).toMatch("color: green;\n  background-color: red;");
     });
   });
 
