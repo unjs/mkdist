@@ -1,5 +1,6 @@
-$color: green;
+@use "modern-normalize/modern-normalize.css";
+@use "base";
 
 .test {
-  color: $color;
+  color: base.$color;
 }

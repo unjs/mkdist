@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "pathe";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { mkdist } from "../src/make";
 import { createLoader } from "../src/loader";
 import { jsLoader, sassLoader, vueLoader } from "../src/loaders";
@@ -99,130 +99,152 @@ describe("mkdist", () => {
     ).toMatch("declare");
   }, 50_000);
 
-  it("mkdist (sass compilation)", async () => {
+  describe("mkdist (sass compilation)", () => {
     const rootDir = resolve(__dirname, "fixture");
-    await mkdist({ rootDir });
-    const css = await readFile(resolve(rootDir, "dist/demo.css"), "utf8");
-
-    expect(css).toMatch("color: green");
-  });
-});
-
-describe("createLoader", () => {
-  it("loadFile returns undefined for an unsupported file", async () => {
-    const { loadFile } = createLoader();
-    const results = await loadFile({
-      extension: ".noth",
-      getContents: () => new Error("this should not be called") as any,
-      path: "another.noth",
+    let writtenFiles: string[];
+    beforeEach(async () => {
+      const results = await mkdist({ rootDir });
+      writtenFiles = results.writtenFiles;
     });
-    expect(results).toMatchObject([{ raw: true }]);
-  });
 
-  it("vueLoader handles no transpilation of script tag", async () => {
-    const { loadFile } = createLoader({
-      loaders: [vueLoader],
+    it("resolves local imports and excludes partials ", async () => {
+      const css = await readFile(resolve(rootDir, "dist/demo.css"), "utf8");
+
+      expect(writtenFiles).not.toContain("dist/_base.css");
+      expect(css).toMatch("color: green");
     });
-    const results = await loadFile({
-      extension: ".vue",
-      getContents: () => "<script>Test</script>",
-      path: "test.vue",
+
+    it("resolves node_modules imports", async () => {
+      const css = await readFile(resolve(rootDir, "dist/demo.css"), "utf8");
+      expect(css).toMatch("box-sizing: border-box;");
     });
-    expect(results).toMatchObject([{ raw: true }]);
+
+    it("compiles sass blocks in vue SFC", async () => {
+      const vue = await readFile(
+        resolve(rootDir, "dist/components/js.vue"),
+        "utf8"
+      );
+
+      expect(vue).toMatch("color: green;\n  background-color: red;");
+    });
   });
 
-  it("vueLoader handles script tags with attributes", async () => {
-    const { loadFile } = createLoader({
-      loaders: [vueLoader, jsLoader],
+  describe("createLoader", () => {
+    it("loadFile returns undefined for an unsupported file", async () => {
+      const { loadFile } = createLoader();
+      const results = await loadFile({
+        extension: ".noth",
+        getContents: () => new Error("this should not be called") as any,
+        path: "another.noth",
+      });
+      expect(results).toMatchObject([{ raw: true }]);
     });
-    const results = await loadFile({
-      extension: ".vue",
-      getContents: () => '<script foo lang="ts">Test</script>',
-      path: "test.vue",
-    });
-    expect(results).toMatchObject([
-      { contents: ["<script foo>", "Test;", "</script>"].join("\n") },
-    ]);
-  });
 
-  it("vueLoader handles style tags", async () => {
-    const { loadFile } = createLoader({
-      loaders: [vueLoader, sassLoader],
+    it("vueLoader handles no transpilation of script tag", async () => {
+      const { loadFile } = createLoader({
+        loaders: [vueLoader],
+      });
+      const results = await loadFile({
+        extension: ".vue",
+        getContents: () => "<script>Test</script>",
+        path: "test.vue",
+      });
+      expect(results).toMatchObject([{ raw: true }]);
     });
-    const results = await loadFile({
-      extension: ".vue",
-      getContents: () =>
-        '<style scoped lang="scss">$color: red; :root { background-color: $color }</style>',
-      path: "test.vue",
-    });
-    expect(results).toMatchObject([
-      {
-        contents: [
-          "<style scoped>",
-          ":root {",
-          "  background-color: red;",
-          "}",
-          "</style>",
-        ].join("\n"),
-      },
-    ]);
-  });
 
-  it("vueLoader bypass <script setup>", async () => {
-    const { loadFile } = createLoader({
-      loaders: [vueLoader, jsLoader],
+    it("vueLoader handles script tags with attributes", async () => {
+      const { loadFile } = createLoader({
+        loaders: [vueLoader, jsLoader],
+      });
+      const results = await loadFile({
+        extension: ".vue",
+        getContents: () => '<script foo lang="ts">Test</script>',
+        path: "test.vue",
+      });
+      expect(results).toMatchObject([
+        { contents: ["<script foo>", "Test;", "</script>"].join("\n") },
+      ]);
     });
-    const results = await loadFile({
-      extension: ".vue",
-      getContents: () => '<script lang="ts" setup>Test</script>',
-      path: "test.vue",
-    });
-    expect(results).toMatchObject([{ raw: true }]);
-  });
 
-  it("vueLoader will generate dts file", async () => {
-    const { loadFile } = createLoader({
-      loaders: [vueLoader, jsLoader],
-      declaration: true,
+    it("vueLoader handles style tags", async () => {
+      const { loadFile } = createLoader({
+        loaders: [vueLoader, sassLoader],
+      });
+      const results = await loadFile({
+        extension: ".vue",
+        getContents: () =>
+          '<style scoped lang="scss">$color: red; :root { background-color: $color }</style>',
+        path: "test.vue",
+      });
+      expect(results).toMatchObject([
+        {
+          contents: [
+            "<style scoped>",
+            ":root {",
+            "  background-color: red;",
+            "}",
+            "</style>",
+          ].join("\n"),
+        },
+      ]);
     });
-    const results = await loadFile({
-      extension: ".vue",
-      getContents: () =>
-        '<script lang="ts">export default bob = 42 as const</script>',
-      path: "test.vue",
-    });
-    expect(results).toEqual(
-      expect.arrayContaining([expect.objectContaining({ declaration: true })])
-    );
-  });
 
-  it("jsLoader will generate dts file (.js)", async () => {
-    const { loadFile } = createLoader({
-      loaders: [jsLoader],
-      declaration: true,
+    it("vueLoader bypass <script setup>", async () => {
+      const { loadFile } = createLoader({
+        loaders: [vueLoader, jsLoader],
+      });
+      const results = await loadFile({
+        extension: ".vue",
+        getContents: () => '<script lang="ts" setup>Test</script>',
+        path: "test.vue",
+      });
+      expect(results).toMatchObject([{ raw: true }]);
     });
-    const results = await loadFile({
-      extension: ".js",
-      getContents: () => "export default bob = 42",
-      path: "test.mjs",
-    });
-    expect(results).toEqual(
-      expect.arrayContaining([expect.objectContaining({ declaration: true })])
-    );
-  });
 
-  it("jsLoader will generate dts file (.ts)", async () => {
-    const { loadFile } = createLoader({
-      loaders: [jsLoader],
-      declaration: true,
+    it("vueLoader will generate dts file", async () => {
+      const { loadFile } = createLoader({
+        loaders: [vueLoader, jsLoader],
+        declaration: true,
+      });
+      const results = await loadFile({
+        extension: ".vue",
+        getContents: () =>
+          '<script lang="ts">export default bob = 42 as const</script>',
+        path: "test.vue",
+      });
+      expect(results).toEqual(
+        expect.arrayContaining([expect.objectContaining({ declaration: true })])
+      );
     });
-    const results = await loadFile({
-      extension: ".ts",
-      getContents: () => "export default bob = 42 as const",
-      path: "test.ts",
+
+    it("jsLoader will generate dts file (.js)", async () => {
+      const { loadFile } = createLoader({
+        loaders: [jsLoader],
+        declaration: true,
+      });
+      const results = await loadFile({
+        extension: ".js",
+        getContents: () => "export default bob = 42",
+        path: "test.mjs",
+      });
+      expect(results).toEqual(
+        expect.arrayContaining([expect.objectContaining({ declaration: true })])
+      );
     });
-    expect(results).toEqual(
-      expect.arrayContaining([expect.objectContaining({ declaration: true })])
-    );
+
+    it("jsLoader will generate dts file (.ts)", async () => {
+      const { loadFile } = createLoader({
+        loaders: [jsLoader],
+        declaration: true,
+      });
+      const results = await loadFile({
+        extension: ".ts",
+        getContents: () => "export default bob = 42 as const",
+        path: "test.ts",
+      });
+      expect(results).toEqual(
+        expect.arrayContaining([expect.objectContaining({ declaration: true })])
+      );
+    });
   });
 });
