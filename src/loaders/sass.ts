@@ -30,7 +30,6 @@ export const sassLoader: Loader = async (input) => {
   output.push({
     contents: compileString(contents, {
       loadPaths: ["node_modules"],
-
       url: pathToFileURL(input.srcPath),
     }).css,
     path: input.path,
