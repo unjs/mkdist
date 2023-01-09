@@ -1,5 +1,5 @@
+import { readFile } from "node:fs/promises";
 import { resolve } from "pathe";
-import { readFile } from "fs-extra";
 import { describe, it, expect, beforeEach } from "vitest";
 import { mkdist } from "../src/make";
 import { createLoader } from "../src/loader";

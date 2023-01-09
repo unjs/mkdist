@@ -5,9 +5,10 @@ export const sassLoader: Loader = async (input) => {
   if (![".sass", ".scss"].includes(input.extension)) {
     return;
   }
+
+  // sass files starting with "_" are always considered partials
+  // and should not be compiled to standalone CSS
   if (basename(input.srcPath).startsWith("_")) {
-    // sass files starting with "_" are always considered partials
-    // and should not be compiled to standalone CSS
     return [
       {
         contents: "",
@@ -16,6 +17,7 @@ export const sassLoader: Loader = async (input) => {
       },
     ];
   }
+
   const compileString = await import("sass").then(
     (r) => r.compileString || r.default.compileString
   );

@@ -1,2 +1,2 @@
 // manual declaration
-export function test(): string
+export function test(): string;

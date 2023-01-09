@@ -3,7 +3,7 @@
     "eslint-config-unjs"
   ],
   "rules": {
-    "unicorn/prefer-module": 0,
-    "unicorn/prevent-abbreviations": 0,
+    "indent": 0,
+    "unicorn/prefer-module": 0
   }
 }
