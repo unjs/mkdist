@@ -1,3 +1,4 @@
+import { pathToFileURL } from "node:url";
 import { dirname, basename } from "pathe";
 import type { Loader, LoaderResult } from "../loader";
 
@@ -28,7 +29,9 @@ export const sassLoader: Loader = async (input) => {
 
   output.push({
     contents: compileString(contents, {
-      loadPaths: [dirname(input.srcPath), "node_modules"],
+      loadPaths: ["node_modules"],
+
+      url: pathToFileURL(input.srcPath),
     }).css,
     path: input.path,
     extension: ".css",
