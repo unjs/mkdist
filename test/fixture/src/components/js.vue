@@ -16,9 +16,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$color: red;
+@use "../base" as base;
+
+$bg-color: red;
 
 .test {
-  color: $color;
+  color: base.$color;
+  background-color: $bg-color;
 }
 </style>

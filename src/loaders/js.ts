@@ -44,11 +44,16 @@ export const jsLoader: Loader = async (input, { options }) => {
       .replace(/^exports.default = /gm, "module.exports = ");
   }
 
+  let extension = isCjs ? ".js" : ".mjs";
+  if (options.ext) {
+    extension = options.ext.startsWith(".") ? options.ext : `.${options.ext}`;
+  }
+
   output.push({
     contents,
     path: input.path,
     type: isCjs ? "cjs" : "mjs",
-    extension: options.ext ? `.${options.ext}` : isCjs ? ".js" : ".mjs",
+    extension,
   });
 
   return output;

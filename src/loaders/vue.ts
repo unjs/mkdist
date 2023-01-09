@@ -16,7 +16,7 @@ export const vueLoader: Loader = async (input, context) => {
 
   for (const blockLoader of [sassLoader, scriptLoader]) {
     const result = await blockLoader(
-      { ...input, getContents: () => output[0].contents! },
+      { ...input, getContents: () => output[0].contents },
       context
     );
     if (!result) {
@@ -52,7 +52,7 @@ const vueBlockLoader =
     const BLOCK_RE = new RegExp(
       `<${options.type}((\\s[^>\\s]*)*)>([\\S\\s.]*?)<\\/${options.type}>`
     );
-    // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [block, attributes = "", _, blockContents] =
       contents.match(BLOCK_RE) || [];
 
@@ -79,7 +79,7 @@ const vueBlockLoader =
     const blockOutputFile = files.find(
       (f) =>
         f.extension === `.${options.outputLang}` ||
-        options.validExtensions?.includes(f.extension!)
+        options.validExtensions?.includes(f.extension)
     );
     if (!blockOutputFile) {
       return;

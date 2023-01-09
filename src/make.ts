@@ -64,6 +64,9 @@ export async function mkdist(
 
   // Process outputs
   for (const output of outputs) {
+    if (output.skip) {
+      continue;
+    }
     // Normalize output extensions
     if (output.extension) {
       const originPath = output.path;
@@ -106,11 +109,7 @@ export async function mkdist(
   }
 
   // Resolve relative imports
-  const resolveId = (
-    from: string,
-    id: string = "",
-    resolveExtensions: string[]
-  ) => {
+  const resolveId = (from: string, id = "", resolveExtensions: string[]) => {
     if (id.startsWith(".")) {
       for (const extension of resolveExtensions) {
         // TODO: Resolve relative ../ via ufo

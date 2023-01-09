@@ -8,14 +8,13 @@ export interface InputFile {
 }
 
 export interface OutputFile {
-  /**
-   * relative to distDir
-   */
+  /** relative to distDir */
   path: string;
   srcPath?: string;
   type?: string;
   extension?: string;
   contents?: string;
+  skip?: boolean;
 }
 
 export type LoaderResult = OutputFile[] | undefined;
