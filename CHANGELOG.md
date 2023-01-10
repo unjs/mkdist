@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/unjs/mkdist/compare/v1.0.0...v1.1.0) (2023-01-10)
+
+
+### Features
+
+* improve sass compilation ([#109](https://github.com/unjs/mkdist/issues/109)) ([bc9536a](https://github.com/unjs/mkdist/commit/bc9536a2cb444b131497d3263131f7cf99486a12))
+
+
+### Bug Fixes
+
+* ensure sass output file has css extension ([#111](https://github.com/unjs/mkdist/issues/111)) ([ea0c57c](https://github.com/unjs/mkdist/commit/ea0c57ca7a082d144fad6fd837f731afeacca5c9))
+
 ## [1.0.0](https://github.com/unjs/mkdist/compare/v0.4.1...v1.0.0) (2022-11-15)
 
 ### [0.4.1](https://github.com/unjs/mkdist/compare/v0.4.0...v0.4.1) (2022-11-15)
