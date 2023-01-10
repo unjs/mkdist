@@ -37,7 +37,7 @@
     "pathe": "^1.0.0"
   },
   "devDependencies": {
-    "@types/fs-extra": "^11.0.0",
+    "@types/fs-extra": "^11.0.1",
     "@types/mri": "^1.1.1",
     "@types/node": "^18.11.18",
     "@vitest/coverage-c8": "^0.27.0",
@@ -64,5 +64,5 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@7.23.0"
+  "packageManager": "pnpm@7.24.2"
 }
