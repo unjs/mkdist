@@ -40,7 +40,7 @@
     "@types/fs-extra": "^11.0.1",
     "@types/mri": "^1.1.1",
     "@types/node": "^18.11.18",
-    "@vitest/coverage-c8": "^0.27.0",
+    "@vitest/coverage-c8": "^0.27.1",
     "c8": "latest",
     "modern-normalize": "^1.1.0",
     "eslint": "^8.31.0",
@@ -50,7 +50,7 @@
     "standard-version": "^9.5.0",
     "typescript": "^4.9.4",
     "unbuild": "^1.0.2",
-    "vitest": "^0.27.0"
+    "vitest": "^0.27.1"
   },
   "peerDependencies": {
     "sass": "^1.57.1",
