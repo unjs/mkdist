@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.1.1
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.1.0...v1.1.1)
+
+
+### 🩹 Fixes
+
+  - Add support for multi-line import extension normalization ([#120](https://github.com/unjs/mkdist/pull/120))
+
+### 🏡 Chore
+
+  - Update release script ([2803fe1](https://github.com/unjs/mkdist/commit/2803fe1))
+
+### ❤️  Contributors
+
+- Pooya Parsa <pooya@pi0.io>
+- Alex Grozav <alex@grozav.com>
+
 ## [1.1.0](https://github.com/unjs/mkdist/compare/v1.0.0...v1.1.0) (2023-01-10)
 
 
