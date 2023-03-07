@@ -10,6 +10,7 @@ export interface MkdistOptions extends LoaderOptions {
   pattern?: string | string[];
   distDir?: string;
   cleanDist?: boolean;
+  addRelativeDeclarationExtensions?: boolean;
 }
 
 export async function mkdist(
@@ -71,7 +72,8 @@ export async function mkdist(
   const dtsOutputs = outputs.filter((o) => o.declaration && !o.skip);
   if (dtsOutputs.length > 0) {
     const declarations = await getDeclarations(
-      new Map(dtsOutputs.map((o) => [o.srcPath, o.contents || ""]))
+      new Map(dtsOutputs.map((o) => [o.srcPath, o.contents || ""])),
+      { addRelativeDeclarationExtensions: options.addRelativeDeclarationExtensions }
     );
     for (const output of dtsOutputs) {
       output.contents = declarations[output.srcPath] || "";

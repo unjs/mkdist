@@ -68,7 +68,7 @@ describe("mkdist", () => {
 
   it("mkdist (emit types)", async () => {
     const rootDir = resolve(__dirname, "fixture");
-    const { writtenFiles } = await mkdist({ rootDir, declaration: true });
+    const { writtenFiles } = await mkdist({ rootDir, declaration: true, addRelativeDeclarationExtensions: true });
     expect(writtenFiles.sort()).toEqual(
       [
         "dist/README.md",
