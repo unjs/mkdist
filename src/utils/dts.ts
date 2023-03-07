@@ -1,3 +1,5 @@
+import { findStaticImports, findExports } from 'mlly'
+
 export async function getDeclarations(vfs: Map<string, string>) {
   const ts = await import("typescript").then((r) => r.default || r);
 
@@ -31,7 +33,16 @@ export async function getDeclarations(vfs: Map<string, string>) {
 
   for (const filename of inputFiles) {
     const dtsFilename = filename.replace(/\.(m|c)?(ts|js)$/, ".d.$1ts");
-    output[filename] = vfs.get(dtsFilename) || "";
+    let contents = vfs.get(dtsFilename) || "";
+    // TODO: add support for type import/exports
+    const imports = findStaticImports(contents);
+    const exports = findExports(contents);
+    for (const spec of [...exports, ...imports]) {
+      if (!spec.specifier || !/^\.{1,2}[/\\]/.test(spec.specifier)) { continue }
+      // add file extension for relative paths (`.js` will match the `.d.ts` extension we emit)
+      contents = contents.replace(spec.code, spec.code.replace(spec.specifier, spec.specifier + '.js'))
+    }
+    output[filename] = contents;
   }
 
   return output;
