@@ -1,2 +1,2 @@
-export const twinkle = 'twinkle'
-export const little = 'star'
+export const twinkle = "twinkle";
+export const little = "star";

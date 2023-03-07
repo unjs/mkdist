@@ -68,7 +68,11 @@ describe("mkdist", () => {
 
   it("mkdist (emit types)", async () => {
     const rootDir = resolve(__dirname, "fixture");
-    const { writtenFiles } = await mkdist({ rootDir, declaration: true, addRelativeDeclarationExtensions: true });
+    const { writtenFiles } = await mkdist({
+      rootDir,
+      declaration: true,
+      addRelativeDeclarationExtensions: true,
+    });
     expect(writtenFiles.sort()).toEqual(
       [
         "dist/README.md",
@@ -101,9 +105,9 @@ describe("mkdist", () => {
       "manual declaration"
     );
 
-    expect(await readFile(resolve(rootDir, "dist/star/index.d.ts"), "utf8")).toMatch(
-      "export * from './other.js';\n"
-    );
+    expect(
+      await readFile(resolve(rootDir, "dist/star/index.d.ts"), "utf8")
+    ).toMatch("export * from './other.js';\n");
     expect(
       await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8")
     ).toMatch("declare");

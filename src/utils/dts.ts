@@ -1,10 +1,13 @@
-import { findStaticImports, findExports } from 'mlly'
+import { findStaticImports, findExports } from "mlly";
 
 interface GetDeclarationsOptions {
   addRelativeDeclarationExtensions?: boolean;
 }
 
-export async function getDeclarations(vfs: Map<string, string>, opts?: GetDeclarationsOptions) {
+export async function getDeclarations(
+  vfs: Map<string, string>,
+  opts?: GetDeclarationsOptions
+) {
   const ts = await import("typescript").then((r) => r.default || r);
 
   const inputFiles = [...vfs.keys()];
@@ -43,9 +46,14 @@ export async function getDeclarations(vfs: Map<string, string>, opts?: GetDeclar
       const imports = findStaticImports(contents);
       const exports = findExports(contents);
       for (const spec of [...exports, ...imports]) {
-        if (!spec.specifier || !/^\.{1,2}[/\\]/.test(spec.specifier)) { continue }
+        if (!spec.specifier || !/^\.{1,2}[/\\]/.test(spec.specifier)) {
+          continue;
+        }
         // add file extension for relative paths (`.js` will match the `.d.ts` extension we emit)
-        contents = contents.replace(spec.code, spec.code.replace(spec.specifier, spec.specifier + '.js'))
+        contents = contents.replace(
+          spec.code,
+          spec.code.replace(spec.specifier, spec.specifier + ".js")
+        );
       }
     }
     output[filename] = contents;

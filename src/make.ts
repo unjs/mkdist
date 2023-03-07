@@ -73,7 +73,10 @@ export async function mkdist(
   if (dtsOutputs.length > 0) {
     const declarations = await getDeclarations(
       new Map(dtsOutputs.map((o) => [o.srcPath, o.contents || ""])),
-      { addRelativeDeclarationExtensions: options.addRelativeDeclarationExtensions }
+      {
+        addRelativeDeclarationExtensions:
+          options.addRelativeDeclarationExtensions,
+      }
     );
     for (const output of dtsOutputs) {
       output.contents = declarations[output.srcPath] || "";
