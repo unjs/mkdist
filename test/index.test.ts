@@ -107,7 +107,7 @@ describe("mkdist", () => {
 
     expect(
       await readFile(resolve(rootDir, "dist/star/index.d.ts"), "utf8")
-    ).toMatch("export * from './other.js';\n");
+    ).toMatch('export * from "./other.js";\n');
     expect(
       await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8")
     ).toMatch("declare");
