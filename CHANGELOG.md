@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.1.2
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.1.1...v1.1.2)
+
+
+### 🩹 Fixes
+
+  - Add `.js` extension for relative import and exports in declarations ([#134](https://github.com/unjs/mkdist/pull/134))
+
+### ❤️  Contributors
+
+- Daniel Roe <daniel@roe.dev>
+
 ## v1.1.1
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.1.0...v1.1.1)
