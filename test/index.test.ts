@@ -17,6 +17,8 @@ describe("mkdist", () => {
         "dist/foo.d.ts", // manual
         "dist/index.mjs",
         "dist/types.d.ts",
+        "dist/star/index.mjs",
+        "dist/star/other.mjs",
         "dist/components/blank.vue",
         "dist/components/js.vue",
         "dist/components/script-setup-ts.vue",
@@ -66,7 +68,11 @@ describe("mkdist", () => {
 
   it("mkdist (emit types)", async () => {
     const rootDir = resolve(__dirname, "fixture");
-    const { writtenFiles } = await mkdist({ rootDir, declaration: true });
+    const { writtenFiles } = await mkdist({
+      rootDir,
+      declaration: true,
+      addRelativeDeclarationExtensions: true,
+    });
     expect(writtenFiles.sort()).toEqual(
       [
         "dist/README.md",
@@ -75,6 +81,10 @@ describe("mkdist", () => {
         "dist/foo.d.ts",
         "dist/index.mjs",
         "dist/index.d.ts",
+        "dist/star/index.mjs",
+        "dist/star/index.d.ts",
+        "dist/star/other.mjs",
+        "dist/star/other.d.ts",
         "dist/types.d.ts",
         "dist/components/blank.vue",
         "dist/components/js.vue",
@@ -94,6 +104,10 @@ describe("mkdist", () => {
     expect(await readFile(resolve(rootDir, "dist/foo.d.ts"), "utf8")).toMatch(
       "manual declaration"
     );
+
+    expect(
+      await readFile(resolve(rootDir, "dist/star/index.d.ts"), "utf8")
+    ).toMatch('export * from "./other.js";\n');
     expect(
       await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8")
     ).toMatch("declare");
