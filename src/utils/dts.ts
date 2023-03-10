@@ -42,7 +42,8 @@ export async function getDeclarations(
     const dtsFilename = filename.replace(/\.(m|c)?(ts|js)$/, ".d.$1ts");
     let contents = vfs.get(dtsFilename) || "";
     if (opts?.addRelativeDeclarationExtensions) {
-      const ext = filename.match(/\.(m|c)?(ts|js)$/)?.[0].replace(/ts$/, 'js') || ".js"
+      const ext =
+        filename.match(/\.(m|c)?(ts|js)$/)?.[0].replace(/ts$/, "js") || ".js";
       const imports = findStaticImports(contents);
       const exports = findExports(contents);
       const typeExports = findTypeExports(contents);
