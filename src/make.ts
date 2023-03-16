@@ -97,8 +97,17 @@ export async function mkdist(
     }
     return id;
   };
-  const esmResolveExtensions = ["", "/index.mjs", "/index.js", ".mjs", ".ts"];
-  for (const output of outputs.filter((o) => o.extension === ".mjs")) {
+  const esmResolveExtensions = [
+    "",
+    "/index.mjs",
+    "/index.js",
+    ".mjs",
+    ".ts",
+    ".js",
+  ];
+  for (const output of outputs.filter(
+    (o) => o.extension === ".mjs" || o.extension === ".js"
+  )) {
     // Resolve import statements
     output.contents = output.contents.replace(
       /(import|export)(\s+(?:.+|{[\s\w,]+})\s+from\s+["'])(.*)(["'])/g,
