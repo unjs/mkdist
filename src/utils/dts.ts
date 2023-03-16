@@ -1,4 +1,4 @@
-import { findStaticImports, findExports } from "mlly";
+import { findStaticImports, findExports, findTypeExports } from "mlly";
 
 interface GetDeclarationsOptions {
   addRelativeDeclarationExtensions?: boolean;
@@ -42,17 +42,19 @@ export async function getDeclarations(
     const dtsFilename = filename.replace(/\.(m|c)?(ts|js)$/, ".d.$1ts");
     let contents = vfs.get(dtsFilename) || "";
     if (opts?.addRelativeDeclarationExtensions) {
-      // TODO: add support for type import/exports
+      const ext =
+        filename.match(/\.(m|c)?(ts|js)$/)?.[0].replace(/ts$/, "js") || ".js";
       const imports = findStaticImports(contents);
       const exports = findExports(contents);
-      for (const spec of [...exports, ...imports]) {
+      const typeExports = findTypeExports(contents);
+      for (const spec of [...exports, ...typeExports, ...imports]) {
         if (!spec.specifier || !/^\.{1,2}[/\\]/.test(spec.specifier)) {
           continue;
         }
         // add file extension for relative paths (`.js` will match the `.d.ts` extension we emit)
         contents = contents.replace(
           spec.code,
-          spec.code.replace(spec.specifier, spec.specifier + ".js")
+          spec.code.replace(spec.specifier, spec.specifier + ext)
         );
       }
     }
