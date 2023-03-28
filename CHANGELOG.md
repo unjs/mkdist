@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.2.0
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.1.2...v1.2.0)
+
+
+### 🚀 Enhancements
+
+  - Add support for relativising type exports ([#135](https://github.com/unjs/mkdist/pull/135))
+  - Add support for relativising type exports ([#140](https://github.com/unjs/mkdist/pull/140))
+
+### 🏡 Chore
+
+  - **release:** V1.1.2 ([4892929](https://github.com/unjs/mkdist/commit/4892929))
+
+### ❤️  Contributors
+
+- Daniel Roe <daniel@roe.dev>
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+
 ## v1.1.2
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.1.1...v1.1.2)
