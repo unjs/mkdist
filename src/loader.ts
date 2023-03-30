@@ -1,3 +1,4 @@
+import type { TransformOptions } from "esbuild";
 import { vueLoader, jsLoader, sassLoader } from "./loaders";
 
 export interface InputFile {
@@ -30,6 +31,7 @@ export interface LoaderOptions {
   ext?: "mjs" | "js" | "ts";
   format?: "cjs" | "esm";
   declaration?: boolean;
+  esbuildOptions?: TransformOptions;
 }
 
 export interface LoaderContext {

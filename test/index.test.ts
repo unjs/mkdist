@@ -263,5 +263,27 @@ describe("mkdist", () => {
         expect.arrayContaining([expect.objectContaining({ declaration: true })])
       );
     });
+
+    it("jsLoader options should support esbuildOptions as property", async () => {
+      const { loadFile } = createLoader({
+        loaders: [jsLoader],
+        declaration: true,
+        esbuildOptions: {
+          keepNames: true,
+        },
+      });
+      const results = await loadFile({
+        extension: ".ts",
+        getContents: () => "function testFunctionName() {}",
+        path: "test.ts",
+      });
+      expect(results).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            contents: expect.stringContaining("Object.defineProperty"),
+          }),
+        ])
+      );
+    });
   });
 });
