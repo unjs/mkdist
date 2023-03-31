@@ -31,7 +31,7 @@ export interface LoaderOptions {
   ext?: "mjs" | "js" | "ts";
   format?: "cjs" | "esm";
   declaration?: boolean;
-  esbuildOptions?: TransformOptions;
+  esbuild?: TransformOptions;
 }
 
 export interface LoaderContext {

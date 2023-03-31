@@ -264,11 +264,11 @@ describe("mkdist", () => {
       );
     });
 
-    it("jsLoader options should support esbuildOptions as property", async () => {
+    it("jsLoader options should support esbuild as property", async () => {
       const { loadFile } = createLoader({
         loaders: [jsLoader],
         declaration: true,
-        esbuildOptions: {
+        esbuild: {
           keepNames: true,
         },
       });
