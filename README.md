@@ -45,7 +45,7 @@ npx mkdist [rootDir] [--src=src] [--dist=dist] [--pattern=glob [--pattern=more-g
 [npm-downloads-src]: https://img.shields.io/npm/dm/mkdist?style=flat-square
 [npm-downloads-href]: https://npmjs.com/package/mkdist
 
-[github-actions-src]: https://img.shields.io/github/actions/workflow/status/unjs/mkdist/ci.yaml.branch=main&style=flat-square
+[github-actions-src]: https://img.shields.io/github/actions/workflow/status/unjs/mkdist/ci.yml.branch=main&style=flat-square
 [github-actions-href]: https://github.com/unjs/mkdist/actions?query=workflow%3Aci
 
 [codecov-src]: https://img.shields.io/codecov/c/gh/unjs/mkdist/main?style=flat-square
