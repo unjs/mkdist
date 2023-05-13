@@ -54,7 +54,7 @@ export async function mkdist(
   let loaders;
   if (options.loaders) {
     loaders = [];
-    for (const loaderName of options.loaders || ["jsLoader", "vueLoader"]) {
+    for (const loaderName of options.loaders) {
       console.log("Loader", loaderName);
       loaders.push(allLoaders[loaderName]);
     }
