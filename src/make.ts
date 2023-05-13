@@ -55,7 +55,6 @@ export async function mkdist(
   if (options.loaders) {
     loaders = [];
     for (const loaderName of options.loaders) {
-      console.log("Loader", loaderName);
       loaders.push(allLoaders[loaderName]);
     }
   }
