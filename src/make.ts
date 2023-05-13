@@ -3,6 +3,10 @@ import fse from "fs-extra";
 import { copyFileWithStream } from "./utils/fs";
 import { InputFile, LoaderOptions, createLoader, OutputFile } from "./loader";
 import { getDeclarations } from "./utils/dts";
+/* eslint import/namespace: ['error', { allowComputed: true }] */
+import * as allLoaders from "./loaders";
+
+type LoaderName = keyof typeof allLoaders;
 
 export interface MkdistOptions extends LoaderOptions {
   rootDir?: string;
@@ -10,6 +14,7 @@ export interface MkdistOptions extends LoaderOptions {
   pattern?: string | string[];
   distDir?: string;
   cleanDist?: boolean;
+  loaders?: LoaderName[];
   addRelativeDeclarationExtensions?: boolean;
 }
 
@@ -34,6 +39,7 @@ export async function mkdist(
     absolute: false,
     cwd: options.srcDir,
   });
+
   const files: InputFile[] = filePaths.map((path) => {
     const sourcePath = resolve(options.srcDir, path);
     return {
@@ -44,11 +50,22 @@ export async function mkdist(
     };
   });
 
+  // Use only the loaders specified in options
+  let loaders;
+  if (options.loaders) {
+    loaders = [];
+    for (const loaderName of options.loaders || ["jsLoader", "vueLoader"]) {
+      console.log("Loader", loaderName);
+      loaders.push(allLoaders[loaderName]);
+    }
+  }
+
   // Create loader
   const { loadFile } = createLoader({
     format: options.format,
     ext: options.ext,
     declaration: options.declaration,
+    loaders,
   });
 
   // Use loaders to get output files
