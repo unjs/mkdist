@@ -146,6 +146,35 @@ describe("mkdist", () => {
     });
   });
 
+  it("mkdist (only jsLoader and vueLoader)", async () => {
+    const rootDir = resolve(__dirname, "fixture");
+    const { writtenFiles } = await mkdist({
+      rootDir,
+      loaders: ["jsLoader", "vueLoader"],
+    });
+    expect(writtenFiles.sort()).toEqual(
+      [
+        "dist/README.md",
+        "dist/demo.scss",
+        "dist/_base.scss",
+        "dist/foo.mjs",
+        "dist/foo.d.ts", // manual
+        "dist/index.mjs",
+        "dist/types.d.ts",
+        "dist/star/index.mjs",
+        "dist/star/other.mjs",
+        "dist/components/blank.vue",
+        "dist/components/js.vue",
+        "dist/components/script-setup-ts.vue",
+        "dist/components/ts.vue",
+        "dist/bar/index.mjs",
+        "dist/bar/esm.mjs",
+      ]
+        .map((f) => resolve(rootDir, f))
+        .sort()
+    );
+  });
+
   describe("createLoader", () => {
     it("loadFile returns undefined for an unsupported file", async () => {
       const { loadFile } = createLoader();
