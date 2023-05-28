@@ -22,7 +22,8 @@
   "scripts": {
     "build": "unbuild",
     "dev": "pnpm mkdist test/fixture -d",
-    "lint": "eslint --ext .ts . && prettier --check src test",
+    "lint": "eslint --ext .ts,.mjs,.cjs . && prettier --check src test",
+    "lint:fix": "eslint --fix --ext .ts,.mjs,.cjs . && prettier --write -c src test",
     "mkdist": "jiti src/cli",
     "release": "pnpm test && pnpm build && changelogen --release && npm publish && git push --follow-tags",
     "test": "pnpm lint && vitest run --coverage"
