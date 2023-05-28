@@ -5,7 +5,7 @@ interface GetDeclarationsOptions {
   addRelativeDeclarationExtensions?: boolean;
 }
 
-const VUE_FILE_EXT_RE = /\.vue\.\S+$/
+const VUE_FILE_EXT_RE = /\.vue\.\S+$/;
 
 export async function getDeclarations(
   vfs: Map<string, string>,
@@ -17,7 +17,7 @@ export async function getDeclarations(
   const { vue: inputVueFiles, rest: inputRestFiles } = mapFiles(inputFiles, {
     vue: {
       src: VUE_FILE_EXT_RE,
-      format: (filename: string) => filename.replace(VUE_FILE_EXT_RE, '.vue')
+      format: (filename: string) => filename.replace(VUE_FILE_EXT_RE, ".vue"),
     },
   });
 
@@ -45,7 +45,7 @@ export async function getDeclarations(
   const program = ts.createProgram(inputRestFiles, compilerOptions, tsHost);
   await program.emit();
 
-  if (inputVueFiles && inputVueFiles.length) {
+  if (inputVueFiles && inputVueFiles.length > 0) {
     const programVue = (await import("vue-tsc")).createProgram({
       rootNames: inputVueFiles,
       options: compilerOptions,
@@ -82,7 +82,12 @@ export async function getDeclarations(
   return output;
 }
 
-function mapFiles<TMapping extends Record<string, RegExp | { src: RegExp; format: (filename: string) => string }>>(
+function mapFiles<
+  TMapping extends Record<
+    string,
+    RegExp | { src: RegExp; format: (filename: string) => string }
+  >
+>(
   inputFiles: string[],
   mapping: TMapping
 ): {
@@ -94,8 +99,8 @@ function mapFiles<TMapping extends Record<string, RegExp | { src: RegExp; format
 
   for (const filename of inputFiles) {
     for (const [key, item] of Object.entries(mapping)) {
-      const re = 'src' in item ? item.src : item
-      const format = 'src' in item ? item.format : undefined
+      const re = "src" in item ? item.src : item;
+      const format = "src" in item ? item.format : undefined;
 
       if (re.test(filename)) {
         (result[key] ||= []).push(format ? format(filename) : filename);
