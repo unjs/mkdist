@@ -1,4 +1,5 @@
 import { findStaticImports, findExports, findTypeExports } from "mlly";
+import type { CompilerOptions } from "typescript";
 
 interface GetDeclarationsOptions {
   addRelativeDeclarationExtensions?: boolean;
@@ -20,7 +21,7 @@ export async function getDeclarations(
     },
   });
 
-  const compilerOptions = {
+  const compilerOptions: CompilerOptions = {
     allowJs: true,
     declaration: true,
     incremental: true,
