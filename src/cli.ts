@@ -10,7 +10,7 @@ const main = defineCommand({
     description: 'Lightweight file-to-file transformer',
   },
   args: {
-    rootDir: {
+    dir: {
       type: 'positional',
       description: 'Project root directory',
       required: false,
@@ -18,13 +18,13 @@ const main = defineCommand({
     },
     src: {
       type: 'string',
-      description: 'Source directory relative to the rootDir',
+      description: 'Source directory relative to the DIR',
       required: false,
       default: 'src',
     },
     dist: {
       type: 'string',
-      description: 'Distribution directory relative to the rootDir',
+      description: 'Distribution directory relative to the DIR',
       required: false,
       default: 'dist',
     },
@@ -43,7 +43,6 @@ const main = defineCommand({
     declaration: {
       type: 'boolean',
       description: 'Generate type declaration file',
-      required: false,
       default: false,
       alias: ['d'],
     },
