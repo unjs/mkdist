@@ -10,35 +10,35 @@ const main = defineCommand({
     description: 'Lightweight file-to-file transformer',
   },
   args: {
-    dir: {
+    _dir: {
       type: 'positional',
+      description: 'Project root directory (prefer using `--dir`)',
+      default: '.',
+    },
+    dir: {
+      type: 'string',
       description: 'Project root directory',
-      required: false,
       default: '.',
     },
     src: {
       type: 'string',
-      description: 'Source directory relative to the DIR',
-      required: false,
+      description: 'Source directory relative to project root directory',
       default: 'src',
     },
     dist: {
       type: 'string',
-      description: 'Distribution directory relative to the DIR',
-      required: false,
+      description: 'Distribution directory relative to project root directory',
       default: 'dist',
     },
     pattern: {
       type: 'string',
       description: 'Pattern includes or excludes files',
-      required: false,
       default: '**',
     },
     format: {
       type: 'string',
       description: 'File format',
       valueHint: 'cjs|esm',
-      required: false,
     },
     declaration: {
       type: 'boolean',
@@ -50,18 +50,18 @@ const main = defineCommand({
       type: 'string',
       description: 'File extension',
       valueHint: 'mjs|js|ts',
-      required: false,
     },
   },
-  async run({ args: arguments_ }) {
+  async run({ args }) {
+    console.log('args', args)
     const { writtenFiles } = await mkdist({
-      rootDir: arguments_._[0],
-      srcDir: arguments_.src,
-      distDir: arguments_.dist,
-      format: arguments_.format,
-      pattern: arguments_.pattern,
-      ext: arguments_.ext,
-      declaration: arguments_.declaration,
+      rootDir: args.dir || args._dir,
+      srcDir: args.src,
+      distDir: args.dist,
+      format: args.format,
+      pattern: args.pattern,
+      ext: args.ext,
+      declaration: args.declaration,
     } as MkdistOptions);
 
     // eslint-disable-next-line no-console
