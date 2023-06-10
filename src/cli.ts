@@ -18,7 +18,6 @@ const main = defineCommand({
     dir: {
       type: 'string',
       description: 'Project root directory',
-      default: '.',
     },
     src: {
       type: 'string',
