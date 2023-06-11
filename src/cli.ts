@@ -52,7 +52,6 @@ const main = defineCommand({
     },
   },
   async run({ args }) {
-    console.log('args', args)
     const { writtenFiles } = await mkdist({
       rootDir: args.dir || args._dir,
       srcDir: args.src,
