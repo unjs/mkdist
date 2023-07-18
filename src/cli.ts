@@ -66,10 +66,14 @@ const main = defineCommand({
       description: "JSX fragment",
       valueHint: "Fragment|React.Fragment",
     },
+    loaders: {
+      type: "string",
+      description: "Loaders",
+      valueHint: "js|vue|sass",
+    }
   },
   async run({ args }) {
     const { writtenFiles } = await mkdist({
-      ...args,
       rootDir: resolve(args.cwd || process.cwd(), args.dir),
       srcDir: args.src,
       distDir: args.dist,
@@ -77,6 +81,7 @@ const main = defineCommand({
       pattern: args.pattern,
       ext: args.ext,
       declaration: args.declaration,
+      loaders: args.loaders?.split(","),
       esbuild: {
         jsx: args.jsx,
         jsxFactory: args.jsxFactory,

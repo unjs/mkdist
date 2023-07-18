@@ -3,7 +3,6 @@ import { resolve } from "pathe";
 import { describe, it, expect, beforeEach } from "vitest";
 import { mkdist } from "../src/make";
 import { createLoader } from "../src/loader";
-import { jsLoader, sassLoader, vueLoader } from "../src/loaders";
 
 describe("mkdist", () => {
   it("mkdist", async () => {
@@ -156,6 +155,37 @@ describe("mkdist", () => {
     });
   });
 
+  it("mkdist (only jsLoader and vueLoader)", async () => {
+    const rootDir = resolve(__dirname, "fixture");
+    const { writtenFiles } = await mkdist({
+      rootDir,
+      loaders: ["js", "vue"],
+    });
+    expect(writtenFiles.sort()).toEqual(
+      [
+        "dist/README.md",
+        "dist/demo.scss",
+        "dist/_base.scss",
+        "dist/foo.mjs",
+        "dist/foo.d.ts", // manual
+        "dist/index.mjs",
+        "dist/types.d.ts",
+        "dist/star/index.mjs",
+        "dist/star/other.mjs",
+        "dist/components/blank.vue",
+        "dist/components/js.vue",
+        "dist/components/script-setup-ts.vue",
+        "dist/components/ts.vue",
+        "dist/components/jsx.mjs",
+        "dist/components/tsx.mjs",
+        "dist/bar/index.mjs",
+        "dist/bar/esm.mjs",
+      ]
+        .map((f) => resolve(rootDir, f))
+        .sort()
+    );
+  });
+
   describe("createLoader", () => {
     it("loadFile returns undefined for an unsupported file", async () => {
       const { loadFile } = createLoader();
@@ -169,7 +199,7 @@ describe("mkdist", () => {
 
     it("vueLoader handles no transpilation of script tag", async () => {
       const { loadFile } = createLoader({
-        loaders: [vueLoader],
+        loaders: ["vue"],
       });
       const results = await loadFile({
         extension: ".vue",
@@ -181,7 +211,7 @@ describe("mkdist", () => {
 
     it("vueLoader handles script tags with attributes", async () => {
       const { loadFile } = createLoader({
-        loaders: [vueLoader, jsLoader],
+        loaders: ["vue", "js"],
       });
       const results = await loadFile({
         extension: ".vue",
@@ -195,7 +225,7 @@ describe("mkdist", () => {
 
     it("vueLoader handles style tags", async () => {
       const { loadFile } = createLoader({
-        loaders: [vueLoader, sassLoader],
+        loaders: ["vue", "sass"],
       });
       const results = await loadFile({
         extension: ".vue",
@@ -218,7 +248,7 @@ describe("mkdist", () => {
 
     it("vueLoader bypass <script setup>", async () => {
       const { loadFile } = createLoader({
-        loaders: [vueLoader, jsLoader],
+        loaders: ["vue", "js"],
       });
       const results = await loadFile({
         extension: ".vue",
@@ -230,7 +260,7 @@ describe("mkdist", () => {
 
     it("vueLoader will generate dts file", async () => {
       const { loadFile } = createLoader({
-        loaders: [vueLoader, jsLoader],
+        loaders: ["vue", "js"],
         declaration: true,
       });
       const results = await loadFile({
@@ -246,7 +276,7 @@ describe("mkdist", () => {
 
     it("jsLoader will generate dts file (.js)", async () => {
       const { loadFile } = createLoader({
-        loaders: [jsLoader],
+        loaders: ["js"],
         declaration: true,
       });
       const results = await loadFile({
@@ -261,7 +291,7 @@ describe("mkdist", () => {
 
     it("jsLoader will generate dts file (.ts)", async () => {
       const { loadFile } = createLoader({
-        loaders: [jsLoader],
+        loaders: ["js"],
         declaration: true,
       });
       const results = await loadFile({
@@ -276,7 +306,7 @@ describe("mkdist", () => {
 
     it("jsLoader: respect esbuild options", async () => {
       const { loadFile } = createLoader({
-        loaders: [jsLoader],
+        loaders: ["js"],
         declaration: true,
         esbuild: {
           keepNames: true,
@@ -294,7 +324,7 @@ describe("mkdist", () => {
 
   it("jsLoader: Support JSX", async () => {
     const { loadFile } = createLoader({
-      loaders: [jsLoader],
+      loaders: ["js"],
       declaration: true,
     });
     const results =
@@ -311,7 +341,7 @@ describe("mkdist", () => {
 
   it("jsLoader: Support TSX", async () => {
     const { loadFile } = createLoader({
-      loaders: [jsLoader],
+      loaders: ["js"],
       declaration: true,
     });
     const results =

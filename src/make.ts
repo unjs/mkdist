@@ -1,8 +1,15 @@
 import { resolve, extname, join, basename, dirname } from "pathe";
 import fse from "fs-extra";
 import { copyFileWithStream } from "./utils/fs";
-import { InputFile, LoaderOptions, createLoader, OutputFile } from "./loader";
+import {
+  InputFile,
+  LoaderOptions,
+  createLoader,
+  OutputFile,
+  Loader,
+} from "./loader";
 import { getDeclarations } from "./utils/dts";
+import { LoaderName } from "./loaders";
 
 export interface MkdistOptions extends LoaderOptions {
   rootDir?: string;
@@ -10,6 +17,7 @@ export interface MkdistOptions extends LoaderOptions {
   pattern?: string | string[];
   distDir?: string;
   cleanDist?: boolean;
+  loaders?: (LoaderName | Loader)[];
   addRelativeDeclarationExtensions?: boolean;
 }
 
@@ -34,6 +42,7 @@ export async function mkdist(
     absolute: false,
     cwd: options.srcDir,
   });
+
   const files: InputFile[] = filePaths.map((path) => {
     const sourcePath = resolve(options.srcDir, path);
     return {
@@ -50,6 +59,7 @@ export async function mkdist(
     ext: options.ext,
     declaration: options.declaration,
     esbuild: options.esbuild,
+    loaders: options.loaders,
   });
 
   // Use loaders to get output files
