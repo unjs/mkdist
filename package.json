@@ -29,6 +29,7 @@
     "test": "pnpm lint && vitest run --coverage"
   },
   "dependencies": {
+    "citty": "^0.1.2",
     "defu": "^6.1.2",
     "esbuild": "^0.18.14",
     "fs-extra": "^11.1.1",
