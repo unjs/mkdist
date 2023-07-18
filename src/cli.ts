@@ -81,7 +81,7 @@ const main = defineCommand({
         jsx: args.jsx,
         jsxFactory: args.jsxFactory,
         jsxFragment: args.jsxFragment,
-      }
+      },
     } as MkdistOptions);
 
     // eslint-disable-next-line no-console
