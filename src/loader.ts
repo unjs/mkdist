@@ -32,8 +32,8 @@ export interface LoaderOptions {
   format?: "cjs" | "esm";
   declaration?: boolean;
   esbuild?: CommonOptions;
-  jsxFactory?: string
-  jsxFragment?: string
+  jsxFactory?: string;
+  jsxFragment?: string;
 }
 
 export interface LoaderContext {
