@@ -101,7 +101,6 @@ export async function mkdist(
       return id;
     }
     for (const extension of resolveExtensions) {
-      // TODO: Resolve relative ../ via ufo
       if (outPaths.has(join(dirname(from), id + extension))) {
         return id + extension;
       }
