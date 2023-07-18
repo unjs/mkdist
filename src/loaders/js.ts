@@ -42,8 +42,7 @@ export const jsLoader: Loader = async (input, { options }) => {
   // esm => cjs
   const isCjs = options.format === "cjs";
   if (isCjs) {
-    // @ts-ignore
-    contents = jiti()
+    contents = jiti("")
       .transform({ source: contents, retainLines: false })
       .replace(/^exports.default = /gm, "module.exports = ");
   }

@@ -264,7 +264,7 @@ describe("mkdist", () => {
       );
     });
 
-    it("jsLoader options should support esbuild as property", async () => {
+    it("jsLoader: respect esbuild options", async () => {
       const { loadFile } = createLoader({
         loaders: [jsLoader],
         declaration: true,
@@ -272,18 +272,13 @@ describe("mkdist", () => {
           keepNames: true,
         },
       });
-      const results = await loadFile({
-        extension: ".ts",
-        getContents: () => "function testFunctionName() {}",
-        path: "test.ts",
-      });
-      expect(results).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            contents: expect.stringContaining("Object.defineProperty"),
-          }),
-        ])
-      );
+      const results =
+        (await loadFile({
+          extension: ".ts",
+          getContents: () => "function testFunctionName() {}",
+          path: "test.ts",
+        })) || [];
+      expect(results[1].contents).includes("Object.defineProperty");
     });
   });
 });
