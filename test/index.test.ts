@@ -176,6 +176,8 @@ describe("mkdist", () => {
         "dist/components/js.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
+        "dist/components/jsx.mjs",
+        "dist/components/tsx.mjs",
         "dist/bar/index.mjs",
         "dist/bar/esm.mjs",
       ]
