@@ -17,9 +17,9 @@ export async function mkdist(
   options: MkdistOptions /* istanbul ignore next */ = {}
 ) {
   // Resolve srcDir and distDir relative to rootDir
-  options.rootDir = resolve(process.cwd(), options.rootDir);
-  options.srcDir = resolve(options.rootDir, options.srcDir);
-  options.distDir = resolve(options.rootDir, options.distDir);
+  options.rootDir = resolve(process.cwd(), options.rootDir || ".");
+  options.srcDir = resolve(options.rootDir, options.srcDir || "src");
+  options.distDir = resolve(options.rootDir, options.distDir || "dist");
 
   // Setup dist
   if (options.cleanDist !== false) {
@@ -30,7 +30,7 @@ export async function mkdist(
 
   // Scan input files
   const { globby } = await import("globby");
-  const filePaths = await globby(options.pattern, {
+  const filePaths = await globby(options.pattern || "**", {
     absolute: false,
     cwd: options.srcDir,
   });
