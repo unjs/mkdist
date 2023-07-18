@@ -70,7 +70,7 @@ const main = defineCommand({
       type: "string",
       description: "Loaders",
       valueHint: "js|vue|sass",
-    }
+    },
   },
   async run({ args }) {
     const { writtenFiles } = await mkdist({
