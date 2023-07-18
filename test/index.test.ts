@@ -26,6 +26,8 @@ describe("mkdist", () => {
         "dist/components/tsx.mjs",
         "dist/bar/index.mjs",
         "dist/bar/esm.mjs",
+        "dist/ts/test1.mjs",
+        "dist/ts/test2.mjs",
       ]
         .map((f) => resolve(rootDir, f))
         .sort()
@@ -105,6 +107,10 @@ describe("mkdist", () => {
         "dist/bar/index.d.ts",
         "dist/bar/esm.mjs",
         "dist/bar/esm.d.mts",
+        "dist/ts/test1.mjs",
+        "dist/ts/test2.mjs",
+        "dist/ts/test1.d.mts",
+        "dist/ts/test2.d.cts",
       ]
         .map((f) => resolve(rootDir, f))
         .sort()
@@ -180,6 +186,8 @@ describe("mkdist", () => {
         "dist/components/tsx.mjs",
         "dist/bar/index.mjs",
         "dist/bar/esm.mjs",
+        "dist/ts/test1.mjs",
+        "dist/ts/test2.mjs",
       ]
         .map((f) => resolve(rootDir, f))
         .sort()

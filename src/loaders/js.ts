@@ -6,11 +6,13 @@ import type { Loader, LoaderResult } from "../loader";
 const DECLARATION_RE = /\.d\.[cm]?ts$/;
 const CM_LETTER_RE = /(?<=\.)(c|m)(?=[jt]s$)/;
 
+const KNOWN_EXT_RE = /\.(c|m)?[jt]sx?$/;
+
+const TS_EXTS = new Set([".ts", ".mts", ".cts"]);
+
 export const jsLoader: Loader = async (input, { options }) => {
-  if (
-    ![".ts", ".js", ".cjs", ".mjs", ".tsx", ".jsx"].includes(input.extension) ||
-    DECLARATION_RE.test(input.path)
-  ) {
+  if (!KNOWN_EXT_RE.test(input.path) || DECLARATION_RE.test(input.path)) {
+    console.log("Ignoring file with known extension:", input.path);
     return;
   }
 
@@ -32,7 +34,7 @@ export const jsLoader: Loader = async (input, { options }) => {
   }
 
   // typescript => js
-  if (input.extension === ".ts") {
+  if (TS_EXTS.has(input.extension)) {
     contents = await transform(contents, {
       ...options.esbuild,
       loader: "ts",
