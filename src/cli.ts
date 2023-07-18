@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import { defineCommand, runMain } from 'citty';
-import { resolve } from 'pathe'
-import { name, version, description } from '../package.json';
+import { defineCommand, runMain } from "citty";
+import { resolve } from "pathe";
+import { name, version, description } from "../package.json";
 import { mkdist, MkdistOptions } from "./index";
 
 const main = defineCommand({
@@ -12,44 +12,44 @@ const main = defineCommand({
   },
   args: {
     dir: {
-      type: 'positional',
-      description: 'Project root directory',
-      default: '.',
+      type: "positional",
+      description: "Project root directory",
+      default: ".",
     },
     cwd: {
-      type: 'string',
-      description: 'Current working directory',
+      type: "string",
+      description: "Current working directory",
     },
     src: {
-      type: 'string',
-      description: 'Source directory relative to project root directory',
-      default: 'src',
+      type: "string",
+      description: "Source directory relative to project root directory",
+      default: "src",
     },
     dist: {
-      type: 'string',
-      description: 'Destinition directory relative to project root directory',
-      default: 'dist',
+      type: "string",
+      description: "Destinition directory relative to project root directory",
+      default: "dist",
     },
     pattern: {
-      type: 'string',
-      description: 'Pattern includes or excludes files',
-      default: '**',
+      type: "string",
+      description: "Pattern includes or excludes files",
+      default: "**",
     },
     format: {
-      type: 'string',
-      description: 'File format',
-      valueHint: 'cjs|esm',
+      type: "string",
+      description: "File format",
+      valueHint: "cjs|esm",
     },
     declaration: {
-      type: 'boolean',
-      description: 'Generate type declaration file',
+      type: "boolean",
+      description: "Generate type declaration file",
       default: false,
-      alias: ['d'],
+      alias: ["d"],
     },
     ext: {
-      type: 'string',
-      description: 'File extension',
-      valueHint: 'mjs|js|ts',
+      type: "string",
+      description: "File extension",
+      valueHint: "mjs|js|ts",
     },
   },
   async run({ args }) {
