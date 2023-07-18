@@ -263,5 +263,22 @@ describe("mkdist", () => {
         expect.arrayContaining([expect.objectContaining({ declaration: true })])
       );
     });
+
+    it("jsLoader: respect esbuild options", async () => {
+      const { loadFile } = createLoader({
+        loaders: [jsLoader],
+        declaration: true,
+        esbuild: {
+          keepNames: true,
+        },
+      });
+      const results =
+        (await loadFile({
+          extension: ".ts",
+          getContents: () => "function testFunctionName() {}",
+          path: "test.ts",
+        })) || [];
+      expect(results[1].contents).includes("Object.defineProperty");
+    });
   });
 });

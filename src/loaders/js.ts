@@ -33,13 +33,16 @@ export const jsLoader: Loader = async (input, { options }) => {
 
   // typescript => js
   if (input.extension === ".ts") {
-    contents = await transform(contents, { loader: "ts" }).then((r) => r.code);
+    contents = await transform(contents, {
+      ...options.esbuild,
+      loader: "ts",
+    }).then((r) => r.code);
   }
 
   // esm => cjs
   const isCjs = options.format === "cjs";
   if (isCjs) {
-    contents = jiti()
+    contents = jiti("")
       .transform({ source: contents, retainLines: false })
       .replace(/^exports.default = /gm, "module.exports = ");
   }

@@ -49,6 +49,7 @@ export async function mkdist(
     format: options.format,
     ext: options.ext,
     declaration: options.declaration,
+    esbuild: options.esbuild,
   });
 
   // Use loaders to get output files
