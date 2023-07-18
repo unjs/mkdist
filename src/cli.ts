@@ -51,6 +51,21 @@ const main = defineCommand({
       description: "File extension",
       valueHint: "mjs|js|ts",
     },
+    jsx: {
+      type: "string",
+      description: "Specify which JSX runtime to use",
+      valueHint: "transform|preserve|automatic",
+    },
+    jsxFactory: {
+      type: "string",
+      description: "JSX factory",
+      valueHint: "h|React.createElement",
+    },
+    jsxFragment: {
+      type: "string",
+      description: "JSX fragment",
+      valueHint: "Fragment|React.Fragment",
+    },
   },
   async run({ args }) {
     const { writtenFiles } = await mkdist({
@@ -62,6 +77,11 @@ const main = defineCommand({
       pattern: args.pattern,
       ext: args.ext,
       declaration: args.declaration,
+      esbuild: {
+        jsx: args.jsx,
+        jsxFactory: args.jsxFactory,
+        jsxFragment: args.jsxFragment,
+      }
     } as MkdistOptions);
 
     // eslint-disable-next-line no-console

@@ -41,8 +41,6 @@ export const jsLoader: Loader = async (input, { options }) => {
     contents = await transform(contents, {
       loader: input.extension === ".tsx" ? "tsx" : "jsx",
       ...options.esbuild,
-      jsxFactory: options.jsxFactory || "h",
-      jsxFragment: options.jsxFragment || "Fragment",
     }).then((r) => r.code);
   }
 

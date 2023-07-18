@@ -11,8 +11,6 @@ export interface MkdistOptions extends LoaderOptions {
   distDir?: string;
   cleanDist?: boolean;
   addRelativeDeclarationExtensions?: boolean;
-  jsxFactory?: string;
-  jsxFragment?: string;
 }
 
 export async function mkdist(
