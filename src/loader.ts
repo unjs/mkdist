@@ -1,5 +1,5 @@
 import type { CommonOptions } from "esbuild";
-import { vueLoader, sassLoader } from "./loaders";
+import { vueLoader, jsLoader, sassLoader } from "./loaders";
 
 export interface InputFile {
   path: string;
