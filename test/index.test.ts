@@ -297,15 +297,16 @@ describe("mkdist", () => {
       loaders: [jsLoader],
       declaration: true,
     });
-    const results = (await loadFile({
-      extension: ".jsx",
-      getContents: () => "export const Test = () => <div>42</div>",
-      path: "test.jsx",
-    })) || [];
+    const results =
+      (await loadFile({
+        extension: ".jsx",
+        getContents: () => "export const Test = () => <div>42</div>",
+        path: "test.jsx",
+      })) || [];
     expect(results[1].contents).toMatchInlineSnapshot(`
       "export const Test = () => /* @__PURE__ */ h(\\"div\\", null, \\"42\\");
       "
-    `)
+    `);
   });
 
   it("jsLoader: Support TSX", async () => {
@@ -313,14 +314,15 @@ describe("mkdist", () => {
       loaders: [jsLoader],
       declaration: true,
     });
-    const results = (await loadFile({
-      extension: ".tsx",
-      getContents: () => "export const Test = () => <div>42</div>",
-      path: "test.tsx",
-    })) || [];
+    const results =
+      (await loadFile({
+        extension: ".tsx",
+        getContents: () => "export const Test = () => <div>42</div>",
+        path: "test.tsx",
+      })) || [];
     expect(results[1].contents).toMatchInlineSnapshot(`
       "export const Test = () => /* @__PURE__ */ h(\\"div\\", null, \\"42\\");
       "
-    `)
+    `);
   });
 });
