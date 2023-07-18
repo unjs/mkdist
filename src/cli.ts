@@ -71,6 +71,15 @@ const main = defineCommand({
       description: "Loaders",
       valueHint: "js|vue|sass",
     },
+    minify: {
+      type: "boolean",
+      description: "Minify output files",
+      default: false,
+    },
+    target: {
+      type: "string",
+      description: "Target environment (esbuild)",
+    },
   },
   async run({ args }) {
     const { writtenFiles } = await mkdist({
@@ -86,6 +95,8 @@ const main = defineCommand({
         jsx: args.jsx,
         jsxFactory: args.jsxFactory,
         jsxFragment: args.jsxFragment,
+        minify: args.minify,
+        target: args.target,
       },
     } as MkdistOptions);
 
