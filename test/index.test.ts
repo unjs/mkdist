@@ -23,6 +23,8 @@ describe("mkdist", () => {
         "dist/components/js.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
+        "dist/components/jsx.mjs",
+        "dist/components/tsx.mjs",
         "dist/bar/index.mjs",
         "dist/bar/esm.mjs",
       ]
@@ -43,6 +45,8 @@ describe("mkdist", () => {
         "dist/components/js.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
+        "dist/components/jsx.mjs",
+        "dist/components/tsx.mjs",
       ]
         .map((f) => resolve(rootDir, f))
         .sort()
@@ -60,6 +64,8 @@ describe("mkdist", () => {
         "dist/components/blank.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
+        "dist/components/jsx.mjs",
+        "dist/components/tsx.mjs",
       ]
         .map((f) => resolve(rootDir, f))
         .sort()
@@ -92,6 +98,10 @@ describe("mkdist", () => {
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
         "dist/components/ts.vue.d.ts",
+        "dist/components/jsx.mjs",
+        "dist/components/tsx.mjs",
+        "dist/components/jsx.d.ts",
+        "dist/components/tsx.d.ts",
         "dist/bar/index.mjs",
         "dist/bar/index.d.ts",
         "dist/bar/esm.mjs",
