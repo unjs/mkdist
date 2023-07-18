@@ -12,7 +12,6 @@ const TS_EXTS = new Set([".ts", ".mts", ".cts"]);
 
 export const jsLoader: Loader = async (input, { options }) => {
   if (!KNOWN_EXT_RE.test(input.path) || DECLARATION_RE.test(input.path)) {
-    console.log("Ignoring file with known extension:", input.path);
     return;
   }
 
