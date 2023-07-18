@@ -3,7 +3,6 @@ import { resolve } from "pathe";
 import { describe, it, expect, beforeEach } from "vitest";
 import { mkdist } from "../src/make";
 import { createLoader } from "../src/loader";
-import { jsLoader, sassLoader, vueLoader } from "../src/loaders";
 
 describe("mkdist", () => {
   it("mkdist", async () => {
@@ -160,7 +159,7 @@ describe("mkdist", () => {
     const rootDir = resolve(__dirname, "fixture");
     const { writtenFiles } = await mkdist({
       rootDir,
-      loaders: ["jsLoader", "vueLoader"],
+      loaders: ["js", "vue"],
     });
     expect(writtenFiles.sort()).toEqual(
       [
@@ -198,7 +197,7 @@ describe("mkdist", () => {
 
     it("vueLoader handles no transpilation of script tag", async () => {
       const { loadFile } = createLoader({
-        loaders: [vueLoader],
+        loaders: ["vue"],
       });
       const results = await loadFile({
         extension: ".vue",
@@ -210,7 +209,7 @@ describe("mkdist", () => {
 
     it("vueLoader handles script tags with attributes", async () => {
       const { loadFile } = createLoader({
-        loaders: [vueLoader, jsLoader],
+        loaders: ["vue", "js"],
       });
       const results = await loadFile({
         extension: ".vue",
@@ -224,7 +223,7 @@ describe("mkdist", () => {
 
     it("vueLoader handles style tags", async () => {
       const { loadFile } = createLoader({
-        loaders: [vueLoader, sassLoader],
+        loaders: ["vue", "sass"],
       });
       const results = await loadFile({
         extension: ".vue",
@@ -247,7 +246,7 @@ describe("mkdist", () => {
 
     it("vueLoader bypass <script setup>", async () => {
       const { loadFile } = createLoader({
-        loaders: [vueLoader, jsLoader],
+        loaders: ["vue", "js"],
       });
       const results = await loadFile({
         extension: ".vue",
@@ -259,7 +258,7 @@ describe("mkdist", () => {
 
     it("vueLoader will generate dts file", async () => {
       const { loadFile } = createLoader({
-        loaders: [vueLoader, jsLoader],
+        loaders: ["vue", "js"],
         declaration: true,
       });
       const results = await loadFile({
@@ -275,7 +274,7 @@ describe("mkdist", () => {
 
     it("jsLoader will generate dts file (.js)", async () => {
       const { loadFile } = createLoader({
-        loaders: [jsLoader],
+        loaders: ["js"],
         declaration: true,
       });
       const results = await loadFile({
@@ -290,7 +289,7 @@ describe("mkdist", () => {
 
     it("jsLoader will generate dts file (.ts)", async () => {
       const { loadFile } = createLoader({
-        loaders: [jsLoader],
+        loaders: ["js"],
         declaration: true,
       });
       const results = await loadFile({
@@ -305,7 +304,7 @@ describe("mkdist", () => {
 
     it("jsLoader: respect esbuild options", async () => {
       const { loadFile } = createLoader({
-        loaders: [jsLoader],
+        loaders: ["js"],
         declaration: true,
         esbuild: {
           keepNames: true,
@@ -323,7 +322,7 @@ describe("mkdist", () => {
 
   it("jsLoader: Support JSX", async () => {
     const { loadFile } = createLoader({
-      loaders: [jsLoader],
+      loaders: ["js"],
       declaration: true,
     });
     const results =
@@ -340,7 +339,7 @@ describe("mkdist", () => {
 
   it("jsLoader: Support TSX", async () => {
     const { loadFile } = createLoader({
-      loaders: [jsLoader],
+      loaders: ["js"],
       declaration: true,
     });
     const results =

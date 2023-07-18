@@ -1,5 +1,5 @@
 import type { CommonOptions } from "esbuild";
-import { vueLoader, jsLoader, sassLoader } from "./loaders";
+import { LoaderName, resolveLoaders } from "./loaders";
 
 export interface InputFile {
   path: string;
@@ -44,14 +44,12 @@ export type Loader = (
   context: LoaderContext
 ) => LoaderResult | Promise<LoaderResult>;
 
-export const defaultLoaders: Loader[] = [vueLoader, jsLoader, sassLoader];
-
 export interface CreateLoaderOptions extends LoaderOptions {
-  loaders?: Loader[];
+  loaders?: (Loader | LoaderName)[];
 }
 
 export function createLoader(loaderOptions: CreateLoaderOptions = {}) {
-  const loaders = loaderOptions.loaders || defaultLoaders;
+  const loaders = resolveLoaders(loaderOptions.loaders);
 
   const loadFile: LoadFile = async function (input: InputFile) {
     const context: LoaderContext = {

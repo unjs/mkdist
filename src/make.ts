@@ -1,12 +1,15 @@
 import { resolve, extname, join, basename, dirname } from "pathe";
 import fse from "fs-extra";
 import { copyFileWithStream } from "./utils/fs";
-import { InputFile, LoaderOptions, createLoader, OutputFile } from "./loader";
+import {
+  InputFile,
+  LoaderOptions,
+  createLoader,
+  OutputFile,
+  Loader,
+} from "./loader";
 import { getDeclarations } from "./utils/dts";
-/* eslint import/namespace: ['error', { allowComputed: true }] */
-import * as allLoaders from "./loaders";
-
-type LoaderName = keyof typeof allLoaders;
+import { LoaderName } from "./loaders";
 
 export interface MkdistOptions extends LoaderOptions {
   rootDir?: string;
@@ -14,7 +17,7 @@ export interface MkdistOptions extends LoaderOptions {
   pattern?: string | string[];
   distDir?: string;
   cleanDist?: boolean;
-  loaders?: LoaderName[];
+  loaders?: (LoaderName | Loader)[];
   addRelativeDeclarationExtensions?: boolean;
 }
 
@@ -50,22 +53,13 @@ export async function mkdist(
     };
   });
 
-  // Use only the loaders specified in options
-  let loaders;
-  if (options.loaders) {
-    loaders = [];
-    for (const loaderName of options.loaders) {
-      loaders.push(allLoaders[loaderName]);
-    }
-  }
-
   // Create loader
   const { loadFile } = createLoader({
     format: options.format,
     ext: options.ext,
     declaration: options.declaration,
     esbuild: options.esbuild,
-    loaders,
+    loaders: options.loaders,
   });
 
   // Use loaders to get output files
