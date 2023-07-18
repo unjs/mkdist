@@ -24,7 +24,7 @@ export interface OutputFile {
 export type LoaderResult = OutputFile[] | undefined;
 
 export type LoadFile = (
-  input: InputFile
+  input: InputFile,
 ) => LoaderResult | Promise<LoaderResult>;
 
 export interface LoaderOptions {
@@ -41,7 +41,7 @@ export interface LoaderContext {
 
 export type Loader = (
   input: InputFile,
-  context: LoaderContext
+  context: LoaderContext,
 ) => LoaderResult | Promise<LoaderResult>;
 
 export interface CreateLoaderOptions extends LoaderOptions {

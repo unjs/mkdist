@@ -30,7 +30,7 @@ describe("mkdist", () => {
         "dist/ts/test2.mjs",
       ]
         .map((f) => resolve(rootDir, f))
-        .sort()
+        .sort(),
     );
   });
 
@@ -50,7 +50,7 @@ describe("mkdist", () => {
         "dist/components/tsx.mjs",
       ]
         .map((f) => resolve(rootDir, f))
-        .sort()
+        .sort(),
     );
   });
 
@@ -69,7 +69,7 @@ describe("mkdist", () => {
         "dist/components/tsx.mjs",
       ]
         .map((f) => resolve(rootDir, f))
-        .sort()
+        .sort(),
     );
   });
 
@@ -113,11 +113,11 @@ describe("mkdist", () => {
         "dist/ts/test2.d.cts",
       ]
         .map((f) => resolve(rootDir, f))
-        .sort()
+        .sort(),
     );
 
     expect(await readFile(resolve(rootDir, "dist/foo.d.ts"), "utf8")).toMatch(
-      "manual declaration"
+      "manual declaration",
     );
 
     expect(await readFile(resolve(rootDir, "dist/star/index.d.ts"), "utf8"))
@@ -127,7 +127,7 @@ describe("mkdist", () => {
       "
     `);
     expect(
-      await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8")
+      await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8"),
     ).toMatch("declare");
   }, 50_000);
 
@@ -154,7 +154,7 @@ describe("mkdist", () => {
     it("compiles sass blocks in vue SFC", async () => {
       const vue = await readFile(
         resolve(rootDir, "dist/components/js.vue"),
-        "utf8"
+        "utf8",
       );
 
       expect(vue).toMatch("color: green;\n  background-color: red;");
@@ -190,7 +190,7 @@ describe("mkdist", () => {
         "dist/ts/test2.mjs",
       ]
         .map((f) => resolve(rootDir, f))
-        .sort()
+        .sort(),
     );
   });
 
@@ -278,7 +278,9 @@ describe("mkdist", () => {
         path: "test.vue",
       });
       expect(results).toEqual(
-        expect.arrayContaining([expect.objectContaining({ declaration: true })])
+        expect.arrayContaining([
+          expect.objectContaining({ declaration: true }),
+        ]),
       );
     });
 
@@ -293,7 +295,9 @@ describe("mkdist", () => {
         path: "test.mjs",
       });
       expect(results).toEqual(
-        expect.arrayContaining([expect.objectContaining({ declaration: true })])
+        expect.arrayContaining([
+          expect.objectContaining({ declaration: true }),
+        ]),
       );
     });
 
@@ -308,7 +312,9 @@ describe("mkdist", () => {
         path: "test.ts",
       });
       expect(results).toEqual(
-        expect.arrayContaining([expect.objectContaining({ declaration: true })])
+        expect.arrayContaining([
+          expect.objectContaining({ declaration: true }),
+        ]),
       );
     });
 

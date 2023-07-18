@@ -7,7 +7,7 @@ interface GetDeclarationsOptions {
 
 export async function getDeclarations(
   vfs: Map<string, string>,
-  opts?: GetDeclarationsOptions
+  opts?: GetDeclarationsOptions,
 ) {
   const ts = await import("typescript").then((r) => r.default || r);
 
@@ -55,7 +55,7 @@ export async function getDeclarations(
         // add file extension for relative paths (`.js` will match the `.d.ts` extension we emit)
         contents = contents.replace(
           spec.code,
-          spec.code.replace(spec.specifier, spec.specifier + ext)
+          spec.code.replace(spec.specifier, spec.specifier + ext),
         );
       }
     }

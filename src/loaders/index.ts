@@ -21,7 +21,7 @@ export function resolveLoader(loader: LoaderName | Loader) {
 }
 
 export function resolveLoaders(
-  loaders: (LoaderName | Loader)[] = defaultLoaders
+  loaders: (LoaderName | Loader)[] = defaultLoaders,
 ) {
   return loaders.map((loader) => resolveLoader(loader)).filter(Boolean);
 }

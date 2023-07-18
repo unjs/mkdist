@@ -22,7 +22,7 @@ export interface MkdistOptions extends LoaderOptions {
 }
 
 export async function mkdist(
-  options: MkdistOptions /* istanbul ignore next */ = {}
+  options: MkdistOptions /* istanbul ignore next */ = {},
 ) {
   // Resolve srcDir and distDir relative to rootDir
   options.rootDir = resolve(process.cwd(), options.rootDir || ".");
@@ -87,7 +87,7 @@ export async function mkdist(
       {
         addRelativeDeclarationExtensions:
           options.addRelativeDeclarationExtensions,
-      }
+      },
     );
     for (const output of dtsOutputs) {
       output.contents = declarations[output.srcPath] || "";
@@ -116,13 +116,13 @@ export async function mkdist(
     ".js",
   ];
   for (const output of outputs.filter(
-    (o) => o.extension === ".mjs" || o.extension === ".js"
+    (o) => o.extension === ".mjs" || o.extension === ".js",
   )) {
     // Resolve import statements
     output.contents = output.contents.replace(
       /(import|export)(\s+(?:.+|{[\s\w,]+})\s+from\s+["'])(.*)(["'])/g,
       (_, type, head, id, tail) =>
-        type + head + resolveId(output.path, id, esmResolveExtensions) + tail
+        type + head + resolveId(output.path, id, esmResolveExtensions) + tail,
     );
   }
   const cjsResolveExtensions = ["", "/index.cjs", ".cjs"];
@@ -135,7 +135,7 @@ export async function mkdist(
         head +
         resolveId(output.path, id, cjsResolveExtensions) +
         tail +
-        ")"
+        ")",
     );
   }
 
@@ -151,7 +151,7 @@ export async function mkdist(
           ? copyFileWithStream(output.srcPath, outFile)
           : fse.writeFile(outFile, output.contents, "utf8"));
         writtenFiles.push(outFile);
-      })
+      }),
   );
 
   return {
