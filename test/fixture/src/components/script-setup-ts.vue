@@ -1,13 +1,13 @@
 <template>
-  <div>{{ str }} </div>
+  <div>{{ str }}</div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref } from "vue";
 
 const props = defineProps<{
-  msg: string
-}>()
+  msg: string;
+}>();
 
-const str = ref<string | number>('hello')
+const str = ref<string | number>("hello");
 </script>

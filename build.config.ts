@@ -1,4 +1,4 @@
-import { defineBuildConfig } from 'unbuild'
+import { defineBuildConfig } from "unbuild";
 export default defineBuildConfig({
-  externals: ['sass']
-})
+  externals: ["sass"]
+});

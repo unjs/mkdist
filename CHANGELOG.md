@@ -2,6 +2,72 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.2.0
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.1.2...v1.2.0)
+
+
+### 🚀 Enhancements
+
+  - Add support for relativising type exports ([#135](https://github.com/unjs/mkdist/pull/135))
+  - Add support for relativising type exports ([#140](https://github.com/unjs/mkdist/pull/140))
+
+### 🏡 Chore
+
+  - **release:** V1.1.2 ([4892929](https://github.com/unjs/mkdist/commit/4892929))
+
+### ❤️  Contributors
+
+- Daniel Roe <daniel@roe.dev>
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+
+## v1.1.2
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.1.1...v1.1.2)
+
+
+### 🩹 Fixes
+
+  - Add `.js` extension for relative import and exports in declarations ([#134](https://github.com/unjs/mkdist/pull/134))
+
+### ❤️  Contributors
+
+- Daniel Roe <daniel@roe.dev>
+
+## v1.1.1
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.1.0...v1.1.1)
+
+
+### 🩹 Fixes
+
+  - Add support for multi-line import extension normalization ([#120](https://github.com/unjs/mkdist/pull/120))
+
+### 🏡 Chore
+
+  - Update release script ([2803fe1](https://github.com/unjs/mkdist/commit/2803fe1))
+
+### ❤️  Contributors
+
+- Pooya Parsa <pooya@pi0.io>
+- Alex Grozav <alex@grozav.com>
+
+## [1.1.0](https://github.com/unjs/mkdist/compare/v1.0.0...v1.1.0) (2023-01-10)
+
+
+### Features
+
+* improve sass compilation ([#109](https://github.com/unjs/mkdist/issues/109)) ([bc9536a](https://github.com/unjs/mkdist/commit/bc9536a2cb444b131497d3263131f7cf99486a12))
+
+
+### Bug Fixes
+
+* ensure sass output file has css extension ([#111](https://github.com/unjs/mkdist/issues/111)) ([ea0c57c](https://github.com/unjs/mkdist/commit/ea0c57ca7a082d144fad6fd837f731afeacca5c9))
+
+## [1.0.0](https://github.com/unjs/mkdist/compare/v0.4.1...v1.0.0) (2022-11-15)
+
+### [0.4.1](https://github.com/unjs/mkdist/compare/v0.4.0...v0.4.1) (2022-11-15)
+
 ## [0.4.0](https://github.com/unjs/mkdist/compare/v0.3.13...v0.4.0) (2022-10-27)
 
 
