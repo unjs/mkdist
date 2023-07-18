@@ -1,23 +1,24 @@
 #!/usr/bin/env node
 import { defineCommand, runMain } from 'citty';
-import { version } from '../package.json';
+import { resolve } from 'pathe'
+import { name, version, description } from '../package.json';
 import { mkdist, MkdistOptions } from "./index";
 
 const main = defineCommand({
   meta: {
+    name,
     version,
-    name: 'mkdist',
-    description: 'Lightweight file-to-file transformer',
+    description,
   },
   args: {
-    _dir: {
+    dir: {
       type: 'positional',
-      description: 'Project root directory (prefer using `--dir`)',
+      description: 'Project root directory',
       default: '.',
     },
-    dir: {
+    cwd: {
       type: 'string',
-      description: 'Project root directory',
+      description: 'Current working directory',
     },
     src: {
       type: 'string',
@@ -26,7 +27,7 @@ const main = defineCommand({
     },
     dist: {
       type: 'string',
-      description: 'Distribution directory relative to project root directory',
+      description: 'Destinition directory relative to project root directory',
       default: 'dist',
     },
     pattern: {
@@ -53,7 +54,8 @@ const main = defineCommand({
   },
   async run({ args }) {
     const { writtenFiles } = await mkdist({
-      rootDir: args.dir || args._dir,
+      ...args,
+      rootDir: resolve(args.cwd || process.cwd(), args.dir),
       srcDir: args.src,
       distDir: args.dist,
       format: args.format,
