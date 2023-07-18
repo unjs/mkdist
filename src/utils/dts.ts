@@ -40,7 +40,7 @@ export async function getDeclarations(
   const output: Record<string, string> = {};
 
   for (const filename of inputFiles) {
-    const dtsFilename = filename.replace(/\.(m|c)?(ts|js)$/, ".d.$1ts");
+    const dtsFilename = filename.replace(/\.(m|c)?(ts|js)x?$/, ".d.$1ts");
     let contents = vfs.get(dtsFilename) || "";
     if (opts?.addRelativeDeclarationExtensions) {
       const ext =

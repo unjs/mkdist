@@ -8,7 +8,7 @@ const CM_LETTER_RE = /(?<=\.)(c|m)(?=[jt]s$)/;
 
 export const jsLoader: Loader = async (input, { options }) => {
   if (
-    ![".ts", ".js", ".cjs", ".mjs"].includes(input.extension) ||
+    ![".ts", ".js", ".cjs", ".mjs", ".tsx", ".jsx"].includes(input.extension) ||
     DECLARATION_RE.test(input.path)
   ) {
     return;
@@ -36,6 +36,11 @@ export const jsLoader: Loader = async (input, { options }) => {
     contents = await transform(contents, {
       ...options.esbuild,
       loader: "ts",
+    }).then((r) => r.code);
+  } else if ([".tsx", ".jsx"].includes(input.extension)) {
+    contents = await transform(contents, {
+      loader: input.extension === ".tsx" ? "tsx" : "jsx",
+      ...options.esbuild,
     }).then((r) => r.code);
   }
 
