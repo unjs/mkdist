@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.3.0
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.2.0...v1.3.0)
+
+### 🚀 Enhancements
+
+- Allow passing esbuild transform options ([#144](https://github.com/unjs/mkdist/pull/144))
+- Support `jsx` and `tsx` files ([#71](https://github.com/unjs/mkdist/pull/71))
+- Support configurable loaders ([#152](https://github.com/unjs/mkdist/pull/152))
+- **cli:** Support `--minify` and `--target` ([84c59aa](https://github.com/unjs/mkdist/commit/84c59aa))
+
+### 🩹 Fixes
+
+- Handle `.cts` and `.mts` as typescript ([#162](https://github.com/unjs/mkdist/pull/162))
+
+### 💅 Refactors
+
+- **cli:** Migrate to unjs/citty ([#157](https://github.com/unjs/mkdist/pull/157))
+
+### 🏡 Chore
+
+- **release:** V1.2.0 ([7a5f92e](https://github.com/unjs/mkdist/commit/7a5f92e))
+- Update ci badge in readme ([#146](https://github.com/unjs/mkdist/pull/146))
+- Add compiler options type ([2289288](https://github.com/unjs/mkdist/commit/2289288))
+- Add `lint:fix` script ([32915a9](https://github.com/unjs/mkdist/commit/32915a9))
+- Update dependencies ([2561704](https://github.com/unjs/mkdist/commit/2561704))
+- Add autofix ci ([7ad18dc](https://github.com/unjs/mkdist/commit/7ad18dc))
+- Remove extra console log ([76bb4f7](https://github.com/unjs/mkdist/commit/76bb4f7))
+- Remove todo ([0296ca6](https://github.com/unjs/mkdist/commit/0296ca6))
+
+### ❤️  Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Vadym <vadym.karpus@gmail.com>
+- Liuyang0826 ([@liuyang0826](http://github.com/liuyang0826))
+- Uuau99999 ([@uuau99999](http://github.com/uuau99999))
+- Zuixinwang 
+- Daniel Roe <daniel@roe.dev>
+- Trim21 ([@trim21](http://github.com/trim21))
+
 ## v1.2.0
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.1.2...v1.2.0)
