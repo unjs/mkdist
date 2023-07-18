@@ -292,7 +292,7 @@ describe("mkdist", () => {
     });
   });
 
-  it("jsLoader will generate dts file (.jsx)", async () => {
+  it("jsLoader: Support JSX", async () => {
     const { loadFile } = createLoader({
       loaders: [jsLoader],
       declaration: true,
@@ -308,7 +308,7 @@ describe("mkdist", () => {
     `)
   });
 
-  it("jsLoader will generate dts file (.tsx)", async () => {
+  it("jsLoader: Support TSX", async () => {
     const { loadFile } = createLoader({
       loaders: [jsLoader],
       declaration: true,
