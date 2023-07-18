@@ -40,8 +40,9 @@ export const jsLoader: Loader = async (input, { options }) => {
   } else if ([".tsx", ".jsx"].includes(input.extension)) {
     contents = await transform(contents, {
       loader: input.extension === ".tsx" ? "tsx" : "jsx",
-      jsxFactory: options.jsxFactory,
-      jsxFragment: options.jsxFragment,
+      ...options.esbuild,
+      jsxFactory: options.jsxFactory || "h",
+      jsxFragment: options.jsxFragment || "Fragment",
     }).then((r) => r.code);
   }
 
