@@ -5,4 +5,6 @@ const foo: string = "foo";
 
 export const importFoo = () => import("node:path");
 
+export const dynamicImport = () => import("./bar");
+
 export default () => foo + bar;
