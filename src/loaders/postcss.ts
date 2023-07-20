@@ -11,8 +11,6 @@ export const postcssLoader: Loader = async (input) => {
     return;
   }
 
-  console.log("[postcss]", input);
-
   const output: LoaderResult = [];
 
   const contents = await input.getContents();
