@@ -29,7 +29,9 @@
     "test": "pnpm lint && vitest run --coverage"
   },
   "dependencies": {
+    "autoprefixer": "^10.4.14",
     "citty": "^0.1.2",
+    "cssnano": "^6.0.1",
     "defu": "^6.1.2",
     "esbuild": "^0.18.14",
     "fs-extra": "^11.1.1",
@@ -37,7 +39,9 @@
     "jiti": "^1.19.1",
     "mlly": "^1.4.0",
     "mri": "^1.2.0",
-    "pathe": "^1.1.1"
+    "pathe": "^1.1.1",
+    "postcss": "^8.4.26",
+    "postcss-nested": "^6.0.1"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
