@@ -4,8 +4,6 @@ import postcss from "postcss";
 import postcssNested from "postcss-nested";
 import type { Loader, LoaderResult } from "../loader";
 
-console.log(postcss);
-
 export const postcssLoader: Loader = async (input) => {
   if (![".css"].includes(input.extension)) {
     return;
