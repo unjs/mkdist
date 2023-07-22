@@ -7,7 +7,7 @@ interface GetDeclarationsOptions {
 
 export async function getDeclarations(
   vfs: Map<string, string>,
-  opts?: GetDeclarationsOptions
+  opts?: GetDeclarationsOptions,
 ) {
   const ts = await import("typescript").then((r) => r.default || r);
 
@@ -48,7 +48,7 @@ export function extractDeclarations(
   const output: Record<string, string> = {};
 
   for (const filename of inputFiles) {
-    const dtsFilename = filename.replace(/\.(m|c)?(ts|js)$/, ".d.$1ts");
+    const dtsFilename = filename.replace(/\.(m|c)?(ts|js)x?$/, ".d.$1ts");
     let contents = vfs.get(dtsFilename) || "";
     if (opts?.addRelativeDeclarationExtensions) {
       const ext =
@@ -63,7 +63,7 @@ export function extractDeclarations(
         // add file extension for relative paths (`.js` will match the `.d.ts` extension we emit)
         contents = contents.replace(
           spec.code,
-          spec.code.replace(spec.specifier, spec.specifier + ext)
+          spec.code.replace(spec.specifier, spec.specifier + ext),
         );
       }
     }

@@ -1,9 +1,16 @@
 import { resolve, extname, join, basename, dirname } from "pathe";
 import fse from "fs-extra";
 import { copyFileWithStream } from "./utils/fs";
-import { InputFile, LoaderOptions, createLoader, OutputFile } from "./loader";
+import {
+  InputFile,
+  LoaderOptions,
+  createLoader,
+  OutputFile,
+  Loader,
+} from "./loader";
 import { getDeclarations } from "./utils/dts";
 import { getVueDeclarations } from "./utils/vue-dts";
+import { LoaderName } from "./loaders";
 
 export interface MkdistOptions extends LoaderOptions {
   rootDir?: string;
@@ -11,11 +18,12 @@ export interface MkdistOptions extends LoaderOptions {
   pattern?: string | string[];
   distDir?: string;
   cleanDist?: boolean;
+  loaders?: (LoaderName | Loader)[];
   addRelativeDeclarationExtensions?: boolean;
 }
 
 export async function mkdist(
-  options: MkdistOptions /* istanbul ignore next */ = {}
+  options: MkdistOptions /* istanbul ignore next */ = {},
 ) {
   // Resolve srcDir and distDir relative to rootDir
   options.rootDir = resolve(process.cwd(), options.rootDir || ".");
@@ -35,6 +43,7 @@ export async function mkdist(
     absolute: false,
     cwd: options.srcDir,
   });
+
   const files: InputFile[] = filePaths.map((path) => {
     const sourcePath = resolve(options.srcDir, path);
     return {
@@ -50,6 +59,8 @@ export async function mkdist(
     format: options.format,
     ext: options.ext,
     declaration: options.declaration,
+    esbuild: options.esbuild,
+    loaders: options.loaders,
   });
 
   // Use loaders to get output files
@@ -89,7 +100,6 @@ export async function mkdist(
       return id;
     }
     for (const extension of resolveExtensions) {
-      // TODO: Resolve relative ../ via ufo
       if (outPaths.has(join(dirname(from), id + extension))) {
         return id + extension;
       }
@@ -105,13 +115,13 @@ export async function mkdist(
     ".js",
   ];
   for (const output of outputs.filter(
-    (o) => o.extension === ".mjs" || o.extension === ".js"
+    (o) => o.extension === ".mjs" || o.extension === ".js",
   )) {
     // Resolve import statements
     output.contents = output.contents.replace(
       /(import|export)(\s+(?:.+|{[\s\w,]+})\s+from\s+["'])(.*)(["'])/g,
       (_, type, head, id, tail) =>
-        type + head + resolveId(output.path, id, esmResolveExtensions) + tail
+        type + head + resolveId(output.path, id, esmResolveExtensions) + tail,
     );
   }
   const cjsResolveExtensions = ["", "/index.cjs", ".cjs"];
@@ -124,7 +134,7 @@ export async function mkdist(
         head +
         resolveId(output.path, id, cjsResolveExtensions) +
         tail +
-        ")"
+        ")",
     );
   }
 
@@ -140,7 +150,7 @@ export async function mkdist(
           ? copyFileWithStream(output.srcPath, outFile)
           : fse.writeFile(outFile, output.contents, "utf8"));
         writtenFiles.push(outFile);
-      })
+      }),
   );
 
   return {

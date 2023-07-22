@@ -17,7 +17,7 @@ export const vueLoader: Loader = async (input, context) => {
   for (const blockLoader of [sassLoader, scriptLoader]) {
     const result = await blockLoader(
       { ...input, getContents: () => output[0].contents },
-      context
+      context,
     );
     if (!result) {
       continue;
@@ -50,7 +50,7 @@ const vueBlockLoader =
     const contents = await input.getContents();
 
     const BLOCK_RE = new RegExp(
-      `<${options.type}((\\s[^>\\s]*)*)>([\\S\\s.]*?)<\\/${options.type}>`
+      `<${options.type}((\\s[^>\\s]*)*)>([\\S\\s.]*?)<\\/${options.type}>`,
     );
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [block, attributes = "", _, blockContents] =
@@ -79,7 +79,7 @@ const vueBlockLoader =
     const blockOutputFile = files.find(
       (f) =>
         f.extension === `.${options.outputLang}` ||
-        options.validExtensions?.includes(f.extension)
+        options.validExtensions?.includes(f.extension),
     );
     if (!blockOutputFile) {
       return;
@@ -87,7 +87,7 @@ const vueBlockLoader =
 
     const newAttributes = attributes.replace(
       new RegExp(`\\s?lang="${lang}"`),
-      ""
+      "",
     );
     return [
       {
@@ -98,7 +98,7 @@ const vueBlockLoader =
             options.type
           }${newAttributes}>\n${blockOutputFile.contents?.trim()}\n</${
             options.type
-          }>`
+          }>`,
         ),
       },
       ...files.filter((f) => f !== blockOutputFile),

@@ -20,7 +20,7 @@ export const sassLoader: Loader = async (input) => {
   }
 
   const compileString = await import("sass").then(
-    (r) => r.compileString || r.default.compileString
+    (r) => r.compileString || r.default.compileString,
   );
 
   const output: LoaderResult = [];
