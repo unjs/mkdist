@@ -5,8 +5,6 @@ interface GetDeclarationsOptions {
   addRelativeDeclarationExtensions?: boolean;
 }
 
-const VUE_FILE_EXT_RE = /\.vue\.\S+$/;
-
 export async function getDeclarations(
   vfs: Map<string, string>,
   opts?: GetDeclarationsOptions
@@ -14,12 +12,6 @@ export async function getDeclarations(
   const ts = await import("typescript").then((r) => r.default || r);
 
   const inputFiles = [...vfs.keys()];
-  const { vue: inputVueFiles, rest: inputRestFiles } = mapFiles(inputFiles, {
-    vue: {
-      src: VUE_FILE_EXT_RE,
-      format: (filename: string) => filename.replace(VUE_FILE_EXT_RE, ".vue"),
-    },
-  });
 
   const compilerOptions: CompilerOptions = {
     allowJs: true,
@@ -42,18 +34,17 @@ export async function getDeclarations(
     return _readFile(filename);
   };
 
-  const program = ts.createProgram(inputRestFiles, compilerOptions, tsHost);
+  const program = ts.createProgram(inputFiles, compilerOptions, tsHost);
   await program.emit();
 
-  if (inputVueFiles && inputVueFiles.length > 0) {
-    const programVue = (await import("vue-tsc")).createProgram({
-      rootNames: inputVueFiles,
-      options: compilerOptions,
-      host: tsHost,
-    });
-    await programVue.emit();
-  }
+  return extractDeclarations(vfs, inputFiles, opts);
+}
 
+export function extractDeclarations(
+  vfs: Map<string, string>,
+  inputFiles: string[],
+  opts?: GetDeclarationsOptions
+) {
   const output: Record<string, string> = {};
 
   for (const filename of inputFiles) {
@@ -77,38 +68,9 @@ export async function getDeclarations(
       }
     }
     output[filename] = contents;
+
+    vfs.delete(filename);
   }
 
   return output;
-}
-
-function mapFiles<
-  TMapping extends Record<
-    string,
-    RegExp | { src: RegExp; format: (filename: string) => string }
-  >
->(
-  inputFiles: string[],
-  mapping: TMapping
-): {
-  [K in keyof TMapping]: string[];
-} & {
-  rest: string[];
-} {
-  const result = {} as any;
-
-  for (const filename of inputFiles) {
-    for (const [key, item] of Object.entries(mapping)) {
-      const re = "src" in item ? item.src : item;
-      const format = "src" in item ? item.format : undefined;
-
-      if (re.test(filename)) {
-        (result[key] ||= []).push(format ? format(filename) : filename);
-      } else {
-        (result.rest ||= []).push(filename);
-      }
-    }
-  }
-
-  return result;
 }
