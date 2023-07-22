@@ -43,7 +43,7 @@ export async function getDeclarations(
 export function extractDeclarations(
   vfs: Map<string, string>,
   inputFiles: string[],
-  opts?: GetDeclarationsOptions
+  opts?: GetDeclarationsOptions,
 ) {
   const output: Record<string, string> = {};
 

@@ -13,7 +13,7 @@ const compilerOptions: CompilerOptions = {
 
 export async function getVueDeclarations(
   vfs: Map<string, string>,
-  opts?: MkdistOptions
+  opts?: MkdistOptions,
 ) {
   const sfcMapping = getSfcMapping(vfs);
   const sfcFiles = Object.keys(sfcMapping);
@@ -36,7 +36,7 @@ export async function getVueDeclarations(
   const _tsSysWriteFile = ts.sys.writeFile;
   ts.sys.writeFile = tsHost.writeFile = (
     fileName: string,
-    declaration: string
+    declaration: string,
   ) => {
     vfs.set(fileName, declaration);
   };
