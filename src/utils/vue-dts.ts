@@ -15,10 +15,10 @@ export async function getVueDeclarations(
   vfs: Map<string, string>,
   opts?: MkdistOptions,
 ) {
-  const sfcMapping = getSfcMapping(vfs);
-  const sfcFiles = Object.keys(sfcMapping);
-  const dtsFiles = Object.values(sfcMapping);
-  if (dtsFiles.length === 0) {
+  const fileMapping = getFileMapping(vfs);
+  const srcFiles = Object.keys(fileMapping);
+  const originFiles = Object.values(fileMapping);
+  if (originFiles.length === 0) {
     return;
   }
 
@@ -49,7 +49,7 @@ export async function getVueDeclarations(
   };
 
   const program = vueTsc.createProgram({
-    rootNames: sfcFiles,
+    rootNames: srcFiles,
     options: compilerOptions,
     host: tsHost,
   });
@@ -60,16 +60,16 @@ export async function getVueDeclarations(
     ts.sys.writeFile = _tsSysWriteFile;
   }
 
-  return extractDeclarations(vfs, dtsFiles, opts);
+  return extractDeclarations(vfs, originFiles, opts);
 }
 
-const SFC_EX_RE = /\.vue\.[cm]?[jt]s$/;
+const SFC_EXT_RE = /\.vue\.[cm]?[jt]s$/;
 
-function getSfcMapping(vfs: Map<string, string>): Record<string, string> {
+function getFileMapping(vfs: Map<string, string>): Record<string, string> {
   const files: Record<string, string> = {};
   for (const [srcPath] of vfs) {
-    if (SFC_EX_RE.test(srcPath)) {
-      files[srcPath.replace(SFC_EX_RE, ".vue")] = srcPath;
+    if (SFC_EXT_RE.test(srcPath)) {
+      files[srcPath.replace(SFC_EXT_RE, ".vue")] = srcPath;
     }
   }
   return files;
