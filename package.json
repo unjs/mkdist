@@ -42,7 +42,7 @@
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
     "@types/mri": "^1.1.1",
-    "@types/node": "^20.5.7",
+    "@types/node": "^20.5.9",
     "@vitest/coverage-v8": "^0.34.3",
     "c8": "latest",
     "changelogen": "^0.5.5",
