@@ -50,7 +50,9 @@ export const jsLoader: Loader = async (input, { options }) => {
   if (isCjs) {
     contents = jiti("")
       .transform({ source: contents, retainLines: false })
-      .replace(/^exports.default = /gm, "module.exports = ");
+      .replace(/^exports.default = /gm, "module.exports = ")
+      .replace(/^var _default = exports.default = /gm, "module.exports = ")
+      .replace("module.exports = void 0;", "");
   }
 
   let extension = isCjs ? ".js" : ".mjs";
