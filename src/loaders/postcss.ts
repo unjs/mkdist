@@ -4,8 +4,10 @@ import postcss from "postcss";
 import postcssNested from "postcss-nested";
 import type { Loader, LoaderResult } from "../loader";
 
-export const postcssLoader: Loader = async (input) => {
-  if (![".css"].includes(input.extension)) {
+export interface PostcssLoaderOptions { }
+
+export const postcssLoader: Loader = async (input, ctx) => {
+  if (ctx.options.postcss === false || ![".css"].includes(input.extension)) {
     return;
   }
 
@@ -14,10 +16,10 @@ export const postcssLoader: Loader = async (input) => {
   const contents = await input.getContents();
 
   const transformed = await postcss([
-    postcssNested(),
-    autoprefixer(),
-    cssnano(),
-  ]).process(contents, {
+    ctx.options.postcss.nested !== false && postcssNested(ctx.options.postcss.nested),
+    ctx.options.postcss.autoprefixer !== false && autoprefixer(ctx.options.postcss.autoprefixer),
+    ctx.options.postcss.cssnano !== false && cssnano(ctx.options.postcss.cssnano),
+  ].filter(Boolean)).process(contents, {
     from: input.srcPath,
   });
 
