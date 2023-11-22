@@ -17,6 +17,8 @@
 
 ✅ `.d.ts` generation for `.ts`, `.js` and `.vue` files
 
+✅ Support [postcss](https://postcss.org/) ([autoprefixer](https://github.com/postcss/autoprefixer), [cssnano](https://cssnano.co/) and [postcss-nested](https://www.npmjs.com/package/postcss-nested) enabled out of the box!)
+
 ## ❓ Why?
 
 Bundling libraries isn't always the best choice:
@@ -39,14 +41,12 @@ npx mkdist [rootDir] [--src=src] [--dist=dist] [--pattern=glob [--pattern=more-g
 [MIT](./LICENSE)
 
 <!-- Badges -->
+
 [npm-version-src]: https://img.shields.io/npm/v/mkdist?style=flat-square
 [npm-version-href]: https://npmjs.com/package/mkdist
-
 [npm-downloads-src]: https://img.shields.io/npm/dm/mkdist?style=flat-square
 [npm-downloads-href]: https://npmjs.com/package/mkdist
-
 [github-actions-src]: https://img.shields.io/github/actions/workflow/status/unjs/mkdist/ci.yml?branch=main&style=flat-square
 [github-actions-href]: https://github.com/unjs/mkdist/actions?query=workflow%3Aci
-
 [codecov-src]: https://img.shields.io/codecov/c/gh/unjs/mkdist/main?style=flat-square
 [codecov-href]: https://codecov.io/gh/unjs/mkdist
