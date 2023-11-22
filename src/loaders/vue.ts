@@ -14,7 +14,7 @@ export const vueLoader: Loader = async (input, context) => {
 
   let earlyReturn = true;
 
-  for (const blockLoader of [sassLoader, scriptLoader]) {
+  for (const blockLoader of [styleLoader, scriptLoader]) {
     const result = await blockLoader(
       { ...input, getContents: () => output[0].contents },
       context,
@@ -105,7 +105,7 @@ const vueBlockLoader =
     ];
   };
 
-const sassLoader = vueBlockLoader({
+const styleLoader = vueBlockLoader({
   outputLang: "css",
   type: "style",
 });
