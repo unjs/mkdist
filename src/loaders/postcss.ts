@@ -23,6 +23,7 @@ export const postcssLoader: Loader = async (input, ctx) => {
         autoprefixer(ctx.options.postcss.autoprefixer),
       ctx.options.postcss.cssnano !== false &&
         cssnano(ctx.options.postcss.cssnano),
+      ...(ctx.options.postcss.plugins || []),
     ].filter(Boolean),
   ).process(contents, {
     from: input.srcPath,
