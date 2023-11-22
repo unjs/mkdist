@@ -26,6 +26,7 @@ export const postcssLoader: Loader = async (input, ctx) => {
       ...(ctx.options.postcss?.plugins || []),
     ].filter(Boolean),
   ).process(contents, {
+    ...ctx.options.postcss?.processOptions,
     from: input.srcPath,
   });
 
