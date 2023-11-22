@@ -55,7 +55,7 @@ export const jsLoader: Loader = async (input, { options }) => {
       .replace("module.exports = void 0;", "");
   }
 
-  let extension = isCjs ? ".js" : ".mjs";
+  let extension = isCjs ? ".js" : ".mjs"; // TODO: Default to .cjs in next major version
   if (options.ext) {
     extension = options.ext.startsWith(".") ? options.ext : `.${options.ext}`;
   }

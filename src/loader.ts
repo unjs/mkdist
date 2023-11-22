@@ -28,7 +28,7 @@ export type LoadFile = (
 ) => LoaderResult | Promise<LoaderResult>;
 
 export interface LoaderOptions {
-  ext?: "mjs" | "js" | "ts";
+  ext?: "js" | "mjs" | "cjs" | "ts" | "mts" | "cts";
   format?: "cjs" | "esm";
   declaration?: boolean;
   esbuild?: CommonOptions;
