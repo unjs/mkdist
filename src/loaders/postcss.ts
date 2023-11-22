@@ -4,7 +4,7 @@ import postcss from "postcss";
 import postcssNested from "postcss-nested";
 import type { Loader, LoaderResult } from "../loader";
 
-export interface PostcssLoaderOptions { }
+export interface PostcssLoaderOptions {}
 
 export const postcssLoader: Loader = async (input, ctx) => {
   if (ctx.options.postcss === false || ![".css"].includes(input.extension)) {
@@ -15,11 +15,16 @@ export const postcssLoader: Loader = async (input, ctx) => {
 
   const contents = await input.getContents();
 
-  const transformed = await postcss([
-    ctx.options.postcss.nested !== false && postcssNested(ctx.options.postcss.nested),
-    ctx.options.postcss.autoprefixer !== false && autoprefixer(ctx.options.postcss.autoprefixer),
-    ctx.options.postcss.cssnano !== false && cssnano(ctx.options.postcss.cssnano),
-  ].filter(Boolean)).process(contents, {
+  const transformed = await postcss(
+    [
+      ctx.options.postcss.nested !== false &&
+        postcssNested(ctx.options.postcss.nested),
+      ctx.options.postcss.autoprefixer !== false &&
+        autoprefixer(ctx.options.postcss.autoprefixer),
+      ctx.options.postcss.cssnano !== false &&
+        cssnano(ctx.options.postcss.cssnano),
+    ].filter(Boolean),
+  ).process(contents, {
     from: input.srcPath,
   });
 

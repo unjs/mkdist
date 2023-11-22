@@ -1,9 +1,9 @@
 import type { CommonOptions } from "esbuild";
-import { LoaderName, resolveLoaders } from "./loaders";
 
-import type { Options as PostcssNestedOptions } from 'postcss-nested'
-import type { Options as AutoprefixerOptions } from 'autoprefixer'
-import type { Options as CssnanoOptions } from 'cssnano'
+import type { Options as PostcssNestedOptions } from "postcss-nested";
+import type { Options as AutoprefixerOptions } from "autoprefixer";
+import type { Options as CssnanoOptions } from "cssnano";
+import { LoaderName, resolveLoaders } from "./loaders";
 
 export interface InputFile {
   path: string;
@@ -36,11 +36,13 @@ export interface LoaderOptions {
   format?: "cjs" | "esm";
   declaration?: boolean;
   esbuild?: CommonOptions;
-  postcss?: false | {
-    nested?: false | PostcssNestedOptions;
-    autoprefixer?: false | AutoprefixerOptions;
-    cssnano?: false | CssnanoOptions;
-  };
+  postcss?:
+    | false
+    | {
+        nested?: false | PostcssNestedOptions;
+        autoprefixer?: false | AutoprefixerOptions;
+        cssnano?: false | CssnanoOptions;
+      };
 }
 
 export interface LoaderContext {
