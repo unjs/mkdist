@@ -54,13 +54,7 @@ export async function mkdist(
   });
 
   // Create loader
-  const { loadFile } = createLoader({
-    format: options.format,
-    ext: options.ext,
-    declaration: options.declaration,
-    esbuild: options.esbuild,
-    loaders: options.loaders,
-  });
+  const { loadFile } = createLoader(options);
 
   // Use loaders to get output files
   const outputs: OutputFile[] = [];
