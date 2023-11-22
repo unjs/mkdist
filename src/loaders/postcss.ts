@@ -17,13 +17,13 @@ export const postcssLoader: Loader = async (input, ctx) => {
 
   const transformed = await postcss(
     [
-      ctx.options.postcss.nested !== false &&
-        postcssNested(ctx.options.postcss.nested),
-      ctx.options.postcss.autoprefixer !== false &&
-        autoprefixer(ctx.options.postcss.autoprefixer),
-      ctx.options.postcss.cssnano !== false &&
-        cssnano(ctx.options.postcss.cssnano),
-      ...(ctx.options.postcss.plugins || []),
+      ctx.options.postcss?.nested !== false &&
+        postcssNested(ctx.options.postcss?.nested),
+      ctx.options.postcss?.autoprefixer !== false &&
+        autoprefixer(ctx.options.postcss?.autoprefixer),
+      ctx.options.postcss?.cssnano !== false &&
+        cssnano(ctx.options.postcss?.cssnano),
+      ...(ctx.options.postcss?.plugins || []),
     ].filter(Boolean),
   ).process(contents, {
     from: input.srcPath,
