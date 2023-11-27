@@ -30,22 +30,22 @@ export async function getVueDeclarations(
     return;
   }
 
-  const ts = await import("typescript").then((r) => r.default || r);
+  // Inside vue-tsc, `require` is used instead of `import`. In order to override `ts.sys`, it is necessary to import it in the same way as vue-tsc for them to refer to the same file.
+  const ts =
+    require("typescript") as typeof import("typescript/lib/tsserverlibrary");
 
   const tsHost = ts.createCompilerHost(compilerOptions);
+
   const _tsSysWriteFile = ts.sys.writeFile;
-  ts.sys.writeFile = tsHost.writeFile = (
-    fileName: string,
-    declaration: string,
-  ) => {
-    vfs.set(fileName, declaration);
+  ts.sys.writeFile = (filename, content) => {
+    vfs.set(filename, content);
   };
-  const _readFile = tsHost.readFile;
-  tsHost.readFile = (filename) => {
+  const _tsSysReadFile = ts.sys.readFile;
+  ts.sys.readFile = (filename, encoding) => {
     if (vfs.has(filename)) {
       return vfs.get(filename);
     }
-    return _readFile(filename);
+    return _tsSysReadFile(filename, encoding);
   };
 
   const program = vueTsc.createProgram({
@@ -58,6 +58,7 @@ export async function getVueDeclarations(
     program.emit();
   } finally {
     ts.sys.writeFile = _tsSysWriteFile;
+    ts.sys.readFile = _tsSysReadFile;
   }
 
   return extractDeclarations(vfs, originFiles, opts);
