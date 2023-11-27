@@ -1,6 +1,9 @@
+import { createRequire } from "node:module";
 import { CompilerOptions } from "typescript";
 import { MkdistOptions } from "../make";
 import { extractDeclarations } from "./dts";
+
+const require = createRequire(import.meta.url);
 
 const compilerOptions: CompilerOptions = {
   allowJs: true,
