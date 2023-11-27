@@ -55,13 +55,7 @@ export async function mkdist(
   });
 
   // Create loader
-  const { loadFile } = createLoader({
-    format: options.format,
-    ext: options.ext,
-    declaration: options.declaration,
-    esbuild: options.esbuild,
-    loaders: options.loaders,
-  });
+  const { loadFile } = createLoader(options);
 
   // Use loaders to get output files
   const outputs: OutputFile[] = [];
@@ -118,11 +112,22 @@ export async function mkdist(
     (o) => o.extension === ".mjs" || o.extension === ".js",
   )) {
     // Resolve import statements
-    output.contents = output.contents.replace(
-      /(import|export)(\s+(?:.+|{[\s\w,]+})\s+from\s+["'])(.*)(["'])/g,
-      (_, type, head, id, tail) =>
-        type + head + resolveId(output.path, id, esmResolveExtensions) + tail,
-    );
+    output.contents = output.contents
+      .replace(
+        /(import|export)(\s+(?:.+|{[\s\w,]+})\s+from\s+["'])(.*)(["'])/g,
+        (_, type, head, id, tail) =>
+          type + head + resolveId(output.path, id, esmResolveExtensions) + tail,
+      )
+      // Resolve dynamic import
+      .replace(
+        /import\((["'])(.*)(["'])\)/g,
+        (_, head, id, tail) =>
+          "import(" +
+          head +
+          resolveId(output.path, id, esmResolveExtensions) +
+          tail +
+          ")",
+      );
   }
   const cjsResolveExtensions = ["", "/index.cjs", ".cjs"];
   for (const output of outputs.filter((o) => o.extension === ".cjs")) {

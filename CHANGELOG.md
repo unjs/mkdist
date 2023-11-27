@@ -2,6 +2,56 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.4.0
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.3.1...v1.4.0)
+
+### 🚀 Enhancements
+
+- Support postcss loader ([#167](https://github.com/unjs/mkdist/pull/167))
+
+### 🩹 Fixes
+
+- **cjs:** Hotfix babel transformation issue ([94444df](https://github.com/unjs/mkdist/commit/94444df))
+- Resolve dynamic import paths ([#165](https://github.com/unjs/mkdist/pull/165))
+- Pass all options to loader context ([ea5ba97](https://github.com/unjs/mkdist/commit/ea5ba97))
+
+### 🌊 Types
+
+- Add `cjs`, `mts` and `cts` to the supported extensions ([e7d3ffb](https://github.com/unjs/mkdist/commit/e7d3ffb))
+
+### 🏡 Chore
+
+- **release:** V1.3.1 ([cf0415f](https://github.com/unjs/mkdist/commit/cf0415f))
+- Update lockfile ([f773e2b](https://github.com/unjs/mkdist/commit/f773e2b))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Liuyang0826 ([@liuyang0826](http://github.com/liuyang0826))
+
+## v1.3.1
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.3.0...v1.3.1)
+
+### 🩹 Fixes
+
+- **cjs:** Hotfix babel transformation issue ([94444df](https://github.com/unjs/mkdist/commit/94444df))
+
+### 🏡 Chore
+
+- Format with prettier v3 ([86fd8cb](https://github.com/unjs/mkdist/commit/86fd8cb))
+- Update dependencies ([6078463](https://github.com/unjs/mkdist/commit/6078463))
+
+### 🤖 CI
+
+- Use conventional commit for autofix ([2e20d10](https://github.com/unjs/mkdist/commit/2e20d10))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
 ## v1.3.0
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.2.0...v1.3.0)

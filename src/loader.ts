@@ -1,4 +1,11 @@
 import type { CommonOptions } from "esbuild";
+import type {
+  AcceptedPlugin as PostcssPlugin,
+  ProcessOptions as PostcssProcessOptions,
+} from "postcss";
+import type { Options as PostcssNestedOptions } from "postcss-nested";
+import type { Options as AutoprefixerOptions } from "autoprefixer";
+import type { Options as CssnanoOptions } from "cssnano";
 import { LoaderName, resolveLoaders } from "./loaders";
 
 export interface InputFile {
@@ -28,10 +35,19 @@ export type LoadFile = (
 ) => LoaderResult | Promise<LoaderResult>;
 
 export interface LoaderOptions {
-  ext?: "mjs" | "js" | "ts";
+  ext?: "js" | "mjs" | "cjs" | "ts" | "mts" | "cts";
   format?: "cjs" | "esm";
   declaration?: boolean;
   esbuild?: CommonOptions;
+  postcss?:
+    | false
+    | {
+        nested?: false | PostcssNestedOptions;
+        autoprefixer?: false | AutoprefixerOptions;
+        cssnano?: false | CssnanoOptions;
+        plugins?: PostcssPlugin[];
+        processOptions?: Omit<PostcssProcessOptions, "from">;
+      };
 }
 
 export interface LoaderContext {
