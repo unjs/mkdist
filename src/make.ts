@@ -9,6 +9,7 @@ import {
   Loader,
 } from "./loader";
 import { getDeclarations } from "./utils/dts";
+import { getVueDeclarations } from "./utils/vue-dts";
 import { LoaderName } from "./loaders";
 
 export interface MkdistOptions extends LoaderOptions {
@@ -76,13 +77,11 @@ export async function mkdist(
   // Generate declarations
   const dtsOutputs = outputs.filter((o) => o.declaration && !o.skip);
   if (dtsOutputs.length > 0) {
-    const declarations = await getDeclarations(
-      new Map(dtsOutputs.map((o) => [o.srcPath, o.contents || ""])),
-      {
-        addRelativeDeclarationExtensions:
-          options.addRelativeDeclarationExtensions,
-      },
-    );
+    const vfs = new Map(dtsOutputs.map((o) => [o.srcPath, o.contents || ""]));
+    const declarations = Object.create(null);
+    for (const loader of [getVueDeclarations, getDeclarations]) {
+      Object.assign(declarations, await loader(vfs, options));
+    }
     for (const output of dtsOutputs) {
       output.contents = declarations[output.srcPath] || "";
     }

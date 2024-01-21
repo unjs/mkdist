@@ -57,17 +57,23 @@
     "sass": "^1.70.0",
     "typescript": "^5.3.3",
     "unbuild": "^2.0.0",
+    "vue": "^3.3.4",
+    "vue-tsc": "^1.8.5",
     "vitest": "^1.2.1"
   },
   "peerDependencies": {
     "sass": "^1.69.7",
-    "typescript": ">=5.3.3"
+    "typescript": ">=5.3.3",
+    "vue-tsc": "^1.8.5"
   },
   "peerDependenciesMeta": {
     "sass": {
       "optional": true
     },
     "typescript": {
+      "optional": true
+    },
+    "vue-tsc": {
       "optional": true
     }
   },

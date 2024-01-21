@@ -37,6 +37,14 @@ export async function getDeclarations(
   const program = ts.createProgram(inputFiles, compilerOptions, tsHost);
   await program.emit();
 
+  return extractDeclarations(vfs, inputFiles, opts);
+}
+
+export function extractDeclarations(
+  vfs: Map<string, string>,
+  inputFiles: string[],
+  opts?: GetDeclarationsOptions,
+) {
   const output: Record<string, string> = {};
 
   for (const filename of inputFiles) {
@@ -60,6 +68,8 @@ export async function getDeclarations(
       }
     }
     output[filename] = contents;
+
+    vfs.delete(filename);
   }
 
   return output;
