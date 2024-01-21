@@ -124,10 +124,10 @@ describe("mkdist", () => {
 
     expect(await readFile(resolve(rootDir, "dist/star/index.d.ts"), "utf8"))
       .toMatchInlineSnapshot(`
-      "export * from \\"./other.js\\";
-      export type { Other } from \\"./other.js\\";
-      "
-    `);
+        "export * from "./other.js";
+        export type { Other } from "./other.js";
+        "
+      `);
     expect(
       await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8"),
     ).toMatch("declare");
@@ -351,7 +351,7 @@ describe("mkdist", () => {
         path: "test.jsx",
       })) || [];
     expect(results[1].contents).toMatchInlineSnapshot(`
-      "export const Test = () => /* @__PURE__ */ React.createElement(\\"div\\", null, \\"42\\");
+      "export const Test = () => /* @__PURE__ */ React.createElement("div", null, "42");
       "
     `);
   });
@@ -368,7 +368,7 @@ describe("mkdist", () => {
         path: "test.tsx",
       })) || [];
     expect(results[1].contents).toMatchInlineSnapshot(`
-      "export const Test = () => /* @__PURE__ */ React.createElement(\\"div\\", null, \\"42\\");
+      "export const Test = () => /* @__PURE__ */ React.createElement("div", null, "42");
       "
     `);
   });
