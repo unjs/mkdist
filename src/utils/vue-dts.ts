@@ -70,7 +70,7 @@ export async function getVueDeclarations(
 const SFC_EXT_RE = /\.vue\.[cm]?[jt]s$/;
 
 function getFileMapping(vfs: Map<string, string>): Record<string, string> {
-  const files: Record<string, string> = {};
+  const files: Record<string, string> = Object.create(null);
   for (const [srcPath] of vfs) {
     if (SFC_EXT_RE.test(srcPath)) {
       files[srcPath.replace(SFC_EXT_RE, ".vue")] = srcPath;

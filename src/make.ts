@@ -78,7 +78,7 @@ export async function mkdist(
   const dtsOutputs = outputs.filter((o) => o.declaration && !o.skip);
   if (dtsOutputs.length > 0) {
     const vfs = new Map(dtsOutputs.map((o) => [o.srcPath, o.contents || ""]));
-    const declarations = {};
+    const declarations = Object.create(null);
     for (const loader of [getVueDeclarations, getDeclarations]) {
       Object.assign(declarations, await loader(vfs, options));
     }
