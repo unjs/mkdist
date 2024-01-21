@@ -29,7 +29,9 @@ export async function getVueDeclarations(
     .then((r) => r.default || r)
     .catch(() => undefined);
   if (!vueTsc) {
-    console.warn("Please install `vue-tsc` to generate Vue SFC declarations");
+    console.warn(
+      "[mkdist] Please install `vue-tsc` to generate Vue SFC declarations.",
+    );
     return;
   }
 
