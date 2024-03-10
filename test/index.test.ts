@@ -1,10 +1,23 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "pathe";
-import { describe, it, expect, beforeEach } from "vitest";
-import { mkdist } from "../src/make";
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  vi,
+  beforeAll,
+  afterAll,
+} from "vitest";
 import { createLoader } from "../src/loader";
 
 describe("mkdist", () => {
+  let mkdist: typeof import("../src/make").mkdist;
+
+  beforeAll(async () => {
+    mkdist = (await import("../src/make")).mkdist;
+  });
+
   it("mkdist", async () => {
     const rootDir = resolve(__dirname, "fixture");
     const { writtenFiles } = await mkdist({ rootDir });
@@ -131,6 +144,16 @@ describe("mkdist", () => {
     expect(
       await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8"),
     ).toMatch("declare");
+    expect(
+      await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
+    ).toMatchInlineSnapshot(`
+        "declare const _default: import("vue").DefineComponent<{}, {}, {
+            test: string;
+            str: "test";
+        }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{}>>, {}, {}>;
+        export default _default;
+        "
+      `);
   }, 50_000);
 
   describe("mkdist (sass compilation)", () => {
@@ -372,4 +395,101 @@ describe("mkdist", () => {
       "
     `);
   });
+});
+
+describe("mkdist with vue-tsc v1", () => {
+  beforeAll(() => {
+    vi.resetModules();
+
+    vi.doMock("local-pkg", async (importOriginal) => {
+      const original = await importOriginal<typeof import("local-pkg")>();
+      return {
+        ...original,
+        getPackageInfo: (path: string) => {
+          if (path === "vue-tsc") {
+            return original.getPackageInfo("vue-tsc1");
+          }
+          return original.getPackageInfo(path);
+        },
+      };
+    });
+    vi.doMock("vue-tsc", () => import("vue-tsc1"));
+  });
+
+  afterAll(() => {
+    vi.doUnmock("local-pkg");
+    vi.doUnmock("vue-tsc");
+  });
+
+  it("mkdist (emit types)", async () => {
+    const rootDir = resolve(__dirname, "fixture");
+    const { mkdist } = await import("../src/make");
+
+    const { writtenFiles } = await mkdist({
+      rootDir,
+      declaration: true,
+      addRelativeDeclarationExtensions: true,
+    });
+    expect(writtenFiles.sort()).toEqual(
+      [
+        "dist/README.md",
+        "dist/demo.css",
+        "dist/foo.mjs",
+        "dist/foo.d.ts",
+        "dist/index.mjs",
+        "dist/index.d.ts",
+        "dist/star/index.mjs",
+        "dist/star/index.d.ts",
+        "dist/star/other.mjs",
+        "dist/star/other.d.ts",
+        "dist/types.d.ts",
+        "dist/components/blank.vue",
+        "dist/components/js.vue",
+        "dist/components/js.vue.d.ts",
+        "dist/components/script-setup-ts.vue",
+        "dist/components/ts.vue",
+        "dist/components/ts.vue.d.ts",
+        "dist/components/jsx.mjs",
+        "dist/components/tsx.mjs",
+        "dist/components/jsx.d.ts",
+        "dist/components/tsx.d.ts",
+        "dist/bar/index.mjs",
+        "dist/bar/index.d.ts",
+        "dist/bar/esm.mjs",
+        "dist/bar/esm.d.mts",
+        "dist/ts/test1.mjs",
+        "dist/ts/test2.mjs",
+        "dist/ts/test1.d.mts",
+        "dist/ts/test2.d.cts",
+        "dist/nested.css",
+      ]
+        .map((f) => resolve(rootDir, f))
+        .sort(),
+    );
+
+    expect(await readFile(resolve(rootDir, "dist/foo.d.ts"), "utf8")).toMatch(
+      "manual declaration",
+    );
+
+    expect(await readFile(resolve(rootDir, "dist/star/index.d.ts"), "utf8"))
+      .toMatchInlineSnapshot(`
+        "export * from "./other.js";
+        export type { Other } from "./other.js";
+        "
+      `);
+    expect(
+      await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8"),
+    ).toMatch("declare");
+
+    expect(
+      await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
+    ).toMatchInlineSnapshot(`
+        "declare const _default: import("vue").DefineComponent<{}, {}, {
+            test: string;
+            str: "test";
+        }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{}>>, {}, {}>;
+        export default _default;
+        "
+      `);
+  }, 50_000);
 });
