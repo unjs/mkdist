@@ -39,18 +39,17 @@ describe("mkdist", () => {
     const rootDir = resolve(__dirname, "fixture");
     const { writtenFiles } = await mkdist({
       rootDir,
-      alias: { '~': resolve(rootDir, 'src') },
+      alias: { "~": resolve(rootDir, "src") },
       pattern: "index.ts",
     });
     expect(writtenFiles.sort()).toEqual(
-      [
-        "dist/index.mjs",
-      ]
-        .map((f) => resolve(rootDir, f))
-        .sort(),
+      ["dist/index.mjs"].map((f) => resolve(rootDir, f)).sort(),
     );
 
-    const indexFile = await readFile(resolve(rootDir, "dist/index.mjs"), "utf8");
+    const indexFile = await readFile(
+      resolve(rootDir, "dist/index.mjs"),
+      "utf8",
+    );
     expect(indexFile).not.toMatch("~/bar");
   });
 

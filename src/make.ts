@@ -1,5 +1,5 @@
 import { resolve, extname, join, basename, dirname } from "pathe";
-import { resolveAlias } from 'pathe/utils'
+import { resolveAlias } from "pathe/utils";
 import fse from "fs-extra";
 import { copyFileWithStream } from "./utils/fs";
 import {
@@ -71,19 +71,15 @@ export async function mkdist(
       (o) => o.extension === ".mjs" || o.extension === ".js",
     )) {
       const alias = {
-        '~': options.srcDir
-      }
+        "~": options.srcDir,
+      };
 
       output.contents = output.contents
         // Resolve require statements
         .replace(
           /require\((["'])(.*)(["'])\)/g,
           (_, head, id, tail) =>
-            "require(" +
-            head +
-            resolveAlias(id, alias) +
-            tail +
-            ")",
+            "require(" + head + resolveAlias(id, alias) + tail + ")",
         )
         // Resolve import statements
         .replace(
@@ -95,11 +91,7 @@ export async function mkdist(
         .replace(
           /import\((["'])(.*)(["'])\)/g,
           (_, head, id, tail) =>
-            "import(" +
-            head +
-            resolveAlias(id, alias) +
-            tail +
-            ")",
+            "import(" + head + resolveAlias(id, alias) + tail + ")",
         );
     }
   }
