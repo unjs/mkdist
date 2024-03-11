@@ -72,10 +72,14 @@ export async function mkdist(
       const resolvedId = resolveAlias(path, aliases).replace(options.srcDir, options.distDir)
 
       // if resolved path is in distDir, we transform it into a relative path
-      return resolvedId.startsWith(options.distDir)
+      if (resolvedId.startsWith(options.distDir)) {
         // the OR `||` clause here means that the two files is in the same dir, we then return a cwd import: `./id`
-        ? relative(dirname(resolve(options.distDir, outputPath)), dirname(resolvedId)) || `.${resolvedId.replace(options.distDir, '')}`
-        : resolvedId
+        const relativePath = relative(dirname(resolve(options.distDir, outputPath)), dirname(resolvedId)) || `.${resolvedId.replace(options.distDir, '')}`
+        // for cases like ('/index.ts, '/subfolder/index.ts'), `relative()` returns 'subfolder', without the leading './' which is incompatible with import/require path parameter
+        return relativePath.startsWith('./') ? relativePath : `./${relativePath}`
+      }
+
+      return resolvedId
     }
 
     for (const output of outputs) {
