@@ -1,4 +1,5 @@
 import { resolve, extname, join, basename, dirname } from "pathe";
+import { resolveAlias } from 'pathe/utils'
 import fse from "fs-extra";
 import { copyFileWithStream } from "./utils/fs";
 import {
@@ -20,6 +21,7 @@ export interface MkdistOptions extends LoaderOptions {
   cleanDist?: boolean;
   loaders?: (LoaderName | Loader)[];
   addRelativeDeclarationExtensions?: boolean;
+  alias?: { [find: string]: string };
 }
 
 export async function mkdist(
@@ -61,6 +63,45 @@ export async function mkdist(
   const outputs: OutputFile[] = [];
   for (const file of files) {
     outputs.push(...((await loadFile(file)) || []));
+  }
+
+  // Resolve aliases
+  if (options.alias && Object.keys(options.alias).length > 0) {
+    for (const output of outputs.filter(
+      (o) => o.extension === ".mjs" || o.extension === ".js",
+    )) {
+      const alias = {
+        '~': options.srcDir
+      }
+
+      output.contents = output.contents
+        // Resolve require statements
+        .replace(
+          /require\((["'])(.*)(["'])\)/g,
+          (_, head, id, tail) =>
+            "require(" +
+            head +
+            resolveAlias(id, alias) +
+            tail +
+            ")",
+        )
+        // Resolve import statements
+        .replace(
+          /(import|export)(\s+(?:.+|{[\s\w,]+})\s+from\s+["'])(.*)(["'])/g,
+          (_, type, head, id, tail) =>
+            type + head + resolveAlias(id, alias) + tail,
+        )
+        // Resolve dynamic import
+        .replace(
+          /import\((["'])(.*)(["'])\)/g,
+          (_, head, id, tail) =>
+            "import(" +
+            head +
+            resolveAlias(id, alias) +
+            tail +
+            ")",
+        );
+    }
   }
 
   // Normalize output extensions
