@@ -1,4 +1,4 @@
-import { resolve, extname, join, basename, dirname, isAbsolute, relative } from "pathe";
+import { resolve, extname, join, basename, dirname, relative, parse } from "pathe";
 import { resolveAlias } from "pathe/utils";
 import fse from "fs-extra";
 import { copyFileWithStream } from "./utils/fs";
@@ -73,10 +73,13 @@ export async function mkdist(
 
       // if resolved path is in distDir, we transform it into a relative path
       if (resolvedId.startsWith(options.distDir)) {
-        // the OR `||` clause here means that the two files is in the same dir, we then return a cwd import: `./id`
-        const relativePath = relative(dirname(resolve(options.distDir, outputPath)), dirname(resolvedId)) || `.${resolvedId.replace(options.distDir, '')}`
+        const from = parse(resolve(options.distDir, outputPath))
+        const to = parse(resolvedId)
+
+        // the OR `||` clause here means that the two files is in the same dir
+        const relativePath = join(relative(from.dir, to.dir), to.base)
         // for cases like ('/index.ts, '/subfolder/index.ts'), `relative()` returns 'subfolder', without the leading './' which is incompatible with import/require path parameter
-        return relativePath.startsWith('./') ? relativePath : `./${relativePath}`
+        return relativePath.startsWith('.') ? relativePath : `./${relativePath}`
       }
 
       return resolvedId
