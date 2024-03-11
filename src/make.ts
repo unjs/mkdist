@@ -1,4 +1,4 @@
-import { resolve, extname, join, basename, dirname } from "pathe";
+import { resolve, extname, join, basename, dirname, isAbsolute, relative } from "pathe";
 import { resolveAlias } from "pathe/utils";
 import fse from "fs-extra";
 import { copyFileWithStream } from "./utils/fs";
@@ -67,7 +67,17 @@ export async function mkdist(
 
   // Resolve aliases
   if (options.alias && Object.keys(options.alias).length > 0) {
-    const _resolveAlias = (path: string, aliases: Record<string, string>) => resolveAlias(path, aliases).replaceAll(options.srcDir, options.distDir)
+    const _resolveAlias = (path: string, aliases: Record<string, string>, outputPath: OutputFile['path'] & string) => {
+      // Resolve the alias and transform srcDir to distDir
+      const resolvedId = resolveAlias(path, aliases).replace(options.srcDir, options.distDir)
+
+      // if resolved path is in distDir, we transform it into a relative path
+      return resolvedId.startsWith(options.distDir)
+        // the OR `||` clause here means that the two files is in the same dir, we then return a cwd import: `./id`
+        ? relative(dirname(resolve(options.distDir, outputPath)), dirname(resolvedId)) || `.${resolvedId.replace(options.distDir, '')}`
+        : resolvedId
+    }
+
     for (const output of outputs) {
       const alias = {
         "~": options.srcDir,
@@ -78,19 +88,19 @@ export async function mkdist(
         .replace(
           /require\((["'])(.*)(["'])\)/g,
           (_, head, id, tail) =>
-            "require(" + head + _resolveAlias(id, alias) + tail + ")",
+            "require(" + head + _resolveAlias(id, alias, output.path) + tail + ")",
         )
         // Resolve import statements
         .replace(
           /(import|export)(\s+(?:.+|{[\s\w,]+})\s+from\s+["'])(.*)(["'])/g,
           (_, type, head, id, tail) =>
-            type + head + _resolveAlias(id, alias) + tail,
+            type + head + _resolveAlias(id, alias, output.path) + tail,
         )
         // Resolve dynamic import
         .replace(
           /import\((["'])(.*)(["'])\)/g,
           (_, head, id, tail) =>
-            "import(" + head + _resolveAlias(id, alias) + tail + ")",
+            "import(" + head + _resolveAlias(id, alias, output.path) + tail + ")",
         );
     }
   }
