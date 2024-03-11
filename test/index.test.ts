@@ -43,17 +43,12 @@ describe("mkdist", () => {
     const { writtenFiles } = await mkdist({
       rootDir,
       alias: { "~": resolve(rootDir, "src") },
-      pattern: [
-        "alias.ts",
-        "nestedFolder/*",
-      ],
+      pattern: ["alias.ts", "nestedFolder/*"],
     });
     expect(writtenFiles.sort()).containSubset(
-      [
-        "dist/alias.mjs",
-        "dist/nestedFolder/index.mjs",
-      ]
-        .map((f) => resolve(rootDir, f)).sort(),
+      ["dist/alias.mjs", "dist/nestedFolder/index.mjs"]
+        .map((f) => resolve(rootDir, f))
+        .sort(),
     );
 
     // Expect file to not contains any unresolved '`' alias
@@ -64,7 +59,9 @@ describe("mkdist", () => {
     expect(indexFile).not.toMatch("~/");
 
     // Expect the file to be able to execute normally
-    await import(resolve(rootDir, "dist/alias.mjs")).then(async (res) => expect(res.foo + await res.bar()).toBe('foobar'))
+    await import(resolve(rootDir, "dist/alias.mjs")).then(async (res) =>
+      expect(res.foo + (await res.bar())).toBe("foobar"),
+    );
   });
 
   it("mkdist (custom glob pattern)", async () => {
@@ -150,7 +147,7 @@ describe("mkdist", () => {
         "dist/nestedFolder/cjs.mjs",
         "dist/nestedFolder/cjs.d.cts",
         "dist/nestedFolder/index.mjs",
-        "dist/nestedFolder/index.d.ts"
+        "dist/nestedFolder/index.d.ts",
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
@@ -231,7 +228,7 @@ describe("mkdist", () => {
         "dist/nested.css",
         "dist/alias.mjs",
         "dist/nestedFolder/cjs.mjs",
-        "dist/nestedFolder/index.mjs"
+        "dist/nestedFolder/index.mjs",
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),

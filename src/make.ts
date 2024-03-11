@@ -1,4 +1,12 @@
-import { resolve, extname, join, basename, dirname, relative, parse } from "pathe";
+import {
+  resolve,
+  extname,
+  join,
+  basename,
+  dirname,
+  relative,
+  parse,
+} from "pathe";
 import { resolveAlias } from "pathe/utils";
 import fse from "fs-extra";
 import { copyFileWithStream } from "./utils/fs";
@@ -67,23 +75,32 @@ export async function mkdist(
 
   // Resolve aliases
   if (options.alias && Object.keys(options.alias).length > 0) {
-    const _resolveAlias = (path: string, aliases: Record<string, string>, outputPath: OutputFile['path'] & string) => {
+    const _resolveAlias = (
+      path: string,
+      aliases: Record<string, string>,
+      outputPath: OutputFile["path"] & string,
+    ) => {
       // Resolve the alias and transform srcDir to distDir
-      const resolvedId = resolveAlias(path, aliases).replace(options.srcDir, options.distDir)
+      const resolvedId = resolveAlias(path, aliases).replace(
+        options.srcDir,
+        options.distDir,
+      );
 
       // if resolved path is in distDir, we transform it into a relative path
       if (resolvedId.startsWith(options.distDir)) {
-        const from = parse(resolve(options.distDir, outputPath))
-        const to = parse(resolvedId)
+        const from = parse(resolve(options.distDir, outputPath));
+        const to = parse(resolvedId);
 
         // the OR `||` clause here means that the two files is in the same dir
-        const relativePath = join(relative(from.dir, to.dir), to.base)
+        const relativePath = join(relative(from.dir, to.dir), to.base);
         // for cases like ('/index.ts, '/subfolder/index.ts'), `relative()` returns 'subfolder', without the leading './' which is incompatible with import/require path parameter
-        return relativePath.startsWith('.') ? relativePath : `./${relativePath}`
+        return relativePath.startsWith(".")
+          ? relativePath
+          : `./${relativePath}`;
       }
 
-      return resolvedId
-    }
+      return resolvedId;
+    };
 
     for (const output of outputs) {
       const alias = {
@@ -95,7 +112,11 @@ export async function mkdist(
         .replace(
           /require\((["'])(.*)(["'])\)/g,
           (_, head, id, tail) =>
-            "require(" + head + _resolveAlias(id, alias, output.path) + tail + ")",
+            "require(" +
+            head +
+            _resolveAlias(id, alias, output.path) +
+            tail +
+            ")",
         )
         // Resolve import statements
         .replace(
@@ -107,7 +128,11 @@ export async function mkdist(
         .replace(
           /import\((["'])(.*)(["'])\)/g,
           (_, head, id, tail) =>
-            "import(" + head + _resolveAlias(id, alias, output.path) + tail + ")",
+            "import(" +
+            head +
+            _resolveAlias(id, alias, output.path) +
+            tail +
+            ")",
         );
     }
   }
