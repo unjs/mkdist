@@ -29,6 +29,9 @@ describe("mkdist", () => {
         "dist/ts/test1.mjs",
         "dist/ts/test2.mjs",
         "dist/nested.css",
+        "dist/alias.mjs",
+        "dist/nestedFolder/cjs.mjs",
+        "dist/nestedFolder/index.mjs",
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
@@ -40,17 +43,28 @@ describe("mkdist", () => {
     const { writtenFiles } = await mkdist({
       rootDir,
       alias: { "~": resolve(rootDir, "src") },
-      pattern: "index.ts",
+      pattern: [
+        "alias.ts",
+        "nestedFolder/*",
+      ],
     });
-    expect(writtenFiles.sort()).toEqual(
-      ["dist/index.mjs"].map((f) => resolve(rootDir, f)).sort(),
+    expect(writtenFiles.sort()).containSubset(
+      [
+        "dist/alias.mjs",
+        "dist/nestedFolder/index.mjs",
+      ]
+        .map((f) => resolve(rootDir, f)).sort(),
     );
 
+    // Expect file to not contains any unresolved '`' alias
     const indexFile = await readFile(
-      resolve(rootDir, "dist/index.mjs"),
+      resolve(rootDir, "dist/alias.mjs"),
       "utf8",
     );
-    expect(indexFile).not.toMatch("~/bar");
+    expect(indexFile).not.toMatch("~/");
+
+    // Expect the file to be able to execute normally
+    await import(resolve(rootDir, "dist/alias.mjs")).then(async (res) => expect(res.foo + await res.bar()).toBe('foobar'))
   });
 
   it("mkdist (custom glob pattern)", async () => {
@@ -131,6 +145,12 @@ describe("mkdist", () => {
         "dist/ts/test1.d.mts",
         "dist/ts/test2.d.cts",
         "dist/nested.css",
+        "dist/alias.mjs",
+        "dist/alias.d.ts",
+        "dist/nestedFolder/cjs.mjs",
+        "dist/nestedFolder/cjs.d.cts",
+        "dist/nestedFolder/index.mjs",
+        "dist/nestedFolder/index.d.ts"
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
@@ -209,6 +229,9 @@ describe("mkdist", () => {
         "dist/ts/test1.mjs",
         "dist/ts/test2.mjs",
         "dist/nested.css",
+        "dist/alias.mjs",
+        "dist/nestedFolder/cjs.mjs",
+        "dist/nestedFolder/index.mjs"
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
