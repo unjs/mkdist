@@ -67,9 +67,7 @@ export async function mkdist(
 
   // Resolve aliases
   if (options.alias && Object.keys(options.alias).length > 0) {
-    for (const output of outputs.filter(
-      (o) => o.extension === ".mjs" || o.extension === ".js",
-    )) {
+    for (const output of outputs) {
       const alias = {
         "~": options.srcDir,
       };
