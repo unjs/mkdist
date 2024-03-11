@@ -67,6 +67,7 @@ export async function mkdist(
 
   // Resolve aliases
   if (options.alias && Object.keys(options.alias).length > 0) {
+    const _resolveAlias = (path: string, aliases: Record<string, string>) => resolveAlias(path, aliases).replaceAll(options.srcDir, options.distDir)
     for (const output of outputs) {
       const alias = {
         "~": options.srcDir,
@@ -77,19 +78,19 @@ export async function mkdist(
         .replace(
           /require\((["'])(.*)(["'])\)/g,
           (_, head, id, tail) =>
-            "require(" + head + resolveAlias(id, alias) + tail + ")",
+            "require(" + head + _resolveAlias(id, alias) + tail + ")",
         )
         // Resolve import statements
         .replace(
           /(import|export)(\s+(?:.+|{[\s\w,]+})\s+from\s+["'])(.*)(["'])/g,
           (_, type, head, id, tail) =>
-            type + head + resolveAlias(id, alias) + tail,
+            type + head + _resolveAlias(id, alias) + tail,
         )
         // Resolve dynamic import
         .replace(
           /import\((["'])(.*)(["'])\)/g,
           (_, head, id, tail) =>
-            "import(" + head + resolveAlias(id, alias) + tail + ")",
+            "import(" + head + _resolveAlias(id, alias) + tail + ")",
         );
     }
   }
