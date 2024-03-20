@@ -102,7 +102,7 @@ export async function mkdist(
       return resolvedId;
     };
 
-    for (const output of outputs) {
+    for (const output of outputs.filter(o => !o.raw)) {
       output.contents = output.contents
         // Resolve require statements
         .replace(
