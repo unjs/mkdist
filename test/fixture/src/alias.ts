@@ -1,4 +1,4 @@
-import { foo2bar2 } from "./nestedFolder/level2c";
+import { foo2bar2 } from "~/nestedFolder/level2c";
 import { foo2 } from "~/nestedFolder/level2a";
 export { foo } from "~/nestedFolder/index";
 export const bar = () => import("~/nestedFolder").then((r) => r.bar);
