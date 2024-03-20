@@ -32,6 +32,9 @@ describe("mkdist", () => {
         "dist/alias.mjs",
         "dist/nestedFolder/cjs.mjs",
         "dist/nestedFolder/index.mjs",
+        "dist/nestedFolder/level2a/index.mjs",
+        "dist/nestedFolder/level2b/index.mjs",
+        "dist/nestedFolder/level2c/index.mjs",
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
@@ -43,10 +46,17 @@ describe("mkdist", () => {
     const { writtenFiles } = await mkdist({
       rootDir,
       alias: { "~": resolve(rootDir, "src") },
-      pattern: ["alias.ts", "nestedFolder/*"],
+      pattern: ["alias.ts", "nestedFolder/**"],
     });
     expect(writtenFiles.sort()).containSubset(
-      ["dist/alias.mjs", "dist/nestedFolder/index.mjs"]
+      [
+        "dist/alias.mjs",
+        "dist/nestedFolder/cjs.mjs",
+        "dist/nestedFolder/index.mjs",
+        "dist/nestedFolder/level2a/index.mjs",
+        "dist/nestedFolder/level2b/index.mjs",
+        "dist/nestedFolder/level2c/index.mjs",
+      ]
         .map((f) => resolve(rootDir, f))
         .sort(),
     );
@@ -147,7 +157,13 @@ describe("mkdist", () => {
         "dist/nestedFolder/cjs.mjs",
         "dist/nestedFolder/cjs.d.cts",
         "dist/nestedFolder/index.mjs",
+        "dist/nestedFolder/level2a/index.mjs",
+        "dist/nestedFolder/level2b/index.mjs",
+        "dist/nestedFolder/level2c/index.mjs",
         "dist/nestedFolder/index.d.ts",
+        "dist/nestedFolder/level2a/index.d.ts",
+        "dist/nestedFolder/level2b/index.d.ts",
+        "dist/nestedFolder/level2c/index.d.ts",
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
@@ -229,6 +245,9 @@ describe("mkdist", () => {
         "dist/alias.mjs",
         "dist/nestedFolder/cjs.mjs",
         "dist/nestedFolder/index.mjs",
+        "dist/nestedFolder/level2a/index.mjs",
+        "dist/nestedFolder/level2b/index.mjs",
+        "dist/nestedFolder/level2c/index.mjs",
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
