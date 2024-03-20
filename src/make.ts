@@ -92,7 +92,7 @@ export async function mkdist(
         const to = parse(resolvedId);
 
         // the OR `||` clause here means that the two files is in the same dir
-        const relativePath = join(relative(from.dir, to.dir), to.base);
+        const relativePath = relative(from.dir, join(to.dir, to.base));
         // for cases like ('/index.ts, '/subfolder/index.ts'), `relative()` returns 'subfolder', without the leading './' which is incompatible with import/require path parameter
         return relativePath.startsWith(".")
           ? relativePath
