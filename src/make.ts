@@ -77,7 +77,7 @@ export async function mkdist(
   if (options.alias && Object.keys(options.alias).length > 0) {
     // Fast transform variables for alias
     for (const [find, replace] of Object.entries(options.alias)) {
-      options.alias[find] = replace.replaceAll('$SRC', options.distDir)
+      options.alias[find] = replace.replaceAll("$SRC", options.distDir);
     }
     const _resolveAlias = (
       path: string,
@@ -106,7 +106,7 @@ export async function mkdist(
       return resolvedId;
     };
 
-    for (const output of outputs.filter(o => !o.raw)) {
+    for (const output of outputs.filter((o) => !o.raw)) {
       output.contents = output.contents
         // Resolve require statements
         .replace(

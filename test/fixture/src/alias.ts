@@ -6,7 +6,7 @@ export const foo2bar = async () => {
   const r = await bar();
   return foo2 + r;
 };
-export const foo2baz2 = foo2bar2.replace('bar', 'baz')
+export const foo2baz2 = foo2bar2.replace("bar", "baz");
 
 // `require()` transform works but errors out because `mkdist` does not currently support mixed cjs and mjs building.
 // export const { baz } = require("~/nestedFolder/cjs")
