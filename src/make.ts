@@ -75,6 +75,10 @@ export async function mkdist(
 
   // Resolve aliases
   if (options.alias && Object.keys(options.alias).length > 0) {
+    // Fast transform variables for alias
+    for (const [find, replace] of Object.entries(options.alias)) {
+      options.alias[find] = replace.replaceAll('$SRC', options.distDir)
+    }
     const _resolveAlias = (
       path: string,
       aliases: Record<string, string>,
