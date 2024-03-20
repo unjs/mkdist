@@ -103,10 +103,6 @@ export async function mkdist(
     };
 
     for (const output of outputs) {
-      const alias = {
-        "~": options.srcDir,
-      };
-
       output.contents = output.contents
         // Resolve require statements
         .replace(
@@ -114,7 +110,7 @@ export async function mkdist(
           (_, head, id, tail) =>
             "require(" +
             head +
-            _resolveAlias(id, alias, output.path) +
+            _resolveAlias(id, options.alias, output.path) +
             tail +
             ")",
         )
@@ -122,7 +118,7 @@ export async function mkdist(
         .replace(
           /(import|export)(\s+(?:.+|{[\s\w,]+})\s+from\s+["'])(.*)(["'])/g,
           (_, type, head, id, tail) =>
-            type + head + _resolveAlias(id, alias, output.path) + tail,
+            type + head + _resolveAlias(id, options.alias, output.path) + tail,
         )
         // Resolve dynamic import
         .replace(
@@ -130,7 +126,7 @@ export async function mkdist(
           (_, head, id, tail) =>
             "import(" +
             head +
-            _resolveAlias(id, alias, output.path) +
+            _resolveAlias(id, options.alias, output.path) +
             tail +
             ")",
         );
