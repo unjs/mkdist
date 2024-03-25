@@ -35,6 +35,10 @@ const main = defineCommand({
       description: "Pattern includes or excludes files",
       default: "**",
     },
+    alias: {
+      type: "string",
+      description: "Custom alias map used to resolve ids",
+    },
     format: {
       type: "string",
       description: "File format",
@@ -88,6 +92,7 @@ const main = defineCommand({
       distDir: args.dist,
       format: args.format,
       pattern: args.pattern,
+      alias: args.alias ? JSON.parse(args.alias) : undefined,
       ext: args.ext,
       declaration: args.declaration,
       loaders: args.loaders?.split(","),

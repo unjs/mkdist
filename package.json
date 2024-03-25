@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "build": "unbuild",
-    "dev": "pnpm mkdist test/fixture -d",
+    "dev": "jiti src/cli test/fixture -d --alias={\\\"~\\\":\\\"\\\u0024\u005cSRC\\\"}",
     "lint": "eslint --ext .ts,.mjs,.cjs . && prettier --check src test",
     "lint:fix": "eslint --fix --ext .ts,.mjs,.cjs . && prettier --write -c src test",
     "mkdist": "jiti src/cli",
