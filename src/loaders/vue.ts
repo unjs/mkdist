@@ -41,7 +41,11 @@ interface BlockLoaderOptions {
   outputLang: string;
   defaultLang?: string;
   validExtensions?: string[];
-  exclude?: RegExp[];
+  exclude?: (args: {
+    lang: string;
+    attributes: string;
+    blockContents: string;
+  }) => boolean | void;
 }
 
 const vueBlockLoader =
@@ -60,13 +64,13 @@ const vueBlockLoader =
       return;
     }
 
-    if (options.exclude?.some((re) => re.test(attributes))) {
-      return;
-    }
-
     const [, lang = options.outputLang] =
       attributes.match(/lang="([a-z]*)"/) || [];
     const extension = "." + lang;
+
+    if (options.exclude?.({ lang, attributes, blockContents }) === true) {
+      return;
+    }
 
     const files =
       (await loadFile({
@@ -113,6 +117,19 @@ const styleLoader = vueBlockLoader({
 const scriptLoader = vueBlockLoader({
   outputLang: "js",
   type: "script",
-  exclude: [/\bsetup\b/],
+  // If the block contains some type-only Vue macros, skip the entire block
+  // e.g. skip `defineProps<...>()`, but allow `defineProps(...)`
+  exclude({ lang, attributes, blockContents }) {
+    if (lang !== "ts" || !/\bsetup\b/.test(attributes)) {
+      return false;
+    }
+
+    const CODE_COMMENT_RE = /\/\/.*\n|\/\*[\S\s]*?\*\//g;
+    const contentsWithoutComments = blockContents.replace(CODE_COMMENT_RE, "");
+
+    const macros = ["defineProps", "defineEmits", "defineSlots", "defineModel"];
+    const typeOnlyMacroRE = new RegExp(`(${macros.join("|")})\\s*<[\\S\\s]*>\\s*\\(`);
+    return typeOnlyMacroRE.test(contentsWithoutComments);
+  },
   validExtensions: [".js", ".mjs"],
 });
