@@ -40,14 +40,19 @@
     "mlly": "^1.6.1",
     "mri": "^1.2.0",
     "pathe": "^1.1.2",
+    "pkg-types": "^1.1.0",
     "postcss": "^8.4.38",
-    "postcss-nested": "^6.0.1"
+    "postcss-nested": "^6.0.1",
+    "semver": "^7.6.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
     "@types/mri": "^1.2.0",
     "@types/node": "^20.12.7",
+    "@types/semver": "^7.5.8",
     "@vitest/coverage-v8": "^1.5.2",
+    "@volar/typescript": "^2.2.0-alpha.10",
+    "@vue/language-core": "^2.0.14",
     "c8": "latest",
     "changelogen": "^0.5.5",
     "eslint": "^8.57.0",
@@ -57,14 +62,15 @@
     "sass": "^1.75.0",
     "typescript": "^5.4.5",
     "unbuild": "^2.0.0",
+    "vitest": "^1.5.2",
     "vue": "^3.4.25",
-    "vue-tsc": "^1.8.27",
-    "vitest": "^1.5.2"
+    "vue-tsc": "^2.0.14",
+    "vue-tsc1": "npm:vue-tsc@^1.8.27"
   },
   "peerDependencies": {
     "sass": "^1.75.0",
     "typescript": ">=5.4.5",
-    "vue-tsc": "^1.8.27"
+    "vue-tsc": "^1.8.27 || ^2.0.14"
   },
   "peerDependenciesMeta": {
     "sass": {
