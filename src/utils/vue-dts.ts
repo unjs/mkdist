@@ -9,16 +9,6 @@ import { extractDeclarations } from "./dts";
 
 const require = createRequire(import.meta.url);
 
-const compilerOptions: CompilerOptions = {
-  allowJs: true,
-  declaration: true,
-  incremental: true,
-  skipLibCheck: true,
-  strictNullChecks: true,
-  emitDeclarationOnly: true,
-  allowNonTsExtensions: true,
-};
-
 export async function getVueDeclarations(
   vfs: Map<string, string>,
   opts?: MkdistOptions,
@@ -41,11 +31,11 @@ export async function getVueDeclarations(
   const majorVersion = major(pkgInfo.version);
   switch (majorVersion) {
     case 1: {
-      await emitVueTscV1(vfs, srcFiles);
+      await emitVueTscV1(vfs, opts.typescript.compilerOptions, srcFiles);
       break;
     }
     case 2: {
-      await emitVueTscV2(vfs, srcFiles);
+      await emitVueTscV2(vfs, opts.typescript.compilerOptions, srcFiles);
       break;
     }
   }
@@ -65,7 +55,11 @@ function getFileMapping(vfs: Map<string, string>): Record<string, string> {
   return files;
 }
 
-async function emitVueTscV1(vfs: Map<string, string>, srcFiles: string[]) {
+async function emitVueTscV1(
+  vfs: Map<string, string>,
+  compilerOptions: CompilerOptions,
+  srcFiles: string[],
+) {
   const vueTsc: typeof import("vue-tsc1") = await import("vue-tsc")
     .then((r) => r.default || r)
     .catch(() => undefined);
@@ -102,7 +96,11 @@ async function emitVueTscV1(vfs: Map<string, string>, srcFiles: string[]) {
   }
 }
 
-async function emitVueTscV2(vfs: Map<string, string>, srcFiles: string[]) {
+async function emitVueTscV2(
+  vfs: Map<string, string>,
+  compilerOptions: CompilerOptions,
+  srcFiles: string[],
+) {
   const ts: typeof import("typescript") = await import("typescript").then(
     (r) => r.default || r,
   );
