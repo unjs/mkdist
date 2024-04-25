@@ -89,9 +89,9 @@ async function emitVueTscV1(
       host: tsHost,
     });
 
-    const result = program.emit()
+    const result = program.emit();
     if (result.diagnostics?.length) {
-      console.error(ts.formatDiagnostics(result.diagnostics, tsHost))
+      console.error(ts.formatDiagnostics(result.diagnostics, tsHost));
     }
   } finally {
     ts.sys.writeFile = _tsSysWriteFile;
@@ -160,8 +160,8 @@ async function emitVueTscV2(
   );
 
   const program = createProgram(programOptions);
-  const result = program.emit()
+  const result = program.emit();
   if (result.diagnostics?.length) {
-    console.error(ts.formatDiagnostics(result.diagnostics, tsHost))
+    console.error(ts.formatDiagnostics(result.diagnostics, tsHost));
   }
 }
