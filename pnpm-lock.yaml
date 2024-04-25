@@ -67,6 +67,12 @@ devDependencies:
   '@vitest/coverage-v8':
     specifier: ^1.4.0
     version: 1.4.0(vitest@1.4.0)
+  '@volar/typescript':
+    specifier: ^2.2.0-alpha.10
+    version: 2.2.0-alpha.10
+  '@vue/language-core':
+    specifier: ^2.0.14
+    version: 2.0.14(typescript@5.4.3)
   c8:
     specifier: latest
     version: 9.1.0

@@ -3,6 +3,7 @@ import { CompilerOptions, CreateProgramOptions } from "typescript";
 import { readPackageJSON } from "pkg-types";
 import { resolve as resolveModule } from "mlly";
 import { major } from "semver";
+import { normalize } from "pathe";
 import { MkdistOptions } from "../make";
 import { extractDeclarations } from "./dts";
 
@@ -105,12 +106,14 @@ async function emitVueTscV2(vfs: Map<string, string>, srcFiles: string[]) {
   const ts: typeof import("typescript") = await import("typescript");
   const vueTsc: typeof import("vue-tsc") = await import("vue-tsc");
   const requireFromVueTsc = createRequire(await resolveModule("vue-tsc"));
-  const vueLangaugeCore = requireFromVueTsc("@vue/language-core");
-  const volarTs = requireFromVueTsc("@volar/typescript");
+  const vueLanguageCore: typeof import("@vue/language-core") =
+    requireFromVueTsc("@vue/language-core");
+  const volarTs: typeof import("@volar/typescript") =
+    requireFromVueTsc("@volar/typescript");
 
   const tsHost = ts.createCompilerHost(compilerOptions);
   tsHost.writeFile = (filename, content) => {
-    vfs.set(filename, content);
+    vfs.set(filename, vueTsc.removeEmitGlobalTypes(content));
   };
   const _tsReadFile = tsHost.readFile.bind(tsHost);
   tsHost.readFile = (filename) => {
@@ -130,22 +133,26 @@ async function emitVueTscV2(vfs: Map<string, string>, srcFiles: string[]) {
     host: tsHost,
   };
 
-  const fakeGlobalTypesHolder =
-    vueTsc.createFakeGlobalTypesHolder(programOptions);
   const createProgram = volarTs.proxyCreateProgram(
     ts,
     ts.createProgram,
-    [".vue"],
     (ts, options) => {
-      const vueLanguagePlugin = vueLangaugeCore.createVueLanguagePlugin(
+      const vueLanguagePlugin = vueLanguageCore.createVueLanguagePlugin(
         ts,
         (id) => id,
-        (fileName) => fileName === fakeGlobalTypesHolder,
+        options.host?.useCaseSensitiveFileNames?.() ?? false,
+        () => "",
+        () => options.rootNames.map((rootName) => normalize(rootName)),
         options.options,
-        vueLangaugeCore.resolveVueCompilerOptions({}),
-        false,
+        vueLanguageCore.resolveVueCompilerOptions({}),
       );
       return [vueLanguagePlugin];
+    },
+    (fileName) => {
+      if ([".vue"].some((ext) => fileName.endsWith(ext))) {
+        return "vue";
+      }
+      return vueLanguageCore.resolveCommonLanguageId(fileName);
     },
   );
 

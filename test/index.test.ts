@@ -413,7 +413,13 @@ describe("mkdist with vue-tsc v1", () => {
         },
       };
     });
-    vi.doMock("vue-tsc", () => import("vue-tsc1"));
+    vi.doMock("vue-tsc", async () => {
+      const vueTsc1 = await import("vue-tsc1");
+      return {
+        removeEmitGlobalTypes: (content) => content,
+        ...vueTsc1,
+      };
+    });
   });
 
   afterAll(() => {
