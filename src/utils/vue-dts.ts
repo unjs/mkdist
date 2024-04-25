@@ -101,7 +101,9 @@ async function emitVueTscV2(
   compilerOptions: CompilerOptions,
   srcFiles: string[],
 ) {
-  const ts: typeof import("typescript") = await import("typescript");
+  const ts: typeof import("typescript") = await import("typescript").then(
+    (r) => r.default || r,
+  );
   const vueTsc: typeof import("vue-tsc") = await import("vue-tsc");
   const requireFromVueTsc = createRequire(await resolveModule("vue-tsc"));
   const vueLanguageCore: typeof import("@vue/language-core") =
