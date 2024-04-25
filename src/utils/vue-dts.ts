@@ -1,6 +1,7 @@
 import { createRequire } from "node:module";
 import { CompilerOptions, CreateProgramOptions } from "typescript";
-import { getPackageInfo, resolveModule } from "local-pkg";
+import { readPackageJSON } from "pkg-types";
+import { resolve as resolveModule } from "mlly";
 import { major } from "semver";
 import { MkdistOptions } from "../make";
 import { extractDeclarations } from "./dts";
@@ -28,7 +29,7 @@ export async function getVueDeclarations(
     return;
   }
 
-  const pkgInfo = await getPackageInfo("vue-tsc");
+  const pkgInfo = await readPackageJSON("vue-tsc").catch(() => {});
   if (!pkgInfo) {
     console.warn(
       "[mkdist] Please install `vue-tsc` to generate Vue SFC declarations.",
@@ -103,7 +104,7 @@ async function emitVueTscV1(vfs: Map<string, string>, srcFiles: string[]) {
 async function emitVueTscV2(vfs: Map<string, string>, srcFiles: string[]) {
   const ts: typeof import("typescript") = await import("typescript");
   const vueTsc: typeof import("vue-tsc") = await import("vue-tsc");
-  const requireFromVueTsc = createRequire(resolveModule("vue-tsc"));
+  const requireFromVueTsc = createRequire(await resolveModule("vue-tsc"));
   const vueLangaugeCore = requireFromVueTsc("@vue/language-core");
   const volarTs = requireFromVueTsc("@volar/typescript");
 

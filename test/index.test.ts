@@ -401,15 +401,15 @@ describe("mkdist with vue-tsc v1", () => {
   beforeAll(() => {
     vi.resetModules();
 
-    vi.doMock("local-pkg", async (importOriginal) => {
-      const original = await importOriginal<typeof import("local-pkg")>();
+    vi.doMock("pkg-types", async (importOriginal) => {
+      const original = await importOriginal<typeof import("pkg-types")>();
       return {
         ...original,
         getPackageInfo: (path: string) => {
           if (path === "vue-tsc") {
-            return original.getPackageInfo("vue-tsc1");
+            return original.readPackageJSON("vue-tsc1");
           }
-          return original.getPackageInfo(path);
+          return original.readPackageJSON(path);
         },
       };
     });
@@ -417,7 +417,7 @@ describe("mkdist with vue-tsc v1", () => {
   });
 
   afterAll(() => {
-    vi.doUnmock("local-pkg");
+    vi.doUnmock("pkg-types");
     vi.doUnmock("vue-tsc");
   });
 
