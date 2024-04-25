@@ -1,5 +1,7 @@
 import { resolve, extname, join, basename, dirname } from "pathe";
 import fse from "fs-extra";
+import type { TSConfig } from "pkg-types";
+import defu from "defu";
 import { copyFileWithStream } from "./utils/fs";
 import {
   InputFile,
@@ -8,7 +10,7 @@ import {
   OutputFile,
   Loader,
 } from "./loader";
-import { getDeclarations } from "./utils/dts";
+import { getDeclarations, normalizeCompilerOptions } from "./utils/dts";
 import { getVueDeclarations } from "./utils/vue-dts";
 import { LoaderName } from "./loaders";
 
@@ -20,6 +22,9 @@ export interface MkdistOptions extends LoaderOptions {
   cleanDist?: boolean;
   loaders?: (LoaderName | Loader)[];
   addRelativeDeclarationExtensions?: boolean;
+  typescript?: {
+    compilerOptions?: TSConfig["compilerOptions"];
+  };
 }
 
 export async function mkdist(
@@ -53,6 +58,20 @@ export async function mkdist(
       getContents: () => fse.readFile(sourcePath, { encoding: "utf8" }),
     };
   });
+
+  // Read and normalise TypeScript compiler options for emitting declarations
+  options.typescript ||= {};
+  options.typescript.compilerOptions = normalizeCompilerOptions(
+    defu({ noEmit: false }, options.typescript.compilerOptions, {
+      allowJs: true,
+      declaration: true,
+      incremental: true,
+      skipLibCheck: true,
+      strictNullChecks: true,
+      emitDeclarationOnly: true,
+      allowNonTsExtensions: true,
+    }),
+  );
 
   // Create loader
   const { loadFile } = createLoader(options);
