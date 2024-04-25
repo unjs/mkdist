@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.5.0
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.4.0...v1.5.0)
+
+### 🚀 Enhancements
+
+- Use `vue-tsc` generate vue declarations ([#154](https://github.com/unjs/mkdist/pull/154))
+- Support vue-tsc v2 ([#201](https://github.com/unjs/mkdist/pull/201))
+- Support custom typescript `compilerOptions` ([#215](https://github.com/unjs/mkdist/pull/215))
+
+### 🩹 Fixes
+
+- De-default `typescript` import ([c518477](https://github.com/unjs/mkdist/commit/c518477))
+- Log errors emitting declarations ([1fb5a74](https://github.com/unjs/mkdist/commit/1fb5a74))
+
+### 🏡 Chore
+
+- **release:** V1.4.0 ([880ec30](https://github.com/unjs/mkdist/commit/880ec30))
+- Update dependencies ([9137f70](https://github.com/unjs/mkdist/commit/9137f70))
+- Update snapshots for vitest v1 ([ea2ff56](https://github.com/unjs/mkdist/commit/ea2ff56))
+
+### 🎨 Styles
+
+- Apply lint fixes ([365002a](https://github.com/unjs/mkdist/commit/365002a))
+
+### 🤖 CI
+
+- Test against node 18 ([aeb444f](https://github.com/unjs/mkdist/commit/aeb444f))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+- Zhong666 ([@aa900031](http://github.com/aa900031))
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+
 ## v1.4.0
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.3.1...v1.4.0)
