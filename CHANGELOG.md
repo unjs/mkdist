@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.5.1
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.0...v1.5.1)
+
+### 🩹 Fixes
+
+- Dynamically import `typescript` when normalising options ([b8afd50](https://github.com/unjs/mkdist/commit/b8afd50))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
 ## v1.5.0
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.4.0...v1.5.0)
