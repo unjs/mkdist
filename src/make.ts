@@ -1,4 +1,13 @@
-import { resolve, extname, join, basename, dirname } from "pathe";
+import {
+  resolve,
+  extname,
+  join,
+  basename,
+  dirname,
+  relative,
+  parse,
+} from "pathe";
+import { resolveAlias } from "pathe/utils";
 import fse from "fs-extra";
 import { copyFileWithStream } from "./utils/fs";
 import {
@@ -20,6 +29,7 @@ export interface MkdistOptions extends LoaderOptions {
   cleanDist?: boolean;
   loaders?: (LoaderName | Loader)[];
   addRelativeDeclarationExtensions?: boolean;
+  alias?: { [find: string]: string };
 }
 
 export async function mkdist(
@@ -61,6 +71,70 @@ export async function mkdist(
   const outputs: OutputFile[] = [];
   for (const file of files) {
     outputs.push(...((await loadFile(file)) || []));
+  }
+
+  // Resolve aliases
+  if (options.alias && Object.keys(options.alias).length > 0) {
+    // Fast transform variables for alias
+    for (const [find, replace] of Object.entries(options.alias)) {
+      options.alias[find] = replace.replaceAll("$SRC", options.distDir);
+    }
+    const _resolveAlias = (
+      path: string,
+      aliases: Record<string, string>,
+      outputPath: OutputFile["path"] & string,
+    ) => {
+      // Resolve the alias and transform srcDir to distDir
+      const resolvedId = resolveAlias(path, aliases).replace(
+        options.srcDir,
+        options.distDir,
+      );
+
+      // if resolved path is in distDir, we transform it into a relative path
+      if (resolvedId.startsWith(options.distDir)) {
+        const from = parse(resolve(options.distDir, outputPath));
+        const to = parse(resolvedId);
+
+        // the OR `||` clause here means that the two files is in the same dir
+        const relativePath = relative(from.dir, join(to.dir, to.base));
+        // for cases like ('/index.ts, '/subfolder/index.ts'), `relative()` returns 'subfolder', without the leading './' which is incompatible with import/require path parameter
+        return relativePath.startsWith(".")
+          ? relativePath
+          : `./${relativePath}`;
+      }
+
+      return resolvedId;
+    };
+
+    for (const output of outputs.filter((o) => !o.raw)) {
+      output.contents = output.contents
+        // Resolve require statements
+        .replace(
+          /require\((["'])(.*)(["'])\)/g,
+          (_, head, id, tail) =>
+            "require(" +
+            head +
+            _resolveAlias(id, options.alias, output.path) +
+            tail +
+            ")",
+        )
+        // Resolve import statements
+        .replace(
+          /(import|export)(\s+(?:.+|{[\s\w,]+})\s+from\s+["'])(.*)(["'])/g,
+          (_, type, head, id, tail) =>
+            type + head + _resolveAlias(id, options.alias, output.path) + tail,
+        )
+        // Resolve dynamic import
+        .replace(
+          /import\((["'])(.*)(["'])\)/g,
+          (_, head, id, tail) =>
+            "import(" +
+            head +
+            _resolveAlias(id, options.alias, output.path) +
+            tail +
+            ")",
+        );
+    }
   }
 
   // Normalize output extensions

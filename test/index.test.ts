@@ -42,9 +42,48 @@ describe("mkdist", () => {
         "dist/ts/test1.mjs",
         "dist/ts/test2.mjs",
         "dist/nested.css",
+        "dist/alias.mjs",
+        "dist/nestedFolder/cjs.mjs",
+        "dist/nestedFolder/index.mjs",
+        "dist/nestedFolder/level2a/index.mjs",
+        "dist/nestedFolder/level2b/index.mjs",
+        "dist/nestedFolder/level2c/index.mjs",
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
+    );
+  });
+
+  it("mkdist (resolve aliases)", async () => {
+    const rootDir = resolve(__dirname, "fixture");
+    const { writtenFiles } = await mkdist({
+      rootDir,
+      alias: { "~": resolve(rootDir, "src") },
+      pattern: ["alias.ts", "nestedFolder/**"],
+    });
+    expect(writtenFiles.sort()).containSubset(
+      [
+        "dist/alias.mjs",
+        "dist/nestedFolder/cjs.mjs",
+        "dist/nestedFolder/index.mjs",
+        "dist/nestedFolder/level2a/index.mjs",
+        "dist/nestedFolder/level2b/index.mjs",
+        "dist/nestedFolder/level2c/index.mjs",
+      ]
+        .map((f) => resolve(rootDir, f))
+        .sort(),
+    );
+
+    // Expect file to not contains any unresolved '`' alias
+    const indexFile = await readFile(
+      resolve(rootDir, "dist/alias.mjs"),
+      "utf8",
+    );
+    expect(indexFile).not.toMatch("~/");
+
+    // Expect the file to be able to execute normally
+    await import(resolve(rootDir, "dist/alias.mjs")).then(async (res) =>
+      expect(res.foo + (await res.bar())).toBe("foobar"),
     );
   });
 
@@ -126,6 +165,18 @@ describe("mkdist", () => {
         "dist/ts/test1.d.mts",
         "dist/ts/test2.d.cts",
         "dist/nested.css",
+        "dist/alias.mjs",
+        "dist/alias.d.ts",
+        "dist/nestedFolder/cjs.mjs",
+        "dist/nestedFolder/cjs.d.cts",
+        "dist/nestedFolder/index.mjs",
+        "dist/nestedFolder/level2a/index.mjs",
+        "dist/nestedFolder/level2b/index.mjs",
+        "dist/nestedFolder/level2c/index.mjs",
+        "dist/nestedFolder/index.d.ts",
+        "dist/nestedFolder/level2a/index.d.ts",
+        "dist/nestedFolder/level2b/index.d.ts",
+        "dist/nestedFolder/level2c/index.d.ts",
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
@@ -214,6 +265,12 @@ describe("mkdist", () => {
         "dist/ts/test1.mjs",
         "dist/ts/test2.mjs",
         "dist/nested.css",
+        "dist/alias.mjs",
+        "dist/nestedFolder/cjs.mjs",
+        "dist/nestedFolder/index.mjs",
+        "dist/nestedFolder/level2a/index.mjs",
+        "dist/nestedFolder/level2b/index.mjs",
+        "dist/nestedFolder/level2c/index.mjs",
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
