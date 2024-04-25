@@ -1,25 +1,18 @@
 import { findStaticImports, findExports, findTypeExports } from "mlly";
-import {
-  ImportsNotUsedAsValues,
-  ModuleResolutionKind,
-  ModuleDetectionKind,
-  NewLineKind,
-  ScriptTarget,
-} from "typescript";
 import type { TSConfig } from "pkg-types";
 import type { MkdistOptions } from "../make";
 
-const configMap = {
-  importsNotUsedAsValues: ImportsNotUsedAsValues,
-  moduleResolution: ModuleResolutionKind,
-  moduleDetection: ModuleDetectionKind,
-  newLine: NewLineKind,
-  target: ScriptTarget,
-};
-
-export function normalizeCompilerOptions(
+export async function normalizeCompilerOptions(
   _options: TSConfig["compilerOptions"],
 ) {
+  const ts = await import("typescript").then((r) => r.default || r);
+  const configMap = {
+    importsNotUsedAsValues: ts.ImportsNotUsedAsValues,
+    moduleResolution: ts.ModuleResolutionKind,
+    moduleDetection: ts.ModuleDetectionKind,
+    newLine: ts.NewLineKind,
+    target: ts.ScriptTarget,
+  };
   const compilerOptions = { ..._options };
   for (const key in configMap) {
     if (key in compilerOptions) {

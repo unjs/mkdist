@@ -61,8 +61,15 @@ export async function mkdist(
 
   // Read and normalise TypeScript compiler options for emitting declarations
   options.typescript ||= {};
-  options.typescript.compilerOptions = normalizeCompilerOptions(
-    defu({ noEmit: false }, options.typescript.compilerOptions, {
+  if (options.typescript.compilerOptions) {
+    options.typescript.compilerOptions = await normalizeCompilerOptions(
+      options.typescript.compilerOptions,
+    );
+  }
+  options.typescript.compilerOptions = defu(
+    { noEmit: false },
+    options.typescript.compilerOptions,
+    {
       allowJs: true,
       declaration: true,
       incremental: true,
@@ -70,7 +77,7 @@ export async function mkdist(
       strictNullChecks: true,
       emitDeclarationOnly: true,
       allowNonTsExtensions: true,
-    }),
+    },
   );
 
   // Create loader
