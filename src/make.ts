@@ -36,7 +36,7 @@ export async function mkdist(
   options.distDir = resolve(options.rootDir, options.distDir || "dist");
 
   // Setup dist
-  if (options.cleanDist !== false) {
+  if (options.cleanDist === true) {
     await fse.unlink(options.distDir).catch(() => {});
     await fse.emptyDir(options.distDir);
     await fse.mkdirp(options.distDir);
