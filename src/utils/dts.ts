@@ -60,7 +60,10 @@ export async function getDeclarations(
     opts.typescript.compilerOptions,
     tsHost,
   );
-  await program.emit();
+  const result = program.emit();
+  if (result.diagnostics?.length) {
+    console.error(ts.formatDiagnostics(result.diagnostics, tsHost));
+  }
 
   return extractDeclarations(vfs, inputFiles, opts);
 }
