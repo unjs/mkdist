@@ -46,6 +46,11 @@ const main = defineCommand({
       default: false,
       alias: ["d"],
     },
+    declarationExt: {
+      type: "string",
+      description: "Extensions for type declaration files",
+      valueHint: "infer|d.ts|d.mts|d.cts",
+    },
     ext: {
       type: "string",
       description: "File extension",
@@ -90,6 +95,7 @@ const main = defineCommand({
       pattern: args.pattern,
       ext: args.ext,
       declaration: args.declaration,
+      declarationExt: args.declarationExt,
       loaders: args.loaders?.split(","),
       esbuild: {
         jsx: args.jsx,
