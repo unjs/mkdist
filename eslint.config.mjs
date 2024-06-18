@@ -2,7 +2,7 @@ import unjs from "eslint-config-unjs";
 
 export default unjs({
   ignores: [
-    'dist/**',
+    '**/dist/**',
   ],
   rules: {
     // rule overrides

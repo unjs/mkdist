@@ -142,20 +142,21 @@ async function emitVueTscV2(
     (ts, options) => {
       const vueLanguagePlugin = vueLanguageCore.createVueLanguagePlugin(
         ts,
-        (id) => id,
-        options.host?.useCaseSensitiveFileNames?.() ?? false,
+        (id) => id as string,
         () => "",
-        () => options.rootNames.map((rootName) => normalize(rootName)),
+        (fileName) => {
+          const fileMap = new Set();
+          for (const vueFileName of options.rootNames.map((rootName) =>
+            normalize(rootName),
+          )) {
+            fileMap.add(vueFileName);
+          }
+          return fileMap.has(fileName);
+        },
         options.options,
         vueLanguageCore.resolveVueCompilerOptions({}),
       );
       return [vueLanguagePlugin];
-    },
-    (fileName) => {
-      if ([".vue"].some((ext) => fileName.endsWith(ext))) {
-        return "vue";
-      }
-      return vueLanguageCore.resolveCommonLanguageId(fileName);
     },
   );
 
