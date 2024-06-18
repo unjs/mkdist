@@ -52,7 +52,7 @@ const vueBlockLoader =
     const BLOCK_RE = new RegExp(
       `<${options.type}((\\s[^>\\s]*)*)>([\\S\\s.]*?)<\\/${options.type}>`,
     );
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const [block, attributes = "", _, blockContents] =
       contents.match(BLOCK_RE) || [];
 

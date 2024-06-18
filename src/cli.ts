@@ -100,7 +100,6 @@ const main = defineCommand({
       },
     } as MkdistOptions);
 
-    // eslint-disable-next-line no-console
     console.log(writtenFiles.map((f) => `- ${f}`).join("\n"));
 
     process.exit(0);
@@ -109,7 +108,6 @@ const main = defineCommand({
 
 // eslint-disable-next-line unicorn/prefer-top-level-await
 runMain(main).catch((error) => {
-  // eslint-disable-next-line no-console
   console.error(error);
   process.exit(1);
 });
