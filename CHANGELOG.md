@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.5.2
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.1...v1.5.2)
+
+### 🩹 Fixes
+
+- Upgrade volar implementation ([#222](https://github.com/unjs/mkdist/pull/222))
+
+### 🏡 Chore
+
+- **release:** V1.5.1 ([b4c0a82](https://github.com/unjs/mkdist/commit/b4c0a82))
+- Bump all dependencies ([#221](https://github.com/unjs/mkdist/pull/221))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
 ## v1.5.1
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.5.0...v1.5.1)
