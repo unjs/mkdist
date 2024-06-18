@@ -1,27 +1,41 @@
 import { findStaticImports, findExports, findTypeExports } from "mlly";
-import type { CompilerOptions } from "typescript";
+import type { TSConfig } from "pkg-types";
+import type { MkdistOptions } from "../make";
 
-interface GetDeclarationsOptions {
-  addRelativeDeclarationExtensions?: boolean;
+export async function normalizeCompilerOptions(
+  _options: TSConfig["compilerOptions"],
+) {
+  const ts = await import("typescript").then((r) => r.default || r);
+  const configMap = {
+    importsNotUsedAsValues: ts.ImportsNotUsedAsValues,
+    moduleResolution: ts.ModuleResolutionKind,
+    moduleDetection: ts.ModuleDetectionKind,
+    newLine: ts.NewLineKind,
+    target: ts.ScriptTarget,
+  };
+  const compilerOptions = { ..._options };
+  for (const key in configMap) {
+    if (key in compilerOptions) {
+      if (configMap[key][compilerOptions[key]]) {
+        compilerOptions[key] = configMap[key][compilerOptions[key]];
+      } else {
+        console.warn("Could not map", key, compilerOptions[key]);
+        delete compilerOptions[key];
+      }
+    }
+  }
+  return compilerOptions;
 }
 
 export async function getDeclarations(
   vfs: Map<string, string>,
-  opts?: GetDeclarationsOptions,
+  opts?: MkdistOptions,
 ) {
   const ts = await import("typescript").then((r) => r.default || r);
 
   const inputFiles = [...vfs.keys()];
 
-  const compilerOptions: CompilerOptions = {
-    allowJs: true,
-    declaration: true,
-    incremental: true,
-    skipLibCheck: true,
-    strictNullChecks: true,
-    emitDeclarationOnly: true,
-  };
-  const tsHost = ts.createCompilerHost(compilerOptions);
+  const tsHost = ts.createCompilerHost(opts.typescript.compilerOptions);
 
   tsHost.writeFile = (fileName: string, declaration: string) => {
     vfs.set(fileName, declaration);
@@ -34,8 +48,15 @@ export async function getDeclarations(
     return _readFile(filename);
   };
 
-  const program = ts.createProgram(inputFiles, compilerOptions, tsHost);
-  await program.emit();
+  const program = ts.createProgram(
+    inputFiles,
+    opts.typescript.compilerOptions,
+    tsHost,
+  );
+  const result = program.emit();
+  if (result.diagnostics?.length) {
+    console.error(ts.formatDiagnostics(result.diagnostics, tsHost));
+  }
 
   return extractDeclarations(vfs, inputFiles, opts);
 }
@@ -43,7 +64,7 @@ export async function getDeclarations(
 export function extractDeclarations(
   vfs: Map<string, string>,
   inputFiles: string[],
-  opts?: GetDeclarationsOptions,
+  opts?: MkdistOptions,
 ) {
   const output: Record<string, string> = {};
 

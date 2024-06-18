@@ -1,18 +1,13 @@
 import { createRequire } from "node:module";
-import { CompilerOptions } from "typescript";
+import { CompilerOptions, CreateProgramOptions } from "typescript";
+import { readPackageJSON } from "pkg-types";
+import { resolve as resolveModule } from "mlly";
+import { major } from "semver";
+import { normalize } from "pathe";
 import { MkdistOptions } from "../make";
 import { extractDeclarations } from "./dts";
 
 const require = createRequire(import.meta.url);
-
-const compilerOptions: CompilerOptions = {
-  allowJs: true,
-  declaration: true,
-  incremental: true,
-  skipLibCheck: true,
-  strictNullChecks: true,
-  emitDeclarationOnly: true,
-};
 
 export async function getVueDeclarations(
   vfs: Map<string, string>,
@@ -25,15 +20,49 @@ export async function getVueDeclarations(
     return;
   }
 
-  const vueTsc = await import("vue-tsc")
-    .then((r) => r.default || r)
-    .catch(() => undefined);
-  if (!vueTsc) {
+  const pkgInfo = await readPackageJSON("vue-tsc").catch(() => {});
+  if (!pkgInfo) {
     console.warn(
       "[mkdist] Please install `vue-tsc` to generate Vue SFC declarations.",
     );
     return;
   }
+
+  const majorVersion = major(pkgInfo.version);
+  switch (majorVersion) {
+    case 1: {
+      await emitVueTscV1(vfs, opts.typescript.compilerOptions, srcFiles);
+      break;
+    }
+    case 2: {
+      await emitVueTscV2(vfs, opts.typescript.compilerOptions, srcFiles);
+      break;
+    }
+  }
+
+  return extractDeclarations(vfs, originFiles, opts);
+}
+
+const SFC_EXT_RE = /\.vue\.[cm]?[jt]s$/;
+
+function getFileMapping(vfs: Map<string, string>): Record<string, string> {
+  const files: Record<string, string> = Object.create(null);
+  for (const [srcPath] of vfs) {
+    if (SFC_EXT_RE.test(srcPath)) {
+      files[srcPath.replace(SFC_EXT_RE, ".vue")] = srcPath;
+    }
+  }
+  return files;
+}
+
+async function emitVueTscV1(
+  vfs: Map<string, string>,
+  compilerOptions: CompilerOptions,
+  srcFiles: string[],
+) {
+  const vueTsc: typeof import("vue-tsc1") = await import("vue-tsc")
+    .then((r) => r.default || r)
+    .catch(() => undefined);
 
   // Inside vue-tsc, `require` is used instead of `import`. In order to override `ts.sys`, it is necessary to import it in the same way as vue-tsc for them to refer to the same file.
   const ts =
@@ -53,30 +82,87 @@ export async function getVueDeclarations(
     return _tsSysReadFile(filename, encoding);
   };
 
-  const program = vueTsc.createProgram({
-    rootNames: srcFiles,
-    options: compilerOptions,
-    host: tsHost,
-  });
-
   try {
-    program.emit();
+    const program = vueTsc.createProgram({
+      rootNames: srcFiles,
+      options: compilerOptions,
+      host: tsHost,
+    });
+
+    const result = program.emit();
+    if (result.diagnostics?.length) {
+      console.error(ts.formatDiagnostics(result.diagnostics, tsHost));
+    }
   } finally {
     ts.sys.writeFile = _tsSysWriteFile;
     ts.sys.readFile = _tsSysReadFile;
   }
-
-  return extractDeclarations(vfs, originFiles, opts);
 }
 
-const SFC_EXT_RE = /\.vue\.[cm]?[jt]s$/;
+async function emitVueTscV2(
+  vfs: Map<string, string>,
+  compilerOptions: CompilerOptions,
+  srcFiles: string[],
+) {
+  const ts: typeof import("typescript") = await import("typescript").then(
+    (r) => r.default || r,
+  );
+  const vueTsc: typeof import("vue-tsc") = await import("vue-tsc");
+  const requireFromVueTsc = createRequire(await resolveModule("vue-tsc"));
+  const vueLanguageCore: typeof import("@vue/language-core") =
+    requireFromVueTsc("@vue/language-core");
+  const volarTs: typeof import("@volar/typescript") =
+    requireFromVueTsc("@volar/typescript");
 
-function getFileMapping(vfs: Map<string, string>): Record<string, string> {
-  const files: Record<string, string> = Object.create(null);
-  for (const [srcPath] of vfs) {
-    if (SFC_EXT_RE.test(srcPath)) {
-      files[srcPath.replace(SFC_EXT_RE, ".vue")] = srcPath;
+  const tsHost = ts.createCompilerHost(compilerOptions);
+  tsHost.writeFile = (filename, content) => {
+    vfs.set(filename, vueTsc.removeEmitGlobalTypes(content));
+  };
+  const _tsReadFile = tsHost.readFile.bind(tsHost);
+  tsHost.readFile = (filename) => {
+    if (vfs.has(filename)) {
+      return vfs.get(filename);
     }
+    return _tsReadFile(filename);
+  };
+  const _tsFileExist = tsHost.fileExists.bind(tsHost);
+  tsHost.fileExists = (filename) => {
+    return vfs.has(filename) || _tsFileExist(filename);
+  };
+
+  const programOptions: CreateProgramOptions = {
+    rootNames: srcFiles,
+    options: compilerOptions,
+    host: tsHost,
+  };
+
+  const createProgram = volarTs.proxyCreateProgram(
+    ts,
+    ts.createProgram,
+    (ts, options) => {
+      const vueLanguagePlugin = vueLanguageCore.createVueLanguagePlugin(
+        ts,
+        (id) => id as string,
+        () => "",
+        (fileName) => {
+          const fileMap = new Set();
+          for (const vueFileName of options.rootNames.map((rootName) =>
+            normalize(rootName),
+          )) {
+            fileMap.add(vueFileName);
+          }
+          return fileMap.has(fileName);
+        },
+        options.options,
+        vueLanguageCore.resolveVueCompilerOptions({}),
+      );
+      return [vueLanguagePlugin];
+    },
+  );
+
+  const program = createProgram(programOptions);
+  const result = program.emit();
+  if (result.diagnostics?.length) {
+    console.error(ts.formatDiagnostics(result.diagnostics, tsHost));
   }
-  return files;
 }
