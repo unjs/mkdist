@@ -319,15 +319,16 @@ describe("mkdist", () => {
       });
       const results = await loadFile({
         extension: ".vue",
-        getContents: () => [
-          '<script setup lang="ts">',
-          'const props = defineProps<{ foo: string }>();',
-          'const emit = defineEmits<{',
-          '  change: [id: number];',
-          '  submit: [{ foo: string }];',
-          '}>();',
-          "</script>",
-        ].join("\n"),
+        getContents: () =>
+          [
+            '<script setup lang="ts">',
+            "const props = defineProps<{ foo: string }>();",
+            "const emit = defineEmits<{",
+            "  change: [id: number];",
+            "  submit: [{ foo: string }];",
+            "}>();",
+            "</script>",
+          ].join("\n"),
         path: "test.vue",
       });
       expect(results).toMatchObject([{ raw: true }]);

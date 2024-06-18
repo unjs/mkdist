@@ -128,7 +128,9 @@ const scriptLoader = vueBlockLoader({
     const contentsWithoutComments = blockContents.replace(CODE_COMMENT_RE, "");
 
     const macros = ["defineProps", "defineEmits", "defineSlots", "defineModel"];
-    const typeOnlyMacroRE = new RegExp(`(${macros.join("|")})\\s*<[\\S\\s]*>\\s*\\(`);
+    const typeOnlyMacroRE = new RegExp(
+      `(${macros.join("|")})\\s*<[\\S\\s]*>\\s*\\(`,
+    );
     return typeOnlyMacroRE.test(contentsWithoutComments);
   },
   validExtensions: [".js", ".mjs"],
