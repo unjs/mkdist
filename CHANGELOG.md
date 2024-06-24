@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.5.3
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.2...v1.5.3)
+
+### 🩹 Fixes
+
+- **dts:** Use `ts.convertCompilerOptionsFromJson` to normalise ([#224](https://github.com/unjs/mkdist/pull/224))
+
+### 🏡 Chore
+
+- Bump deps ([#225](https://github.com/unjs/mkdist/pull/225))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
 ## v1.5.2
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.5.1...v1.5.2)
