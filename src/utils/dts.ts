@@ -6,25 +6,7 @@ export async function normalizeCompilerOptions(
   _options: TSConfig["compilerOptions"],
 ) {
   const ts = await import("typescript").then((r) => r.default || r);
-  const configMap = {
-    importsNotUsedAsValues: ts.ImportsNotUsedAsValues,
-    moduleResolution: ts.ModuleResolutionKind,
-    moduleDetection: ts.ModuleDetectionKind,
-    newLine: ts.NewLineKind,
-    target: ts.ScriptTarget,
-  };
-  const compilerOptions = { ..._options };
-  for (const key in configMap) {
-    if (key in compilerOptions) {
-      if (configMap[key][compilerOptions[key]]) {
-        compilerOptions[key] = configMap[key][compilerOptions[key]];
-      } else {
-        console.warn("Could not map", key, compilerOptions[key]);
-        delete compilerOptions[key];
-      }
-    }
-  }
-  return compilerOptions;
+  return ts.convertCompilerOptionsFromJson(_options, process.cwd()).options;
 }
 
 export async function getDeclarations(
