@@ -61,11 +61,6 @@ export async function mkdist(
 
   // Read and normalise TypeScript compiler options for emitting declarations
   options.typescript ||= {};
-  if (options.typescript.compilerOptions) {
-    options.typescript.compilerOptions = await normalizeCompilerOptions(
-      options.typescript.compilerOptions,
-    );
-  }
   options.typescript.compilerOptions = defu(
     { noEmit: false },
     options.typescript.compilerOptions,
@@ -79,6 +74,12 @@ export async function mkdist(
       allowNonTsExtensions: true,
     },
   );
+
+  if (options.typescript.compilerOptions) {
+    options.typescript.compilerOptions = await normalizeCompilerOptions(
+      options.typescript.compilerOptions,
+    );
+  }
 
   // Create loader
   const { loadFile } = createLoader(options);
