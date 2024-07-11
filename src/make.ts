@@ -13,7 +13,7 @@ import {
 import { getDeclarations, normalizeCompilerOptions } from "./utils/dts";
 import { getVueDeclarations } from "./utils/vue-dts";
 import { LoaderName } from "./loaders";
-import fg from 'fast-glob';
+import fg from "fast-glob";
 
 export interface MkdistOptions extends LoaderOptions {
   rootDir?: string;
