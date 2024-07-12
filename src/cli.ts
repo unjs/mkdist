@@ -30,6 +30,11 @@ const main = defineCommand({
       description: "Destinition directory relative to project root directory",
       default: "dist",
     },
+    clean: {
+      type: "boolean",
+      description: "Clean the Destinition directory",
+      default: false,
+    },
     pattern: {
       type: "string",
       description: "Pattern includes or excludes files",
@@ -86,6 +91,7 @@ const main = defineCommand({
       rootDir: resolve(args.cwd || process.cwd(), args.dir),
       srcDir: args.src,
       distDir: args.dist,
+      cleanDist: args.clean,
       format: args.format,
       pattern: args.pattern,
       ext: args.ext,
