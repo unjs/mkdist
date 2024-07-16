@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.5.4
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.3...v1.5.4)
+
+### 💅 Refactors
+
+- Replace `fs-extra` with `node:fs/promises` ([#231](https://github.com/unjs/mkdist/pull/231))
+- Replace globby w/ fast-glob ([#230](https://github.com/unjs/mkdist/pull/230))
+
+### 🏡 Chore
+
+- Update deps ([3515d36](https://github.com/unjs/mkdist/commit/3515d36))
+- Remove unused `mri` dependency ([d43b142](https://github.com/unjs/mkdist/commit/d43b142))
+- Remove unused `globby` dependency` ([eb1f556](https://github.com/unjs/mkdist/commit/eb1f556))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Sukka <isukkaw@gmail.com>
+
 ## v1.5.3
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.5.2...v1.5.3)
