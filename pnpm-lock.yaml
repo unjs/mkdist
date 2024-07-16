@@ -26,9 +26,6 @@ importers:
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.2
-      globby:
-        specifier: ^14.0.2
-        version: 14.0.2
       jiti:
         specifier: ^1.21.6
         version: 1.21.6
