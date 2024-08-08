@@ -36,6 +36,32 @@ While there are tools like [tsc](https://www.typescriptlang.org/docs/handbook/co
 npx mkdist [rootDir] [--src=src] [--dist=dist] [--pattern=glob [--pattern=more-glob]] [--format=cjs|esm] [-d|--declaration] [--ext=mjs|js|ts]
 ```
 
+## Vue Single File Components
+
+`<script lang="ts">` is transformed to `<script>` with JS content. The typings are extracted to a `.vue.d.ts` file (if `--declaration` is enabled).
+
+If using `<script setup lang="ts">` and type-only variant of macros, e.g. `defineProps<...>()`, the file will not be transformed.
+
+This will not be transformed:
+```html
+<script setup lang="ts">
+const props = defineProps<{ foo: string }>()
+</script>
+```
+But, this will be transformed:
+```html
+<script setup lang="ts">
+const props = defineProps({
+  foo: {
+    type: String,
+    required: true,
+  },
+})
+</script>
+```
+
+`<style lang="scss">`/`<style lang="sass">` is transformed to `<style>` with CSS content. It also supports the `scoped` attribute.
+
 ## License
 
 [MIT](./LICENSE)
