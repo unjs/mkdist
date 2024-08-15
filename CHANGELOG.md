@@ -2,6 +2,59 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.5.4
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.3...v1.5.4)
+
+### 💅 Refactors
+
+- Replace `fs-extra` with `node:fs/promises` ([#231](https://github.com/unjs/mkdist/pull/231))
+- Replace globby w/ fast-glob ([#230](https://github.com/unjs/mkdist/pull/230))
+
+### 🏡 Chore
+
+- Update deps ([3515d36](https://github.com/unjs/mkdist/commit/3515d36))
+- Remove unused `mri` dependency ([d43b142](https://github.com/unjs/mkdist/commit/d43b142))
+- Remove unused `globby` dependency` ([eb1f556](https://github.com/unjs/mkdist/commit/eb1f556))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Sukka <isukkaw@gmail.com>
+
+## v1.5.3
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.2...v1.5.3)
+
+### 🩹 Fixes
+
+- **dts:** Use `ts.convertCompilerOptionsFromJson` to normalise ([#224](https://github.com/unjs/mkdist/pull/224))
+
+### 🏡 Chore
+
+- Bump deps ([#225](https://github.com/unjs/mkdist/pull/225))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
+## v1.5.2
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.1...v1.5.2)
+
+### 🩹 Fixes
+
+- Upgrade volar implementation ([#222](https://github.com/unjs/mkdist/pull/222))
+
+### 🏡 Chore
+
+- **release:** V1.5.1 ([b4c0a82](https://github.com/unjs/mkdist/commit/b4c0a82))
+- Bump all dependencies ([#221](https://github.com/unjs/mkdist/pull/221))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
 ## v1.5.1
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.5.0...v1.5.1)
