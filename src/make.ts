@@ -13,7 +13,7 @@ import {
 import { getDeclarations, normalizeCompilerOptions } from "./utils/dts";
 import { getVueDeclarations } from "./utils/vue-dts";
 import { LoaderName } from "./loaders";
-import fg from "fast-glob";
+import { glob } from "tinyglobby";
 
 export interface MkdistOptions extends LoaderOptions {
   rootDir?: string;
@@ -44,7 +44,10 @@ export async function mkdist(
   }
 
   // Scan input files
-  const filePaths = await fg(options.pattern || "**", {
+  const patterns = Array.isArray(options.pattern)
+    ? options.pattern
+    : [options.pattern || "**"];
+  const filePaths = await glob(patterns, {
     absolute: false,
     cwd: options.srcDir,
   });
