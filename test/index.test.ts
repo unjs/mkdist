@@ -405,7 +405,7 @@ describe("mkdist with vue-tsc v1", () => {
       const original = await importOriginal<typeof import("pkg-types")>();
       return {
         ...original,
-        getPackageInfo: (path: string) => {
+        readPackageJSON: (path: string) => {
           if (path === "vue-tsc") {
             return original.readPackageJSON("vue-tsc1");
           }
@@ -414,11 +414,7 @@ describe("mkdist with vue-tsc v1", () => {
       };
     });
     vi.doMock("vue-tsc", async () => {
-      const vueTsc1 = await import("vue-tsc1");
-      return {
-        removeEmitGlobalTypes: (content) => content,
-        ...vueTsc1,
-      };
+      return await import("vue-tsc1");
     });
   });
 
@@ -508,7 +504,7 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
       const original = await importOriginal<typeof import("pkg-types")>();
       return {
         ...original,
-        getPackageInfo: (path: string) => {
+        readPackageJSON: async (path: string) => {
           if (path === "vue-tsc") {
             return original.readPackageJSON("vue-tsc2.0");
           }
@@ -517,11 +513,7 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
       };
     });
     vi.doMock("vue-tsc", async () => {
-      const vueTsc1 = await import("vue-tsc2.0");
-      return {
-        removeEmitGlobalTypes: (content) => content,
-        ...vueTsc1,
-      };
+      return await import("vue-tsc2.0");
     });
   });
 
