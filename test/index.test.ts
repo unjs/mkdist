@@ -405,7 +405,7 @@ describe("mkdist with vue-tsc v1", () => {
       const original = await importOriginal<typeof import("pkg-types")>();
       return {
         ...original,
-        getPackageInfo: (path: string) => {
+        readPackageJSON: (path: string) => {
           if (path === "vue-tsc") {
             return original.readPackageJSON("vue-tsc1");
           }
@@ -414,11 +414,106 @@ describe("mkdist with vue-tsc v1", () => {
       };
     });
     vi.doMock("vue-tsc", async () => {
-      const vueTsc1 = await import("vue-tsc1");
+      return await import("vue-tsc1");
+    });
+  });
+
+  afterAll(() => {
+    vi.doUnmock("pkg-types");
+    vi.doUnmock("vue-tsc");
+  });
+
+  it("mkdist (emit types)", async () => {
+    const rootDir = resolve(__dirname, "fixture");
+    const { mkdist } = await import("../src/make");
+
+    const { writtenFiles } = await mkdist({
+      rootDir,
+      declaration: true,
+      addRelativeDeclarationExtensions: true,
+    });
+    expect(writtenFiles.sort()).toEqual(
+      [
+        "dist/README.md",
+        "dist/demo.css",
+        "dist/foo.mjs",
+        "dist/foo.d.ts",
+        "dist/index.mjs",
+        "dist/index.d.ts",
+        "dist/star/index.mjs",
+        "dist/star/index.d.ts",
+        "dist/star/other.mjs",
+        "dist/star/other.d.ts",
+        "dist/types.d.ts",
+        "dist/components/blank.vue",
+        "dist/components/js.vue",
+        "dist/components/js.vue.d.ts",
+        "dist/components/script-setup-ts.vue",
+        "dist/components/ts.vue",
+        "dist/components/ts.vue.d.ts",
+        "dist/components/jsx.mjs",
+        "dist/components/tsx.mjs",
+        "dist/components/jsx.d.ts",
+        "dist/components/tsx.d.ts",
+        "dist/bar/index.mjs",
+        "dist/bar/index.d.ts",
+        "dist/bar/esm.mjs",
+        "dist/bar/esm.d.mts",
+        "dist/ts/test1.mjs",
+        "dist/ts/test2.mjs",
+        "dist/ts/test1.d.mts",
+        "dist/ts/test2.d.cts",
+        "dist/nested.css",
+      ]
+        .map((f) => resolve(rootDir, f))
+        .sort(),
+    );
+
+    expect(await readFile(resolve(rootDir, "dist/foo.d.ts"), "utf8")).toMatch(
+      "manual declaration",
+    );
+
+    expect(await readFile(resolve(rootDir, "dist/star/index.d.ts"), "utf8"))
+      .toMatchInlineSnapshot(`
+        "export * from "./other.js";
+        export type { Other } from "./other.js";
+        "
+      `);
+    expect(
+      await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8"),
+    ).toMatch("declare");
+
+    expect(
+      await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
+    ).toMatchInlineSnapshot(`
+        "declare const _default: import("vue").DefineComponent<{}, {}, {
+            test: string;
+            str: "test";
+        }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{}>>, {}, {}>;
+        export default _default;
+        "
+      `);
+  }, 50_000);
+});
+
+describe("mkdist with vue-tsc ~v2.0.21", () => {
+  beforeAll(() => {
+    vi.resetModules();
+
+    vi.doMock("pkg-types", async (importOriginal) => {
+      const original = await importOriginal<typeof import("pkg-types")>();
       return {
-        removeEmitGlobalTypes: (content) => content,
-        ...vueTsc1,
+        ...original,
+        readPackageJSON: async (path: string) => {
+          if (path === "vue-tsc") {
+            return original.readPackageJSON("vue-tsc2.0");
+          }
+          return original.readPackageJSON(path);
+        },
       };
+    });
+    vi.doMock("vue-tsc", async () => {
+      return await import("vue-tsc2.0");
     });
   });
 

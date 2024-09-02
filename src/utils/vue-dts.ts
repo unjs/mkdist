@@ -3,7 +3,6 @@ import { CompilerOptions, CreateProgramOptions } from "typescript";
 import { readPackageJSON } from "pkg-types";
 import { resolve as resolveModule } from "mlly";
 import { major } from "semver";
-import { normalize } from "pathe";
 import { MkdistOptions } from "../make";
 import { extractDeclarations } from "./dts";
 
@@ -107,7 +106,6 @@ async function emitVueTscV2(
   const ts: typeof import("typescript") = await import("typescript").then(
     (r) => r.default || r,
   );
-  const vueTsc: typeof import("vue-tsc") = await import("vue-tsc");
   const requireFromVueTsc = createRequire(await resolveModule("vue-tsc"));
   const vueLanguageCore: typeof import("@vue/language-core") =
     requireFromVueTsc("@vue/language-core");
@@ -116,7 +114,7 @@ async function emitVueTscV2(
 
   const tsHost = ts.createCompilerHost(compilerOptions);
   tsHost.writeFile = (filename, content) => {
-    vfs.set(filename, vueTsc.removeEmitGlobalTypes(content));
+    vfs.set(filename, content);
   };
   const _tsReadFile = tsHost.readFile.bind(tsHost);
   tsHost.readFile = (filename) => {
@@ -140,21 +138,11 @@ async function emitVueTscV2(
     ts,
     ts.createProgram,
     (ts, options) => {
-      const vueLanguagePlugin = vueLanguageCore.createVueLanguagePlugin(
+      const vueLanguagePlugin = vueLanguageCore.createVueLanguagePlugin<string>(
         ts,
-        (id) => id as string,
-        () => "",
-        (fileName) => {
-          const fileMap = new Set();
-          for (const vueFileName of options.rootNames.map((rootName) =>
-            normalize(rootName),
-          )) {
-            fileMap.add(vueFileName);
-          }
-          return fileMap.has(fileName);
-        },
         options.options,
         vueLanguageCore.resolveVueCompilerOptions({}),
+        (id) => id as string,
       );
       return [vueLanguagePlugin];
     },
