@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.5.5
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.4...v1.5.5)
+
+### 🩹 Fixes
+
+- **dts:** Update for compatibility with `vue-tsc` >=2.1 ([#240](https://github.com/unjs/mkdist/pull/240))
+
+### ❤️ Contributors
+
+- Teages ([@Teages](http://github.com/Teages))
+
 ## v1.5.4
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.5.3...v1.5.4)
