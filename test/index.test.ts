@@ -512,6 +512,19 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         },
       };
     });
+    vi.doMock("mlly", async () => {
+      const original = await import("mlly");
+      const resolve: typeof import("mlly").resolve = (id, options) => {
+        if (id === "vue-tsc") {
+          return original.resolve("vue-tsc2.0", options);
+        }
+        return original.resolve(id, options);
+      };
+      return {
+        ...original,
+        resolve,
+      };
+    });
     vi.doMock("vue-tsc", async () => {
       return await import("vue-tsc2.0");
     });

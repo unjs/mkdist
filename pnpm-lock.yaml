@@ -63,6 +63,9 @@ importers:
       '@vue/language-core':
         specifier: ^2.1.2
         version: 2.1.2(typescript@5.5.4)
+      '@vue/language-core2.0':
+        specifier: npm:@vue/language-core@2.0.29
+        version: '@vue/language-core@2.0.29(typescript@5.5.4)'
       c8:
         specifier: latest
         version: 10.1.2
@@ -103,7 +106,7 @@ importers:
         specifier: npm:vue-tsc@^1.8.27
         version: vue-tsc@1.8.27(typescript@5.5.4)
       vue-tsc2.0:
-        specifier: npm:vue-tsc@~2.0.29
+        specifier: npm:vue-tsc@2.0.29
         version: vue-tsc@2.0.29(typescript@5.5.4)
 
 packages:
