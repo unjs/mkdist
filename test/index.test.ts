@@ -147,13 +147,13 @@ describe("mkdist", () => {
     expect(
       await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
     ).toMatchInlineSnapshot(`
-        "declare const _default: import("vue").DefineComponent<{}, {}, {
-            test: string;
-            str: "test";
-        }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{}>>, {}, {}>;
-        export default _default;
-        "
-      `);
+      "declare const _default: import("vue").DefineComponent<{}, {}, {
+          test: string;
+          str: "test";
+      }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      "
+    `);
   }, 50_000);
 
   describe("mkdist (sass compilation)", () => {
@@ -486,13 +486,13 @@ describe("mkdist with vue-tsc v1", () => {
     expect(
       await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
     ).toMatchInlineSnapshot(`
-        "declare const _default: import("vue").DefineComponent<{}, {}, {
-            test: string;
-            str: "test";
-        }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{}>>, {}, {}>;
-        export default _default;
-        "
-      `);
+      "declare const _default: import("vue").DefineComponent<{}, {}, {
+          test: string;
+          str: "test";
+      }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      "
+    `);
   }, 50_000);
 });
 
@@ -598,12 +598,12 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
     expect(
       await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
     ).toMatchInlineSnapshot(`
-        "declare const _default: import("vue").DefineComponent<{}, {}, {
-            test: string;
-            str: "test";
-        }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{}>>, {}, {}>;
-        export default _default;
-        "
-      `);
+      "declare const _default: import("vue").DefineComponent<{}, {}, {
+          test: string;
+          str: "test";
+      }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      "
+    `);
   }, 50_000);
 });
