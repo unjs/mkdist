@@ -1,5 +1,12 @@
 {
+  // renovate config
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>unjs/renovate-config"
+  ],
+  "ignoreDeps": [
+    "@vue/language-core2.0",
+    "vue-tsc1",
+    "vue-tsc2.0"
   ]
 }
