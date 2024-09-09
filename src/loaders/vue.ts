@@ -51,7 +51,7 @@ const vueBlockLoader =
 
     const BLOCK_RE = new RegExp(
       `<${options.type}((\\s[^>\\s]*)*)>([\\S\\s.]*?)<\\/${options.type}>`,
-      'g',
+      "g",
     );
 
     const matches = [...contents.matchAll(BLOCK_RE)];
@@ -60,8 +60,8 @@ const vueBlockLoader =
     }
 
     // TODO: support merging <script> blocks
-    if (options.type === 'script' && matches.length > 1) {
-      return
+    if (options.type === "script" && matches.length > 1) {
+      return;
     }
 
     const [block, attributes = "", _, blockContents] = matches[0];
