@@ -33,6 +33,7 @@ describe("mkdist", () => {
         "dist/star/other.mjs",
         "dist/components/blank.vue",
         "dist/components/js.vue",
+        "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
         "dist/components/jsx.mjs",
@@ -58,6 +59,7 @@ describe("mkdist", () => {
       [
         "dist/components/blank.vue",
         "dist/components/js.vue",
+        "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
         "dist/components/jsx.mjs",
@@ -77,6 +79,7 @@ describe("mkdist", () => {
     expect(writtenFiles.sort()).toEqual(
       [
         "dist/components/blank.vue",
+        "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
         "dist/components/jsx.mjs",
@@ -110,6 +113,7 @@ describe("mkdist", () => {
         "dist/components/blank.vue",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
+        "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
         "dist/components/ts.vue.d.ts",
@@ -205,6 +209,7 @@ describe("mkdist", () => {
         "dist/star/other.mjs",
         "dist/components/blank.vue",
         "dist/components/js.vue",
+        "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
         "dist/components/jsx.mjs",
@@ -448,6 +453,7 @@ describe("mkdist with vue-tsc v1", () => {
         "dist/components/blank.vue",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
+        "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
         "dist/components/ts.vue.d.ts",
@@ -560,6 +566,7 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         "dist/components/blank.vue",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
+        "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
         "dist/components/ts.vue.d.ts",
@@ -603,6 +610,28 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
           str: "test";
       }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
       export default _default;
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-multi-block.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<template>
+        <div>{{ msg }}</div>
+      </template>
+
+      <script lang="ts">
+      interface MyComponentProps {
+        msg: string;
+      }
+      </script>
+
+      <script setup lang="ts">
+      defineProps<MyComponentProps>();
+      </script>
       "
     `);
   }, 50_000);
