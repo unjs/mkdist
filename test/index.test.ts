@@ -24,6 +24,7 @@ describe("mkdist", () => {
     expect(writtenFiles.sort()).toEqual(
       [
         "dist/README.md",
+        "dist/bar.mjs",
         "dist/demo.css",
         "dist/dir-export.mjs",
         "dist/foo.mjs",
@@ -101,6 +102,8 @@ describe("mkdist", () => {
     expect(writtenFiles.sort()).toEqual(
       [
         "dist/README.md",
+        "dist/bar.d.ts",
+        "dist/bar.mjs",
         "dist/demo.css",
         "dist/dir-export.d.ts",
         "dist/dir-export.mjs",
@@ -150,7 +153,8 @@ describe("mkdist", () => {
       `);
     expect(await readFile(resolve(rootDir, "dist/dir-export.d.ts"), "utf8"))
       .toMatchInlineSnapshot(`
-        "export * from "./star/index.js";
+        "export { default as bar } from "./bar.js";
+        export * from "./star/index.js";
         "
       `);
     expect(
@@ -207,6 +211,7 @@ describe("mkdist", () => {
     expect(writtenFiles.sort()).toEqual(
       [
         "dist/README.md",
+        "dist/bar.mjs",
         "dist/demo.scss",
         "dist/_base.scss",
         "dist/dir-export.mjs",
@@ -449,6 +454,8 @@ describe("mkdist with vue-tsc v1", () => {
     expect(writtenFiles.sort()).toEqual(
       [
         "dist/README.md",
+        "dist/bar.d.ts",
+        "dist/bar.mjs",
         "dist/demo.css",
         "dist/dir-export.d.ts",
         "dist/dir-export.mjs",
@@ -564,6 +571,8 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
     expect(writtenFiles.sort()).toEqual(
       [
         "dist/README.md",
+        "dist/bar.d.ts",
+        "dist/bar.mjs",
         "dist/demo.css",
         "dist/dir-export.d.ts",
         "dist/dir-export.mjs",
