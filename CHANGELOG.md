@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.5.9
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.8...v1.5.9)
+
+### 🩹 Fixes
+
+- **dts:** Handle dir + file of same name ([#245](https://github.com/unjs/mkdist/pull/245))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
 ## v1.5.8
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.5.7...v1.5.8)
