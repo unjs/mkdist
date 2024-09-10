@@ -1,6 +1,6 @@
 import { statSync } from "node:fs";
 import { findStaticImports, findExports, findTypeExports } from "mlly";
-import { join, resolve } from "pathe";
+import { resolve } from "pathe";
 import type { TSConfig } from "pkg-types";
 import type { MkdistOptions } from "../make";
 
@@ -78,7 +78,7 @@ export function extractDeclarations(
           spec.code,
           spec.code.replace(
             spec.specifier,
-            isDir ? join(spec.specifier, "index" + ext) : spec.specifier + ext,
+            (isDir ? spec.specifier + "/index" : spec.specifier) + ext,
           ),
         );
       }

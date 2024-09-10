@@ -25,6 +25,7 @@ describe("mkdist", () => {
       [
         "dist/README.md",
         "dist/demo.css",
+        "dist/dir-export.mjs",
         "dist/foo.mjs",
         "dist/foo.d.ts", // manual
         "dist/index.mjs",
@@ -101,6 +102,8 @@ describe("mkdist", () => {
       [
         "dist/README.md",
         "dist/demo.css",
+        "dist/dir-export.d.ts",
+        "dist/dir-export.mjs",
         "dist/foo.mjs",
         "dist/foo.d.ts",
         "dist/index.mjs",
@@ -143,6 +146,11 @@ describe("mkdist", () => {
       .toMatchInlineSnapshot(`
         "export * from "./other.js";
         export type { Other } from "./other.js";
+        "
+      `);
+    expect(await readFile(resolve(rootDir, "dist/dir-export.d.ts"), "utf8"))
+      .toMatchInlineSnapshot(`
+        "export * from "./star/index.js";
         "
       `);
     expect(
@@ -201,6 +209,7 @@ describe("mkdist", () => {
         "dist/README.md",
         "dist/demo.scss",
         "dist/_base.scss",
+        "dist/dir-export.mjs",
         "dist/foo.mjs",
         "dist/foo.d.ts", // manual
         "dist/index.mjs",
@@ -441,6 +450,8 @@ describe("mkdist with vue-tsc v1", () => {
       [
         "dist/README.md",
         "dist/demo.css",
+        "dist/dir-export.d.ts",
+        "dist/dir-export.mjs",
         "dist/foo.mjs",
         "dist/foo.d.ts",
         "dist/index.mjs",
@@ -554,6 +565,8 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
       [
         "dist/README.md",
         "dist/demo.css",
+        "dist/dir-export.d.ts",
+        "dist/dir-export.mjs",
         "dist/foo.mjs",
         "dist/foo.d.ts",
         "dist/index.mjs",
