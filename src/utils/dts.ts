@@ -1,4 +1,6 @@
+import { statSync } from "node:fs";
 import { findStaticImports, findExports, findTypeExports } from "mlly";
+import { join, resolve } from "pathe";
 import type { TSConfig } from "pkg-types";
 import type { MkdistOptions } from "../make";
 
@@ -63,10 +65,21 @@ export function extractDeclarations(
         if (!spec.specifier || !/^\.{1,2}[/\\]/.test(spec.specifier)) {
           continue;
         }
+        let isDir = false;
+        try {
+          isDir = statSync(
+            resolve(filename, "..", spec.specifier),
+          ).isDirectory();
+        } catch {
+          // file does not exist
+        }
         // add file extension for relative paths (`.js` will match the `.d.ts` extension we emit)
         contents = contents.replace(
           spec.code,
-          spec.code.replace(spec.specifier, spec.specifier + ext),
+          spec.code.replace(
+            spec.specifier,
+            isDir ? join(spec.specifier, "index" + ext) : spec.specifier + ext,
+          ),
         );
       }
     }
