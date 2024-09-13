@@ -1,8 +1,7 @@
 import { createRequire } from "node:module";
 import { CompilerOptions, CreateProgramOptions } from "typescript";
 import { readPackageJSON } from "pkg-types";
-import { resolve as resolveModule } from "mlly";
-import { major } from "semver";
+import { satisfies } from "semver";
 import { normalize } from "pathe";
 import { MkdistOptions } from "../make";
 import { extractDeclarations } from "./dts";
@@ -28,15 +27,18 @@ export async function getVueDeclarations(
     return;
   }
 
-  const majorVersion = major(pkgInfo.version);
-  switch (majorVersion) {
-    case 1: {
+  const { version } = pkgInfo;
+  switch (true) {
+    case satisfies(version, "^1.8.27"): {
       await emitVueTscV1(vfs, opts.typescript.compilerOptions, srcFiles);
       break;
     }
-    case 2: {
+    case satisfies(version, "~v2.0.0"): {
       await emitVueTscV2(vfs, opts.typescript.compilerOptions, srcFiles);
       break;
+    }
+    default: {
+      await emitVueTscLatest(vfs, opts.typescript.compilerOptions, srcFiles);
     }
   }
 
@@ -104,10 +106,78 @@ async function emitVueTscV2(
   compilerOptions: CompilerOptions,
   srcFiles: string[],
 ) {
+  const { resolve: resolveModule } = await import("mlly");
   const ts: typeof import("typescript") = await import("typescript").then(
     (r) => r.default || r,
   );
-  const vueTsc: typeof import("vue-tsc") = await import("vue-tsc");
+  const vueTsc = (await import(
+    "vue-tsc"
+  )) as unknown as typeof import("vue-tsc2.0");
+  const requireFromVueTsc = createRequire(await resolveModule("vue-tsc"));
+  const vueLanguageCore: typeof import("@vue/language-core2.0") =
+    requireFromVueTsc("@vue/language-core");
+  const volarTs: typeof import("@volar/typescript") =
+    requireFromVueTsc("@volar/typescript");
+
+  const tsHost = ts.createCompilerHost(compilerOptions);
+  tsHost.writeFile = (filename, content) => {
+    vfs.set(filename, vueTsc.removeEmitGlobalTypes(content));
+  };
+  const _tsReadFile = tsHost.readFile.bind(tsHost);
+  tsHost.readFile = (filename) => {
+    if (vfs.has(filename)) {
+      return vfs.get(filename);
+    }
+    return _tsReadFile(filename);
+  };
+  const _tsFileExist = tsHost.fileExists.bind(tsHost);
+  tsHost.fileExists = (filename) => {
+    return vfs.has(filename) || _tsFileExist(filename);
+  };
+  const programOptions: CreateProgramOptions = {
+    rootNames: srcFiles,
+    options: compilerOptions,
+    host: tsHost,
+  };
+  const createProgram = volarTs.proxyCreateProgram(
+    ts,
+    ts.createProgram,
+    (ts, options) => {
+      const vueLanguagePlugin = vueLanguageCore.createVueLanguagePlugin<string>(
+        ts,
+        (id) => id,
+        () => "",
+        (fileName) => {
+          const fileMap = new Set();
+          for (const vueFileName of options.rootNames.map((rootName) =>
+            normalize(rootName),
+          )) {
+            fileMap.add(vueFileName);
+          }
+          return fileMap.has(fileName);
+        },
+        options.options,
+        vueLanguageCore.resolveVueCompilerOptions({}),
+      );
+      return [vueLanguagePlugin];
+    },
+  );
+  const program = createProgram(programOptions);
+  const result = program.emit();
+  if (result.diagnostics?.length) {
+    console.error(ts.formatDiagnostics(result.diagnostics, tsHost));
+  }
+}
+
+async function emitVueTscLatest(
+  vfs: Map<string, string>,
+  compilerOptions: CompilerOptions,
+  srcFiles: string[],
+) {
+  const { resolve: resolveModule } = await import("mlly");
+  const ts: typeof import("typescript") = await import("typescript").then(
+    (r) => r.default || r,
+  );
   const requireFromVueTsc = createRequire(await resolveModule("vue-tsc"));
   const vueLanguageCore: typeof import("@vue/language-core") =
     requireFromVueTsc("@vue/language-core");
@@ -116,7 +186,7 @@ async function emitVueTscV2(
 
   const tsHost = ts.createCompilerHost(compilerOptions);
   tsHost.writeFile = (filename, content) => {
-    vfs.set(filename, vueTsc.removeEmitGlobalTypes(content));
+    vfs.set(filename, content);
   };
   const _tsReadFile = tsHost.readFile.bind(tsHost);
   tsHost.readFile = (filename) => {
@@ -140,21 +210,11 @@ async function emitVueTscV2(
     ts,
     ts.createProgram,
     (ts, options) => {
-      const vueLanguagePlugin = vueLanguageCore.createVueLanguagePlugin(
+      const vueLanguagePlugin = vueLanguageCore.createVueLanguagePlugin<string>(
         ts,
-        (id) => id as string,
-        () => "",
-        (fileName) => {
-          const fileMap = new Set();
-          for (const vueFileName of options.rootNames.map((rootName) =>
-            normalize(rootName),
-          )) {
-            fileMap.add(vueFileName);
-          }
-          return fileMap.has(fileName);
-        },
         options.options,
         vueLanguageCore.resolveVueCompilerOptions({}),
+        (id) => id as string,
       );
       return [vueLanguagePlugin];
     },

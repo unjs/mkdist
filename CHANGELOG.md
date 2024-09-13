@@ -2,6 +2,66 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.5.9
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.8...v1.5.9)
+
+### 🩹 Fixes
+
+- **dts:** Handle dir + file of same name ([#245](https://github.com/unjs/mkdist/pull/245))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
+## v1.5.8
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.7...v1.5.8)
+
+### 🩹 Fixes
+
+- **dts:** Resolve directory exports in `.dts` files ([#244](https://github.com/unjs/mkdist/pull/244))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
+## v1.5.7
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.6...v1.5.7)
+
+### 🩹 Fixes
+
+- **vue:** Skip transpilation with multiple script blocks ([#243](https://github.com/unjs/mkdist/pull/243))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
+## v1.5.6
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.5...v1.5.6)
+
+### 🩹 Fixes
+
+- **dts:** Compatible with `vue-tsc` 2.0.x ([#242](https://github.com/unjs/mkdist/pull/242))
+
+### ❤️ Contributors
+
+- Teages ([@Teages](http://github.com/Teages))
+
+## v1.5.5
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.4...v1.5.5)
+
+### 🩹 Fixes
+
+- **dts:** Update for compatibility with `vue-tsc` >=2.1 ([#240](https://github.com/unjs/mkdist/pull/240))
+
+### ❤️ Contributors
+
+- Teages ([@Teages](http://github.com/Teages))
+
 ## v1.5.4
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.5.3...v1.5.4)
