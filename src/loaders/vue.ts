@@ -135,6 +135,10 @@ const scriptLoader = vueBlockLoader({
       return false;
     }
 
+    if (!blockContents.includes("<")) {
+      return false;
+    }
+
     // These macros have a type-only variant that we want to skip
     const targetMacros = new Set([
       "defineProps",
@@ -142,6 +146,14 @@ const scriptLoader = vueBlockLoader({
       "defineSlots",
       "defineModel",
     ]);
+    for (const macro of targetMacros) {
+      if (!blockContents.includes(macro)) {
+        targetMacros.delete(macro);
+      }
+    }
+    if (targetMacros.size === 0) {
+      return false;
+    }
 
     let seenPotentialTypeOnly = false;
     for (const token of jsTokens(blockContents)) {
