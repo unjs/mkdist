@@ -1,3 +1,4 @@
+import jsTokens from "js-tokens";
 import type { Loader, LoaderResult } from "../loader";
 
 export const vueLoader: Loader = async (input, context) => {
@@ -134,14 +135,44 @@ const scriptLoader = vueBlockLoader({
       return false;
     }
 
-    const CODE_COMMENT_RE = /\/\/.*\n|\/\*[\S\s]*?\*\//g;
-    const contentsWithoutComments = blockContents.replace(CODE_COMMENT_RE, "");
+    // These macros have a type-only variant that we want to skip
+    const targetMacros = new Set([
+      "defineProps",
+      "defineEmits",
+      "defineSlots",
+      "defineModel",
+    ]);
 
-    const macros = ["defineProps", "defineEmits", "defineSlots", "defineModel"];
-    const typeOnlyMacroRE = new RegExp(
-      `(${macros.join("|")})\\s*<[\\S\\s]*>\\s*\\(`,
-    );
-    return typeOnlyMacroRE.test(contentsWithoutComments);
+    let seenPotentialTypeOnly = false;
+    for (const token of jsTokens(blockContents)) {
+      if (token.type === "IdentifierName" && targetMacros.has(token.value)) {
+        seenPotentialTypeOnly = true;
+        continue;
+      }
+
+      if (!seenPotentialTypeOnly) {
+        continue;
+      }
+
+      // There might be spaces, newlines, comments, etc. between the macro name
+      // and the opening angle bracket (<). So, we need to keep looking.
+
+      // defineProps<...>(), we found it!
+      if (token.type === "Punctuator" && token.value === "<") {
+        return true;
+      }
+
+      if (
+        // defineProps(...) or something alike, this is not it
+        token.type === "Punctuator" ||
+        // We somehow found another identifier, this can't be it
+        token.type === "IdentifierName"
+      ) {
+        seenPotentialTypeOnly = false;
+      }
+    }
+
+    return false;
   },
   validExtensions: [".js", ".mjs"],
 });
