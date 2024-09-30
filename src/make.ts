@@ -44,10 +44,7 @@ export async function mkdist(
   }
 
   // Scan input files
-  const patterns = Array.isArray(options.pattern)
-    ? options.pattern
-    : [options.pattern || "**"];
-  const filePaths = await glob(patterns, {
+  const filePaths = await glob(options.pattern || "**", {
     absolute: false,
     cwd: options.srcDir,
   });

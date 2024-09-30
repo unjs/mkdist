@@ -41,7 +41,7 @@
     "postcss": "^8.4.41",
     "postcss-nested": "^6.2.0",
     "semver": "^7.6.3",
-    "tinyglobby": "^0.2.2"
+    "tinyglobby": "^0.2.7"
   },
   "devDependencies": {
     "@types/node": "^20.16.1",

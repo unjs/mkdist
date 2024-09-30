@@ -45,8 +45,8 @@ importers:
         specifier: ^7.6.3
         version: 7.6.3
       tinyglobby:
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.2.7
+        version: 0.2.7
     devDependencies:
       '@types/node':
         specifier: ^20.16.1
@@ -1512,8 +1512,8 @@ packages:
   fastq@1.17.1:
     resolution: {integrity: sha512-sRVD3lWVIXWg6By68ZN7vho9a1pQcN/WBFaAAsDDFzlJjvoGx0P8z7V1t72grFJfJhu3YPZBuu25f7Kaw2jN1w==}
 
-  fdir@6.2.0:
-    resolution: {integrity: sha512-9XaWcDl0riOX5j2kYfy0kKdg7skw3IY6kA4LFT8Tk2yF9UdrADUy8D6AJuBLtf7ISm/MksumwAHE3WVbMRyCLw==}
+  fdir@6.4.0:
+    resolution: {integrity: sha512-3oB133prH1o4j/L5lLW7uOCF1PlD+/It2L0eL/iAqWMB91RBbqTewABqxhj0ibBd90EEmWZq7ntIWzVaWcXTGQ==}
     peerDependencies:
       picomatch: ^3 || ^4
     peerDependenciesMeta:
@@ -2566,8 +2566,8 @@ packages:
   tinybench@2.8.0:
     resolution: {integrity: sha512-1/eK7zUnIklz4JUUlL+658n58XO2hHLQfSk1Zf2LKieUjxidN16eKFEoDEfjHc3ohofSSqK3X5yO6VGb6iW8Lw==}
 
-  tinyglobby@0.2.2:
-    resolution: {integrity: sha512-mZ2sDMaySvi1PkTp4lTo1In2zjU+cY8OvZsfwrDrx3YGRbXPX1/cbPwCR9zkm3O/Fz9Jo0F1HNgIQ1b8BepqyQ==}
+  tinyglobby@0.2.7:
+    resolution: {integrity: sha512-qFWYeNxBQxrOTRHvGjlRdBamy8JFqu6c0bwRru9leE+q8J72tLtlT0L3v+2T7fbLXN7FGzDNBhXkWiJqHUHD9g==}
     engines: {node: '>=12.0.0'}
 
   tinypool@1.0.0:
@@ -4282,7 +4282,7 @@ snapshots:
     dependencies:
       reusify: 1.0.4
 
-  fdir@6.2.0(picomatch@4.0.2):
+  fdir@6.4.0(picomatch@4.0.2):
     optionalDependencies:
       picomatch: 4.0.2
 
@@ -5273,9 +5273,9 @@ snapshots:
 
   tinybench@2.8.0: {}
 
-  tinyglobby@0.2.2:
+  tinyglobby@0.2.7:
     dependencies:
-      fdir: 6.2.0(picomatch@4.0.2)
+      fdir: 6.4.0(picomatch@4.0.2)
       picomatch: 4.0.2
 
   tinypool@1.0.0: {}
