@@ -45,7 +45,9 @@ export async function getDeclarations(
   return extractDeclarations(vfs, inputFiles, opts);
 }
 
-const EXT_RE = /\.(m|c)?(ts|js)$/;
+const JS_EXT_RE = /\.(m|c)?(ts|js)$/;
+const JSX_EXT_RE = /\.(m|c)?(ts|js)x?$/;
+const RELATIVE_RE = /^\.{1,2}[/\\]/;
 
 export function extractDeclarations(
   vfs: Map<string, string>,
@@ -55,39 +57,34 @@ export function extractDeclarations(
   const output: Record<string, string> = {};
 
   for (const filename of inputFiles) {
-    const dtsFilename = filename.replace(/\.(m|c)?(ts|js)x?$/, ".d.$1ts");
+    const dtsFilename = filename.replace(JSX_EXT_RE, ".d.$1ts");
     let contents = vfs.get(dtsFilename) || "";
     if (opts?.addRelativeDeclarationExtensions) {
-      const ext = filename.match(EXT_RE)?.[0].replace(/ts$/, "js") || ".js";
+      const ext = filename.match(JS_EXT_RE)?.[0].replace(/ts$/, "js") || ".js";
       const imports = findStaticImports(contents);
       const exports = findExports(contents);
       const typeExports = findTypeExports(contents);
       for (const spec of [...exports, ...typeExports, ...imports]) {
-        if (!spec.specifier || !/^\.{1,2}[/\\]/.test(spec.specifier)) {
+        if (!spec.specifier || !RELATIVE_RE.test(spec.specifier)) {
           continue;
         }
-        let isDir = false;
+        const srcPath = resolve(filename, "..", spec.specifier);
+        const srcDtsPath = srcPath + ext.replace(JS_EXT_RE, ".d.$1ts");
+        let specifier = spec.specifier;
         try {
-          const declaration = resolve(
-            filename,
-            "..",
-            spec.specifier + ext.replace(EXT_RE, ".d.$1ts"),
-          );
-          if (!vfs.get(declaration)) {
-            isDir = statSync(
-              resolve(filename, "..", spec.specifier),
-            ).isDirectory();
+          if (!vfs.get(srcDtsPath)) {
+            const stat = statSync(srcPath);
+            if (stat.isDirectory()) {
+              specifier += "/index";
+            }
           }
         } catch {
-          // file does not exist
+          // src file does not exists
         }
         // add file extension for relative paths (`.js` will match the `.d.ts` extension we emit)
         contents = contents.replace(
           spec.code,
-          spec.code.replace(
-            spec.specifier,
-            (isDir ? spec.specifier + "/index" : spec.specifier) + ext,
-          ),
+          spec.code.replace(spec.specifier, specifier + ext),
         );
       }
     }
