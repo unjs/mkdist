@@ -1,6 +1,6 @@
 {
   "name": "mkdist",
-  "version": "1.5.1",
+  "version": "1.5.9",
   "description": "Lightweight file-to-file transformer",
   "repository": "unjs/mkdist",
   "license": "MIT",
@@ -22,55 +22,53 @@
   "scripts": {
     "build": "unbuild",
     "dev": "pnpm mkdist test/fixture -d",
-    "lint": "eslint --ext .ts,.mjs,.cjs . && prettier --check src test",
-    "lint:fix": "eslint --fix --ext .ts,.mjs,.cjs . && prettier --write -c src test",
+    "lint": "eslint . && prettier --check src test",
+    "lint:fix": "eslint --fix . && prettier --write -c src test",
     "mkdist": "jiti src/cli",
     "release": "pnpm test && pnpm build && changelogen --release && npm publish && git push --follow-tags",
     "test": "pnpm lint && vitest run --coverage"
   },
   "dependencies": {
-    "autoprefixer": "^10.4.19",
+    "autoprefixer": "^10.4.20",
     "citty": "^0.1.6",
-    "cssnano": "^7.0.0",
+    "cssnano": "^7.0.6",
     "defu": "^6.1.4",
-    "esbuild": "^0.20.2",
-    "fs-extra": "^11.2.0",
-    "globby": "^14.0.1",
-    "jiti": "^1.21.0",
-    "mlly": "^1.6.1",
-    "mri": "^1.2.0",
+    "esbuild": "^0.23.1",
+    "fast-glob": "^3.3.2",
+    "jiti": "^1.21.6",
+    "mlly": "^1.7.1",
     "pathe": "^1.1.2",
-    "pkg-types": "^1.1.0",
-    "postcss": "^8.4.38",
-    "postcss-nested": "^6.0.1",
-    "semver": "^7.6.0"
+    "pkg-types": "^1.2.0",
+    "postcss": "^8.4.45",
+    "postcss-nested": "^6.2.0",
+    "semver": "^7.6.3"
   },
   "devDependencies": {
-    "@types/fs-extra": "^11.0.4",
-    "@types/mri": "^1.2.0",
-    "@types/node": "^20.12.7",
+    "@types/node": "^20.16.5",
     "@types/semver": "^7.5.8",
-    "@vitest/coverage-v8": "^1.5.2",
-    "@volar/typescript": "^2.2.0-alpha.10",
-    "@vue/language-core": "^2.0.14",
+    "@vitest/coverage-v8": "^2.0.5",
+    "@volar/typescript": "^2.4.2",
+    "@vue/language-core": "^2.1.6",
+    "@vue/language-core2.0": "npm:@vue/language-core@2.0.29",
     "c8": "latest",
     "changelogen": "^0.5.5",
-    "eslint": "^8.57.0",
-    "eslint-config-unjs": "^0.2.1",
-    "modern-normalize": "^2.0.0",
-    "prettier": "^3.2.5",
-    "sass": "^1.75.0",
-    "typescript": "^5.4.5",
+    "eslint": "^9.9.1",
+    "eslint-config-unjs": "^0.3.2",
+    "modern-normalize": "^3.0.1",
+    "prettier": "^3.3.3",
+    "sass": "^1.78.0",
+    "typescript": "^5.5.4",
     "unbuild": "^2.0.0",
-    "vitest": "^1.5.2",
-    "vue": "^3.4.25",
-    "vue-tsc": "^2.0.14",
-    "vue-tsc1": "npm:vue-tsc@^1.8.27"
+    "vitest": "^2.0.5",
+    "vue": "^3.5.3",
+    "vue-tsc": "^2.1.6",
+    "vue-tsc1": "npm:vue-tsc@^1.8.27",
+    "vue-tsc2.0": "npm:vue-tsc@2.0.29"
   },
   "peerDependencies": {
-    "sass": "^1.75.0",
-    "typescript": ">=5.4.5",
-    "vue-tsc": "^1.8.27 || ^2.0.14"
+    "sass": "^1.78.0",
+    "typescript": ">=5.5.4",
+    "vue-tsc": "^1.8.27 || ^2.0.21"
   },
   "peerDependenciesMeta": {
     "sass": {
@@ -83,5 +81,5 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@9.0.6"
+  "packageManager": "pnpm@9.9.0"
 }

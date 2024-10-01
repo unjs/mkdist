@@ -51,10 +51,20 @@ const vueBlockLoader =
 
     const BLOCK_RE = new RegExp(
       `<${options.type}((\\s[^>\\s]*)*)>([\\S\\s.]*?)<\\/${options.type}>`,
+      "g",
     );
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [block, attributes = "", _, blockContents] =
-      contents.match(BLOCK_RE) || [];
+
+    const matches = [...contents.matchAll(BLOCK_RE)];
+    if (matches.length === 0) {
+      return;
+    }
+
+    // TODO: support merging <script> blocks
+    if (options.type === "script" && matches.length > 1) {
+      return;
+    }
+
+    const [block, attributes = "", _, blockContents] = matches[0];
 
     if (!block || !blockContents) {
       return;

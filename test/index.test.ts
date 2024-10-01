@@ -24,7 +24,9 @@ describe("mkdist", () => {
     expect(writtenFiles.sort()).toEqual(
       [
         "dist/README.md",
+        "dist/bar.mjs",
         "dist/demo.css",
+        "dist/dir-export.mjs",
         "dist/foo.mjs",
         "dist/foo.d.ts", // manual
         "dist/index.mjs",
@@ -33,6 +35,7 @@ describe("mkdist", () => {
         "dist/star/other.mjs",
         "dist/components/blank.vue",
         "dist/components/js.vue",
+        "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
         "dist/components/jsx.mjs",
@@ -58,6 +61,7 @@ describe("mkdist", () => {
       [
         "dist/components/blank.vue",
         "dist/components/js.vue",
+        "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
         "dist/components/jsx.mjs",
@@ -77,6 +81,7 @@ describe("mkdist", () => {
     expect(writtenFiles.sort()).toEqual(
       [
         "dist/components/blank.vue",
+        "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
         "dist/components/jsx.mjs",
@@ -97,7 +102,11 @@ describe("mkdist", () => {
     expect(writtenFiles.sort()).toEqual(
       [
         "dist/README.md",
+        "dist/bar.d.ts",
+        "dist/bar.mjs",
         "dist/demo.css",
+        "dist/dir-export.d.ts",
+        "dist/dir-export.mjs",
         "dist/foo.mjs",
         "dist/foo.d.ts",
         "dist/index.mjs",
@@ -110,6 +119,7 @@ describe("mkdist", () => {
         "dist/components/blank.vue",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
+        "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
         "dist/components/ts.vue.d.ts",
@@ -141,19 +151,25 @@ describe("mkdist", () => {
         export type { Other } from "./other.js";
         "
       `);
+    expect(await readFile(resolve(rootDir, "dist/dir-export.d.ts"), "utf8"))
+      .toMatchInlineSnapshot(`
+        "export { default as bar } from "./bar.js";
+        export * from "./star/index.js";
+        "
+      `);
     expect(
       await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8"),
     ).toMatch("declare");
     expect(
       await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
     ).toMatchInlineSnapshot(`
-        "declare const _default: import("vue").DefineComponent<{}, {}, {
-            test: string;
-            str: "test";
-        }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{}>>, {}, {}>;
-        export default _default;
-        "
-      `);
+      "declare const _default: import("vue").DefineComponent<{}, {}, {
+          test: string;
+          str: "test";
+      }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      "
+    `);
   }, 50_000);
 
   describe("mkdist (declarationExt: infer)", () => {
@@ -379,8 +395,10 @@ describe("mkdist", () => {
     expect(writtenFiles.sort()).toEqual(
       [
         "dist/README.md",
+        "dist/bar.mjs",
         "dist/demo.scss",
         "dist/_base.scss",
+        "dist/dir-export.mjs",
         "dist/foo.mjs",
         "dist/foo.d.ts", // manual
         "dist/index.mjs",
@@ -389,6 +407,7 @@ describe("mkdist", () => {
         "dist/star/other.mjs",
         "dist/components/blank.vue",
         "dist/components/js.vue",
+        "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
         "dist/components/jsx.mjs",
@@ -589,7 +608,7 @@ describe("mkdist with vue-tsc v1", () => {
       const original = await importOriginal<typeof import("pkg-types")>();
       return {
         ...original,
-        getPackageInfo: (path: string) => {
+        readPackageJSON: (path: string) => {
           if (path === "vue-tsc") {
             return original.readPackageJSON("vue-tsc1");
           }
@@ -598,11 +617,7 @@ describe("mkdist with vue-tsc v1", () => {
       };
     });
     vi.doMock("vue-tsc", async () => {
-      const vueTsc1 = await import("vue-tsc1");
-      return {
-        removeEmitGlobalTypes: (content) => content,
-        ...vueTsc1,
-      };
+      return await import("vue-tsc1");
     });
   });
 
@@ -623,7 +638,11 @@ describe("mkdist with vue-tsc v1", () => {
     expect(writtenFiles.sort()).toEqual(
       [
         "dist/README.md",
+        "dist/bar.d.ts",
+        "dist/bar.mjs",
         "dist/demo.css",
+        "dist/dir-export.d.ts",
+        "dist/dir-export.mjs",
         "dist/foo.mjs",
         "dist/foo.d.ts",
         "dist/index.mjs",
@@ -636,6 +655,7 @@ describe("mkdist with vue-tsc v1", () => {
         "dist/components/blank.vue",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
+        "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
         "dist/components/ts.vue.d.ts",
@@ -674,12 +694,151 @@ describe("mkdist with vue-tsc v1", () => {
     expect(
       await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
     ).toMatchInlineSnapshot(`
-        "declare const _default: import("vue").DefineComponent<{}, {}, {
-            test: string;
-            str: "test";
-        }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{}>>, {}, {}>;
-        export default _default;
+      "declare const _default: import("vue").DefineComponent<{}, {}, {
+          test: string;
+          str: "test";
+      }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      "
+    `);
+  }, 50_000);
+});
+
+describe("mkdist with vue-tsc ~v2.0.21", () => {
+  beforeAll(() => {
+    vi.resetModules();
+
+    vi.doMock("pkg-types", async (importOriginal) => {
+      const original = await importOriginal<typeof import("pkg-types")>();
+      return {
+        ...original,
+        readPackageJSON: async (path: string) => {
+          if (path === "vue-tsc") {
+            return original.readPackageJSON("vue-tsc2.0");
+          }
+          return original.readPackageJSON(path);
+        },
+      };
+    });
+    vi.doMock("mlly", async () => {
+      const original = await import("mlly");
+      const resolve: typeof import("mlly").resolve = (id, options) => {
+        if (id === "vue-tsc") {
+          return original.resolve("vue-tsc2.0", options);
+        }
+        return original.resolve(id, options);
+      };
+      return {
+        ...original,
+        resolve,
+      };
+    });
+    vi.doMock("vue-tsc", async () => {
+      return await import("vue-tsc2.0");
+    });
+  });
+
+  afterAll(() => {
+    vi.doUnmock("pkg-types");
+    vi.doUnmock("vue-tsc");
+  });
+
+  it("mkdist (emit types)", async () => {
+    const rootDir = resolve(__dirname, "fixture");
+    const { mkdist } = await import("../src/make");
+
+    const { writtenFiles } = await mkdist({
+      rootDir,
+      declaration: true,
+      addRelativeDeclarationExtensions: true,
+    });
+    expect(writtenFiles.sort()).toEqual(
+      [
+        "dist/README.md",
+        "dist/bar.d.ts",
+        "dist/bar.mjs",
+        "dist/demo.css",
+        "dist/dir-export.d.ts",
+        "dist/dir-export.mjs",
+        "dist/foo.mjs",
+        "dist/foo.d.ts",
+        "dist/index.mjs",
+        "dist/index.d.ts",
+        "dist/star/index.mjs",
+        "dist/star/index.d.ts",
+        "dist/star/other.mjs",
+        "dist/star/other.d.ts",
+        "dist/types.d.ts",
+        "dist/components/blank.vue",
+        "dist/components/js.vue",
+        "dist/components/js.vue.d.ts",
+        "dist/components/script-multi-block.vue",
+        "dist/components/script-setup-ts.vue",
+        "dist/components/ts.vue",
+        "dist/components/ts.vue.d.ts",
+        "dist/components/jsx.mjs",
+        "dist/components/tsx.mjs",
+        "dist/components/jsx.d.ts",
+        "dist/components/tsx.d.ts",
+        "dist/bar/index.mjs",
+        "dist/bar/index.d.ts",
+        "dist/bar/esm.mjs",
+        "dist/bar/esm.d.mts",
+        "dist/ts/test1.mjs",
+        "dist/ts/test2.mjs",
+        "dist/ts/test1.d.mts",
+        "dist/ts/test2.d.cts",
+        "dist/nested.css",
+      ]
+        .map((f) => resolve(rootDir, f))
+        .sort(),
+    );
+
+    expect(await readFile(resolve(rootDir, "dist/foo.d.ts"), "utf8")).toMatch(
+      "manual declaration",
+    );
+
+    expect(await readFile(resolve(rootDir, "dist/star/index.d.ts"), "utf8"))
+      .toMatchInlineSnapshot(`
+        "export * from "./other.js";
+        export type { Other } from "./other.js";
         "
       `);
+    expect(
+      await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8"),
+    ).toMatch("declare");
+
+    expect(
+      await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
+    ).toMatchInlineSnapshot(`
+      "declare const _default: import("vue").DefineComponent<{}, {}, {
+          test: string;
+          str: "test";
+      }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-multi-block.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<template>
+        <div>{{ msg }}</div>
+      </template>
+
+      <script lang="ts">
+      interface MyComponentProps {
+        msg: string;
+      }
+      </script>
+
+      <script setup lang="ts">
+      defineProps<MyComponentProps>();
+      </script>
+      "
+    `);
   }, 50_000);
 });
