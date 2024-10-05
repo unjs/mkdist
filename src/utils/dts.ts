@@ -1,4 +1,6 @@
+import { statSync } from "node:fs";
 import { findStaticImports, findExports, findTypeExports } from "mlly";
+import { resolve } from "pathe";
 import type { TSConfig } from "pkg-types";
 import type { MkdistOptions } from "../make";
 
@@ -43,6 +45,10 @@ export async function getDeclarations(
   return extractDeclarations(vfs, inputFiles, opts);
 }
 
+const JS_EXT_RE = /\.(m|c)?(ts|js)$/;
+const JSX_EXT_RE = /\.(m|c)?(ts|js)x?$/;
+const RELATIVE_RE = /^\.{1,2}[/\\]/;
+
 export function extractDeclarations(
   vfs: Map<string, string>,
   inputFiles: string[],
@@ -51,22 +57,34 @@ export function extractDeclarations(
   const output: Record<string, string> = {};
 
   for (const filename of inputFiles) {
-    const dtsFilename = filename.replace(/\.(m|c)?(ts|js)x?$/, ".d.$1ts");
+    const dtsFilename = filename.replace(JSX_EXT_RE, ".d.$1ts");
     let contents = vfs.get(dtsFilename) || "";
     if (opts?.addRelativeDeclarationExtensions) {
-      const ext =
-        filename.match(/\.(m|c)?(ts|js)$/)?.[0].replace(/ts$/, "js") || ".js";
+      const ext = filename.match(JS_EXT_RE)?.[0].replace(/ts$/, "js") || ".js";
       const imports = findStaticImports(contents);
       const exports = findExports(contents);
       const typeExports = findTypeExports(contents);
       for (const spec of [...exports, ...typeExports, ...imports]) {
-        if (!spec.specifier || !/^\.{1,2}[/\\]/.test(spec.specifier)) {
+        if (!spec.specifier || !RELATIVE_RE.test(spec.specifier)) {
           continue;
+        }
+        const srcPath = resolve(filename, "..", spec.specifier);
+        const srcDtsPath = srcPath + ext.replace(JS_EXT_RE, ".d.$1ts");
+        let specifier = spec.specifier;
+        try {
+          if (!vfs.get(srcDtsPath)) {
+            const stat = statSync(srcPath);
+            if (stat.isDirectory()) {
+              specifier += "/index";
+            }
+          }
+        } catch {
+          // src file does not exists
         }
         // add file extension for relative paths (`.js` will match the `.d.ts` extension we emit)
         contents = contents.replace(
           spec.code,
-          spec.code.replace(spec.specifier, spec.specifier + ext),
+          spec.code.replace(spec.specifier, specifier + ext),
         );
       }
     }

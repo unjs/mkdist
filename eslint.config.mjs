@@ -1,11 +1,9 @@
 import unjs from "eslint-config-unjs";
 
 export default unjs({
-  ignores: [
-    '**/dist/**',
-  ],
+  ignores: ["**/dist/**"],
   rules: {
-    // rule overrides
+    "@typescript-eslint/no-empty-object-type": 0,
   },
   markdown: {
     rules: {
