@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.6.0
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.9...v1.6.0)
+
+### 🚀 Enhancements
+
+- Update esbuild to 0.24 ([d0dd1f7](https://github.com/unjs/mkdist/commit/d0dd1f7))
+
+### 💅 Refactors
+
+- **dts:** Improve  internal `extractDeclarations` readability ([#248](https://github.com/unjs/mkdist/pull/248))
+- Replace fast-glob with tinyglobby ([#237](https://github.com/unjs/mkdist/pull/237))
+
+### 🏡 Chore
+
+- **release:** V1.5.9 ([9fdcf8a](https://github.com/unjs/mkdist/commit/9fdcf8a))
+- Update dev dependencies ([39390b3](https://github.com/unjs/mkdist/commit/39390b3))
+- Update eslint config ([10032ee](https://github.com/unjs/mkdist/commit/10032ee))
+
+### ✅ Tests
+
+- Add test for `components/index.ts` dts behavior ([eb495b0](https://github.com/unjs/mkdist/commit/eb495b0))
+
+### ❤️ Contributors
+
+- Superchupu ([@SuperchupuDev](http://github.com/SuperchupuDev))
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
 ## v1.5.9
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.5.8...v1.5.9)
