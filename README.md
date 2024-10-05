@@ -33,7 +33,7 @@ While there are tools like [tsc](https://www.typescriptlang.org/docs/handbook/co
 ## 🚀 Usage
 
 ```bash
-npx mkdist [rootDir] [--src=src] [--dist=dist] [--pattern=glob [--pattern=more-glob]] [--format=cjs|esm] [-d|--declaration] [--ext=mjs|js|ts]
+npx mkdist [rootDir] [--src=src] [--dist=dist] [--pattern=glob [--pattern=more-glob]] [--format=cjs|esm] [-d|--declaration] [--ext=mjs|js|ts] [--declarationExt=infer|d.ts|d.mts|d.cts]
 ```
 
 ## License
