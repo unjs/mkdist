@@ -33,6 +33,7 @@ describe("mkdist", () => {
         "dist/types.d.ts",
         "dist/star/index.mjs",
         "dist/star/other.mjs",
+        "dist/components/index.mjs",
         "dist/components/blank.vue",
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
@@ -59,6 +60,7 @@ describe("mkdist", () => {
     });
     expect(writtenFiles.sort()).toEqual(
       [
+        "dist/components/index.mjs",
         "dist/components/blank.vue",
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
@@ -80,6 +82,7 @@ describe("mkdist", () => {
     });
     expect(writtenFiles.sort()).toEqual(
       [
+        "dist/components/index.mjs",
         "dist/components/blank.vue",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
@@ -116,6 +119,8 @@ describe("mkdist", () => {
         "dist/star/other.mjs",
         "dist/star/other.d.ts",
         "dist/types.d.ts",
+        "dist/components/index.mjs",
+        "dist/components/index.d.ts",
         "dist/components/blank.vue",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
@@ -151,15 +156,30 @@ describe("mkdist", () => {
         export type { Other } from "./other.js";
         "
       `);
+
     expect(await readFile(resolve(rootDir, "dist/dir-export.d.ts"), "utf8"))
       .toMatchInlineSnapshot(`
         "export { default as bar } from "./bar.js";
         export * from "./star/index.js";
         "
       `);
+
     expect(
       await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8"),
     ).toMatch("declare");
+
+    expect(
+      await readFile(resolve(rootDir, "dist/components/index.d.ts"), "utf8"),
+    ).toMatchInlineSnapshot(`
+      "export * as jsx from "./jsx.jsx.js";
+      export * as tsx from "./tsx.tsx.js";
+      export * as blank from "./blank.vue.js";
+      export * as scriptSetupTS from "./script-setup-ts.vue.js";
+      export * as scriptMultiBlock from "./script-multi-block.vue.js";
+      export * as ts from "./ts.vue.js";
+      "
+    `);
+
     expect(
       await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
     ).toMatchInlineSnapshot(`
@@ -405,6 +425,7 @@ describe("mkdist", () => {
         "dist/types.d.ts",
         "dist/star/index.mjs",
         "dist/star/other.mjs",
+        "dist/components/index.mjs",
         "dist/components/blank.vue",
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
@@ -652,6 +673,8 @@ describe("mkdist with vue-tsc v1", () => {
         "dist/star/other.mjs",
         "dist/star/other.d.ts",
         "dist/types.d.ts",
+        "dist/components/index.mjs",
+        "dist/components/index.d.ts",
         "dist/components/blank.vue",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
@@ -690,6 +713,18 @@ describe("mkdist with vue-tsc v1", () => {
     expect(
       await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8"),
     ).toMatch("declare");
+
+    expect(
+      await readFile(resolve(rootDir, "dist/components/index.d.ts"), "utf8"),
+    ).toMatchInlineSnapshot(`
+      "export * as jsx from "./jsx.jsx.js";
+      export * as tsx from "./tsx.tsx.js";
+      export * as blank from "./blank.vue.js";
+      export * as scriptSetupTS from "./script-setup-ts.vue.js";
+      export * as scriptMultiBlock from "./script-multi-block.vue.js";
+      export * as ts from "./ts.vue.js";
+      "
+    `);
 
     expect(
       await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
@@ -769,6 +804,8 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         "dist/star/other.mjs",
         "dist/star/other.d.ts",
         "dist/types.d.ts",
+        "dist/components/index.mjs",
+        "dist/components/index.d.ts",
         "dist/components/blank.vue",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
@@ -807,6 +844,18 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
     expect(
       await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8"),
     ).toMatch("declare");
+
+    expect(
+      await readFile(resolve(rootDir, "dist/components/index.d.ts"), "utf8"),
+    ).toMatchInlineSnapshot(`
+      "export * as jsx from "./jsx.jsx.js";
+      export * as tsx from "./tsx.tsx.js";
+      export * as blank from "./blank.vue.js";
+      export * as scriptSetupTS from "./script-setup-ts.vue.js";
+      export * as scriptMultiBlock from "./script-multi-block.vue.js";
+      export * as ts from "./ts.vue.js";
+      "
+    `);
 
     expect(
       await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
