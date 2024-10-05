@@ -200,6 +200,8 @@ describe("mkdist", () => {
         implicitFiles: [
           "dist/foo.js",
           "dist/foo.d.ts",
+          "dist/bar.js",
+          "dist/bar.d.ts",
           "dist/index.js",
           "dist/index.d.ts",
           "dist/star/index.js",
@@ -221,6 +223,11 @@ describe("mkdist", () => {
           "dist/components/tsx.js",
           "dist/components/jsx.d.ts",
           "dist/components/tsx.d.ts",
+          "dist/dir-export.js",
+          "dist/dir-export.d.ts",
+          "dist/components/index.d.ts",
+          "dist/components/index.js",
+          "dist/components/script-multi-block.vue",
         ],
       },
       // not setting the format explicitly should work like esm
@@ -230,6 +237,8 @@ describe("mkdist", () => {
         implicitFiles: [
           "dist/foo.mjs",
           "dist/foo.d.mts",
+          "dist/bar.mjs",
+          "dist/bar.d.mts",
           "dist/index.mjs",
           "dist/index.d.mts",
           "dist/star/index.mjs",
@@ -251,6 +260,11 @@ describe("mkdist", () => {
           "dist/components/tsx.mjs",
           "dist/components/jsx.d.mts",
           "dist/components/tsx.d.mts",
+          "dist/dir-export.mjs",
+          "dist/dir-export.d.mts",
+          "dist/components/index.d.mts",
+          "dist/components/index.mjs",
+          "dist/components/script-multi-block.vue",
         ],
       })),
       ...(["cjs", "esm", undefined] as const).flatMap((format) =>
@@ -270,6 +284,8 @@ describe("mkdist", () => {
             implicitFiles: [
               `dist/foo.${srcExt}`,
               `dist/foo.${dtsExt}`,
+              `dist/bar.${srcExt}`,
+              `dist/bar.${dtsExt}`,
               `dist/index.${srcExt}`,
               `dist/index.${dtsExt}`,
               `dist/star/index.${srcExt}`,
@@ -289,6 +305,11 @@ describe("mkdist", () => {
               `dist/components/tsx.${srcExt}`,
               `dist/components/jsx.${dtsExt}`,
               `dist/components/tsx.${dtsExt}`,
+              `dist/dir-export.${srcExt}`,
+              `dist/dir-export.${dtsExt}`,
+              `dist/components/index.${srcExt}`,
+              `dist/components/index.${dtsExt}`,
+              `dist/components/script-multi-block.vue`,
               ...(emitsVue
                 ? [
                     `dist/components/js.vue.${dtsExt}`,
