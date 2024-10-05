@@ -33,13 +33,13 @@
     "citty": "^0.1.6",
     "cssnano": "^7.0.6",
     "defu": "^6.1.4",
-    "esbuild": "^0.23.1",
+    "esbuild": "^0.24.0",
     "fast-glob": "^3.3.2",
     "jiti": "^1.21.6",
     "mlly": "^1.7.1",
     "pathe": "^1.1.2",
     "pkg-types": "^1.2.0",
-    "postcss": "^8.4.45",
+    "postcss": "^8.4.47",
     "postcss-nested": "^6.2.0",
     "semver": "^7.6.3"
   },
@@ -66,8 +66,8 @@
     "vue-tsc2.0": "npm:vue-tsc@2.0.29"
   },
   "peerDependencies": {
-    "sass": "^1.78.0",
-    "typescript": ">=5.5.4",
+    "sass": "^1.79.4",
+    "typescript": ">=5.6.2",
     "vue-tsc": "^1.8.27 || ^2.0.21"
   },
   "peerDependenciesMeta": {
@@ -81,5 +81,5 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@9.9.0"
+  "packageManager": "pnpm@9.12.0"
 }
