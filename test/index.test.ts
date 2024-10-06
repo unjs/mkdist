@@ -38,6 +38,7 @@ describe("mkdist", () => {
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
+        "dist/components/script-setup-ts-with-type-only-macros.vue",
         "dist/components/ts.vue",
         "dist/components/jsx.mjs",
         "dist/components/tsx.mjs",
@@ -65,6 +66,7 @@ describe("mkdist", () => {
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
+        "dist/components/script-setup-ts-with-type-only-macros.vue",
         "dist/components/ts.vue",
         "dist/components/jsx.mjs",
         "dist/components/tsx.mjs",
@@ -86,6 +88,7 @@ describe("mkdist", () => {
         "dist/components/blank.vue",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
+        "dist/components/script-setup-ts-with-type-only-macros.vue",
         "dist/components/ts.vue",
         "dist/components/jsx.mjs",
         "dist/components/tsx.mjs",
@@ -126,6 +129,8 @@ describe("mkdist", () => {
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
+        "dist/components/script-setup-ts.vue.d.ts",
+        "dist/components/script-setup-ts-with-type-only-macros.vue",
         "dist/components/ts.vue",
         "dist/components/ts.vue.d.ts",
         "dist/components/jsx.mjs",
@@ -246,6 +251,7 @@ describe("mkdist", () => {
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
+        "dist/components/script-setup-ts-with-type-only-macros.vue",
         "dist/components/ts.vue",
         "dist/components/jsx.mjs",
         "dist/components/tsx.mjs",
@@ -320,13 +326,49 @@ describe("mkdist", () => {
       ]);
     });
 
-    it("vueLoader bypass <script setup>", async () => {
+    it("vueLoader handles <script setup>", async () => {
       const { loadFile } = createLoader({
         loaders: ["vue", "js"],
       });
       const results = await loadFile({
         extension: ".vue",
-        getContents: () => '<script lang="ts" setup>Test</script>',
+        getContents: () =>
+          [
+            '<script setup lang="ts">',
+            'import { ref } from "vue";',
+            'const str = ref<string | number>("hello");',
+            "</script>",
+          ].join("\n"),
+        path: "test.vue",
+      });
+      expect(results).toMatchObject([
+        {
+          contents: [
+            "<script setup>",
+            'import { ref } from "vue";',
+            'const str = ref("hello");',
+            "</script>",
+          ].join("\n"),
+        },
+      ]);
+    });
+
+    it("vueLoader bypasses <script setup> when using type-only macros", async () => {
+      const { loadFile } = createLoader({
+        loaders: ["vue", "js"],
+      });
+      const results = await loadFile({
+        extension: ".vue",
+        getContents: () =>
+          [
+            '<script setup lang="ts">',
+            "const props = defineProps<{ foo: string }>();",
+            "const emit = defineEmits<{",
+            "  change: [id: number];",
+            "  submit: [{ foo: string }];",
+            "}>();",
+            "</script>",
+          ].join("\n"),
         path: "test.vue",
       });
       expect(results).toMatchObject([{ raw: true }]);
@@ -495,7 +537,9 @@ describe("mkdist with vue-tsc v1", () => {
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
+        "dist/components/script-setup-ts-with-type-only-macros.vue",
         "dist/components/script-setup-ts.vue",
+        "dist/components/script-setup-ts.vue.d.ts",
         "dist/components/ts.vue",
         "dist/components/ts.vue.d.ts",
         "dist/components/jsx.mjs",
@@ -626,7 +670,9 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
+        "dist/components/script-setup-ts-with-type-only-macros.vue",
         "dist/components/script-setup-ts.vue",
+        "dist/components/script-setup-ts.vue.d.ts",
         "dist/components/ts.vue",
         "dist/components/ts.vue.d.ts",
         "dist/components/jsx.mjs",

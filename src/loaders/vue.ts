@@ -1,3 +1,4 @@
+import jsTokens from "js-tokens";
 import type { Loader, LoaderResult } from "../loader";
 
 export const vueLoader: Loader = async (input, context) => {
@@ -41,7 +42,11 @@ interface BlockLoaderOptions {
   outputLang: string;
   defaultLang?: string;
   validExtensions?: string[];
-  exclude?: RegExp[];
+  exclude?: (args: {
+    lang: string;
+    attributes: string;
+    blockContents: string;
+  }) => boolean | void;
 }
 
 const vueBlockLoader =
@@ -70,13 +75,13 @@ const vueBlockLoader =
       return;
     }
 
-    if (options.exclude?.some((re) => re.test(attributes))) {
-      return;
-    }
-
     const [, lang = options.outputLang] =
       attributes.match(/lang="([a-z]*)"/) || [];
     const extension = "." + lang;
+
+    if (options.exclude?.({ lang, attributes, blockContents }) === true) {
+      return;
+    }
 
     const files =
       (await loadFile({
@@ -123,6 +128,63 @@ const styleLoader = vueBlockLoader({
 const scriptLoader = vueBlockLoader({
   outputLang: "js",
   type: "script",
-  exclude: [/\bsetup\b/],
+  // If the block contains some type-only Vue macros, skip the entire block
+  // e.g. skip `defineProps<...>()`, but allow `defineProps(...)`
+  exclude({ lang, attributes, blockContents }) {
+    if (lang !== "ts" || !/\bsetup\b/.test(attributes)) {
+      return false;
+    }
+
+    if (!blockContents.includes("<")) {
+      return false;
+    }
+
+    // These macros have a type-only variant that we want to skip
+    const targetMacros = new Set([
+      "defineProps",
+      "defineEmits",
+      "defineSlots",
+      "defineModel",
+    ]);
+    for (const macro of targetMacros) {
+      if (!blockContents.includes(macro)) {
+        targetMacros.delete(macro);
+      }
+    }
+    if (targetMacros.size === 0) {
+      return false;
+    }
+
+    let seenPotentialTypeOnly = false;
+    for (const token of jsTokens(blockContents)) {
+      if (token.type === "IdentifierName" && targetMacros.has(token.value)) {
+        seenPotentialTypeOnly = true;
+        continue;
+      }
+
+      if (!seenPotentialTypeOnly) {
+        continue;
+      }
+
+      // There might be spaces, newlines, comments, etc. between the macro name
+      // and the opening angle bracket (<). So, we need to keep looking.
+
+      // defineProps<...>(), we found it!
+      if (token.type === "Punctuator" && token.value === "<") {
+        return true;
+      }
+
+      if (
+        // defineProps(...) or something alike, this is not it
+        token.type === "Punctuator" ||
+        // We somehow found another identifier, this can't be it
+        token.type === "IdentifierName"
+      ) {
+        seenPotentialTypeOnly = false;
+      }
+    }
+
+    return false;
+  },
   validExtensions: [".js", ".mjs"],
 });
