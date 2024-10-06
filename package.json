@@ -78,6 +78,9 @@
     "typescript": {
       "optional": true
     },
+    "vue": {
+      "optional": true
+    },
     "vue-tsc": {
       "optional": true
     }
