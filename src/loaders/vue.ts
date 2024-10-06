@@ -1,128 +1,226 @@
-import type { Loader, LoaderResult } from "../loader";
+import type { SFCBlock } from "vue/compiler-sfc";
+import type {
+  InputFile,
+  Loader,
+  LoaderContext,
+  LoaderResult,
+  OutputFile,
+} from "../loader";
 
-export const vueLoader: Loader = async (input, context) => {
-  if (input.extension !== ".vue") {
-    return;
-  }
+import fs from "node:fs";
+import { dirname, resolve } from "pathe";
 
-  const output: LoaderResult = [
-    {
-      path: input.path,
-      contents: await input.getContents(),
+import { compileScript, parse } from "vue/compiler-sfc";
+
+export interface DefineVueLoaderOptions {
+  blockLoaders?: {
+    [blockType: string]: VueBlockLoader | undefined;
+  };
+}
+
+export interface VueBlockLoader {
+  (
+    block: Pick<SFCBlock, "type" | "content" | "attrs">,
+    context: LoaderContext & {
+      rawInput: InputFile;
+      addOutput: (...files: OutputFile[]) => void;
     },
-  ];
+  ): Promise<Pick<SFCBlock, "type" | "content" | "attrs"> | undefined>;
+}
 
-  let earlyReturn = true;
-
-  for (const blockLoader of [styleLoader, scriptLoader]) {
-    const result = await blockLoader(
-      { ...input, getContents: () => output[0].contents },
-      context,
-    );
-    if (!result) {
-      continue;
-    }
-
-    earlyReturn = false;
-    const [vueFile, ...files] = result;
-    output[0] = vueFile;
-    output.push(...files);
-  }
-
-  if (earlyReturn) {
-    return;
-  }
-
-  return output;
-};
-
-interface BlockLoaderOptions {
+export interface DefaultBlockLoaderOptions {
   type: "script" | "style" | "template";
   outputLang: string;
   defaultLang?: string;
   validExtensions?: string[];
-  exclude?: RegExp[];
 }
 
-const vueBlockLoader =
-  (options: BlockLoaderOptions): Loader =>
-  async (input, { loadFile }) => {
-    const contents = await input.getContents();
+export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
+  const blockLoaders = options?.blockLoaders || {};
 
-    const BLOCK_RE = new RegExp(
-      `<${options.type}((\\s[^>\\s]*)*)>([\\S\\s.]*?)<\\/${options.type}>`,
-      "g",
+  return async (input, context) => {
+    if (input.extension !== ".vue") {
+      return;
+    }
+
+    let modified = false;
+
+    const raw = await input.getContents();
+    const sfc = parse(raw, { filename: input.path, ignoreEmpty: true });
+
+    if (sfc.errors.length > 0) {
+      for (const error of sfc.errors) {
+        console.error(error);
+      }
+      return;
+    }
+
+    const output: LoaderResult = [];
+    const addOutput = (...files: OutputFile[]) => output.push(...files);
+
+    const blocks = [
+      sfc.descriptor.template,
+      ...sfc.descriptor.styles,
+      ...sfc.descriptor.customBlocks,
+    ].filter((item) => !!item);
+    // merge script blocks
+    if (sfc.descriptor.script || sfc.descriptor.scriptSetup) {
+      // need to compile script when using typescript with <script setup>
+      if (sfc.descriptor.scriptSetup && sfc.descriptor.scriptSetup.lang) {
+        const merged = compileScript(sfc.descriptor, {
+          id: input.path,
+          fs: createFs(input.srcPath),
+        });
+        merged.setup = false;
+        merged.attrs = toOmit(merged.attrs, "setup");
+        blocks.unshift(merged);
+      } else {
+        const scriptBlocks = [
+          sfc.descriptor.script,
+          sfc.descriptor.scriptSetup,
+        ].filter((item) => !!item);
+        blocks.unshift(...scriptBlocks);
+      }
+    }
+
+    const results = await Promise.all(
+      blocks.map(async (data) => {
+        const blockLoader = blockLoaders[data.type];
+        const result = await blockLoader?.(data, {
+          ...context,
+          rawInput: input,
+          addOutput,
+        });
+        if (result) {
+          modified = true;
+        }
+        return result || data;
+      }),
     );
 
-    const matches = [...contents.matchAll(BLOCK_RE)];
-    if (matches.length === 0) {
+    if (!modified) {
       return;
     }
 
-    // TODO: support merging <script> blocks
-    if (options.type === "script" && matches.length > 1) {
+    const contents = results
+      .map((block) => {
+        const attrs = Object.entries(block.attrs)
+          .map(([key, value]) => {
+            if (!value) {
+              return undefined;
+            }
+
+            return value === true ? key : `${key}="${value}"`;
+          })
+          .filter((item) => !!item)
+          .join(" ");
+
+        const header = `<${`${block.type} ${attrs}`.trim()}>`;
+        const footer = `</${block.type}>`;
+
+        return `${header}\n${cleanupBreakLine(block.content)}\n${footer}\n`;
+      })
+      .join("\n");
+    addOutput({
+      path: input.path,
+      srcPath: input.srcPath,
+      extension: ".vue",
+      contents,
+      declaration: false,
+    });
+
+    return output;
+  };
+}
+
+export function defineDefaultBlockLoader(
+  options: DefaultBlockLoaderOptions,
+): VueBlockLoader {
+  return async (block, { loadFile, rawInput, addOutput }) => {
+    if (options.type !== block.type) {
       return;
     }
 
-    const [block, attributes = "", _, blockContents] = matches[0];
-
-    if (!block || !blockContents) {
-      return;
-    }
-
-    if (options.exclude?.some((re) => re.test(attributes))) {
-      return;
-    }
-
-    const [, lang = options.outputLang] =
-      attributes.match(/lang="([a-z]*)"/) || [];
-    const extension = "." + lang;
+    const lang =
+      typeof block.attrs.lang === "string"
+        ? block.attrs.lang
+        : options.outputLang;
+    const extension = `.${lang}`;
 
     const files =
       (await loadFile({
-        getContents: () => blockContents,
-        path: `${input.path}${extension}`,
-        srcPath: `${input.srcPath}${extension}`,
+        getContents: () => block.content,
+        path: `${rawInput.path}${extension}`,
+        srcPath: `${rawInput.srcPath}${extension}`,
         extension,
       })) || [];
 
     const blockOutputFile = files.find(
       (f) =>
         f.extension === `.${options.outputLang}` ||
-        options.validExtensions?.includes(f.extension),
+        options.validExtensions?.includes(f.extension as string),
     );
-    if (!blockOutputFile) {
+    if (!blockOutputFile?.contents) {
       return;
     }
+    addOutput(...files.filter((f) => f !== blockOutputFile));
 
-    const newAttributes = attributes.replace(
-      new RegExp(`\\s?lang="${lang}"`),
-      "",
-    );
-    return [
-      {
-        path: input.path,
-        contents: contents.replace(
-          block,
-          `<${
-            options.type
-          }${newAttributes}>\n${blockOutputFile.contents?.trim()}\n</${
-            options.type
-          }>`,
-        ),
-      },
-      ...files.filter((f) => f !== blockOutputFile),
-    ];
+    return {
+      type: block.type,
+      attrs: toOmit(block.attrs, "lang"),
+      content: blockOutputFile.contents,
+    };
   };
+}
 
-const styleLoader = vueBlockLoader({
+const styleLoader = defineDefaultBlockLoader({
   outputLang: "css",
   type: "style",
 });
 
-const scriptLoader = vueBlockLoader({
+const scriptLoader = defineDefaultBlockLoader({
   outputLang: "js",
   type: "script",
-  exclude: [/\bsetup\b/],
   validExtensions: [".js", ".mjs"],
 });
+
+export const vueLoader = defineVueLoader({
+  blockLoaders: {
+    style: styleLoader,
+    script: scriptLoader,
+  },
+});
+
+function createFs(pwd?: string) {
+  const realpath = (...paths: string[]) =>
+    pwd ? resolve(dirname(pwd), ...paths) : resolve(...paths);
+  const fileExists = (file: string) => {
+    try {
+      if (!pwd) {
+        return false;
+      }
+      const path = realpath(file);
+
+      fs.accessSync(path);
+      return fs.lstatSync(path).isFile();
+    } catch {
+      return false;
+    }
+  };
+  const readFile = (file: string) => {
+    return fs.readFileSync(realpath(file), "utf8");
+  };
+
+  return { realpath, fileExists, readFile };
+}
+function cleanupBreakLine(str: string): string {
+  return str.replaceAll(/(\n\n)\n+/g, "\n\n").replace(/^\s*\n|\n\s*$/g, "");
+}
+function toOmit<R extends Record<keyof object, unknown>, K extends keyof R>(
+  record: R,
+  toRemove: K,
+): Omit<R, K> {
+  return Object.fromEntries(
+    Object.entries(record).filter(([key]) => key !== toRemove),
+  ) as Omit<R, K>;
+}

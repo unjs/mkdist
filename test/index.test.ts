@@ -125,7 +125,9 @@ describe("mkdist", () => {
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
+        "dist/components/script-multi-block.vue.d.ts",
         "dist/components/script-setup-ts.vue",
+        "dist/components/script-setup-ts.vue.d.ts",
         "dist/components/ts.vue",
         "dist/components/ts.vue.d.ts",
         "dist/components/jsx.mjs",
@@ -293,7 +295,7 @@ describe("mkdist", () => {
         path: "test.vue",
       });
       expect(results).toMatchObject([
-        { contents: ["<script foo>", "Test;", "</script>"].join("\n") },
+        { contents: ["<script foo>", "Test;", "</script>", ""].join("\n") },
       ]);
     });
 
@@ -304,32 +306,28 @@ describe("mkdist", () => {
       const results = await loadFile({
         extension: ".vue",
         getContents: () =>
-          '<style scoped lang="scss">$color: red; :root { background-color: $color }</style>',
+          [
+            "<script>export default {}</script>",
+            '<style scoped lang="scss">$color: red; :root { background-color: $color }</style>',
+          ].join("\n"),
         path: "test.vue",
       });
       expect(results).toMatchObject([
         {
           contents: [
+            "<script>",
+            "export default {}",
+            "</script>",
+            "",
             "<style scoped>",
             ":root {",
             "  background-color: red;",
             "}",
             "</style>",
+            "",
           ].join("\n"),
         },
       ]);
-    });
-
-    it("vueLoader bypass <script setup>", async () => {
-      const { loadFile } = createLoader({
-        loaders: ["vue", "js"],
-      });
-      const results = await loadFile({
-        extension: ".vue",
-        getContents: () => '<script lang="ts" setup>Test</script>',
-        path: "test.vue",
-      });
-      expect(results).toMatchObject([{ raw: true }]);
     });
 
     it("vueLoader will generate dts file", async () => {
@@ -495,7 +493,9 @@ describe("mkdist with vue-tsc v1", () => {
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
+        "dist/components/script-multi-block.vue.d.ts",
         "dist/components/script-setup-ts.vue",
+        "dist/components/script-setup-ts.vue.d.ts",
         "dist/components/ts.vue",
         "dist/components/ts.vue.d.ts",
         "dist/components/jsx.mjs",
@@ -626,7 +626,9 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
+        "dist/components/script-multi-block.vue.d.ts",
         "dist/components/script-setup-ts.vue",
+        "dist/components/script-setup-ts.vue.d.ts",
         "dist/components/ts.vue",
         "dist/components/ts.vue.d.ts",
         "dist/components/jsx.mjs",
@@ -681,28 +683,6 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
           str: "test";
       }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
       export default _default;
-      "
-    `);
-
-    expect(
-      await readFile(
-        resolve(rootDir, "dist/components/script-multi-block.vue"),
-        "utf8",
-      ),
-    ).toMatchInlineSnapshot(`
-      "<template>
-        <div>{{ msg }}</div>
-      </template>
-
-      <script lang="ts">
-      interface MyComponentProps {
-        msg: string;
-      }
-      </script>
-
-      <script setup lang="ts">
-      defineProps<MyComponentProps>();
-      </script>
       "
     `);
   }, 50_000);

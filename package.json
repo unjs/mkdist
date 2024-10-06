@@ -68,6 +68,7 @@
   "peerDependencies": {
     "sass": "^1.78.0",
     "typescript": ">=5.5.4",
+    "vue": "^3.2.13",
     "vue-tsc": "^1.8.27 || ^2.0.21"
   },
   "peerDependenciesMeta": {
