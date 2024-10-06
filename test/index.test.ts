@@ -192,6 +192,53 @@ describe("mkdist", () => {
       export default _default;
       "
     `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-multi-block.vue.d.ts"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "interface MyComponentProps {
+          msg: string;
+      }
+      declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<MyComponentProps>>, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<MyComponentProps>>> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
+      type __VLS_TypePropsToOption<T> = {
+          [K in keyof T]-?: {} extends Pick<T, K> ? {
+              type: import('vue').PropType<__VLS_NonUndefinedable<T[K]>>;
+          } : {
+              type: import('vue').PropType<T[K]>;
+              required: true;
+          };
+      };
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-setup-ts.vue.d.ts"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<{
+          msg: string;
+      }>>, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<{
+          msg: string;
+      }>>> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
+      type __VLS_TypePropsToOption<T> = {
+          [K in keyof T]-?: {} extends Pick<T, K> ? {
+              type: import('vue').PropType<__VLS_NonUndefinedable<T[K]>>;
+          } : {
+              type: import('vue').PropType<T[K]>;
+              required: true;
+          };
+      };
+      "
+    `);
   }, 50_000);
 
   describe("mkdist (sass compilation)", () => {
@@ -552,6 +599,53 @@ describe("mkdist with vue-tsc v1", () => {
       export default _default;
       "
     `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-multi-block.vue.d.ts"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "interface MyComponentProps {
+          msg: string;
+      }
+      declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToRuntimeProps<MyComponentProps>>, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_TypePropsToRuntimeProps<MyComponentProps>>> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
+      type __VLS_TypePropsToRuntimeProps<T> = {
+          [K in keyof T]-?: {} extends Pick<T, K> ? {
+              type: import('vue').PropType<__VLS_NonUndefinedable<T[K]>>;
+          } : {
+              type: import('vue').PropType<T[K]>;
+              required: true;
+          };
+      };
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-setup-ts.vue.d.ts"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToRuntimeProps<{
+          msg: string;
+      }>>, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_TypePropsToRuntimeProps<{
+          msg: string;
+      }>>> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
+      type __VLS_TypePropsToRuntimeProps<T> = {
+          [K in keyof T]-?: {} extends Pick<T, K> ? {
+              type: import('vue').PropType<__VLS_NonUndefinedable<T[K]>>;
+          } : {
+              type: import('vue').PropType<T[K]>;
+              required: true;
+          };
+      };
+      "
+    `);
   }, 50_000);
 });
 
@@ -683,6 +777,53 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
           str: "test";
       }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
       export default _default;
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-multi-block.vue.d.ts"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "interface MyComponentProps {
+          msg: string;
+      }
+      declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<MyComponentProps>>, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<MyComponentProps>>> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
+      type __VLS_TypePropsToOption<T> = {
+          [K in keyof T]-?: {} extends Pick<T, K> ? {
+              type: import('vue').PropType<__VLS_NonUndefinedable<T[K]>>;
+          } : {
+              type: import('vue').PropType<T[K]>;
+              required: true;
+          };
+      };
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-setup-ts.vue.d.ts"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<{
+          msg: string;
+      }>>, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<{
+          msg: string;
+      }>>> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
+      type __VLS_TypePropsToOption<T> = {
+          [K in keyof T]-?: {} extends Pick<T, K> ? {
+              type: import('vue').PropType<__VLS_NonUndefinedable<T[K]>>;
+          } : {
+              type: import('vue').PropType<T[K]>;
+              required: true;
+          };
+      };
       "
     `);
   }, 50_000);
