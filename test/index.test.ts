@@ -122,6 +122,7 @@ describe("mkdist", () => {
         "dist/components/index.mjs",
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
+        "dist/components/blank.vue.d.ts",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
@@ -189,6 +190,17 @@ describe("mkdist", () => {
           test: string;
           str: "test";
       }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/blank.vue.d.ts"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "declare const _default: import("vue").DefineComponent<{}, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
       export default _default;
       "
     `);
@@ -537,6 +549,7 @@ describe("mkdist with vue-tsc v1", () => {
         "dist/components/index.mjs",
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
+        "dist/components/blank.vue.d.ts",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
@@ -586,6 +599,17 @@ describe("mkdist with vue-tsc v1", () => {
       export * as scriptSetupTS from "./script-setup-ts.vue.js";
       export * as scriptMultiBlock from "./script-multi-block.vue.js";
       export * as ts from "./ts.vue.js";
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/blank.vue.d.ts"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "declare const _default: import("vue").DefineComponent<{}, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
       "
     `);
 
@@ -717,6 +741,7 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         "dist/components/index.mjs",
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
+        "dist/components/blank.vue.d.ts",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
@@ -766,6 +791,17 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
       export * as scriptSetupTS from "./script-setup-ts.vue.js";
       export * as scriptMultiBlock from "./script-multi-block.vue.js";
       export * as ts from "./ts.vue.js";
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/blank.vue.d.ts"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "declare const _default: import("vue").DefineComponent<{}, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
       "
     `);
 

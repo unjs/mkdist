@@ -18,14 +18,16 @@ export interface DefineVueLoaderOptions {
   };
 }
 
+export type VueBlock = Pick<SFCBlock, "type" | "content" | "attrs">;
+
 export interface VueBlockLoader {
   (
-    block: Pick<SFCBlock, "type" | "content" | "attrs">,
+    block: VueBlock,
     context: LoaderContext & {
       rawInput: InputFile;
       addOutput: (...files: OutputFile[]) => void;
     },
-  ): Promise<Pick<SFCBlock, "type" | "content" | "attrs"> | undefined>;
+  ): Promise<VueBlock | undefined>;
 }
 
 export interface DefaultBlockLoaderOptions {
@@ -44,10 +46,10 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
     }
 
     let modified = false;
+    let fakeScriptBlock = false;
 
     const raw = await input.getContents();
     const sfc = parse(raw, { filename: input.path, ignoreEmpty: true });
-
     if (sfc.errors.length > 0) {
       for (const error of sfc.errors) {
         console.error(error);
@@ -58,7 +60,7 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
     const output: LoaderResult = [];
     const addOutput = (...files: OutputFile[]) => output.push(...files);
 
-    const blocks = [
+    const blocks: VueBlock[] = [
       sfc.descriptor.template,
       ...sfc.descriptor.styles,
       ...sfc.descriptor.customBlocks,
@@ -81,6 +83,14 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
         ].filter((item) => !!item);
         blocks.unshift(...scriptBlocks);
       }
+    } else {
+      // push a fake script block to generate dts
+      blocks.unshift({
+        type: "script",
+        content: "export default {}",
+        attrs: {},
+      });
+      fakeScriptBlock = true;
     }
 
     const results = await Promise.all(
@@ -104,6 +114,10 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
 
     const contents = results
       .map((block) => {
+        if (block.type === "script" && fakeScriptBlock) {
+          return undefined;
+        }
+
         const attrs = Object.entries(block.attrs)
           .map(([key, value]) => {
             if (!value) {
@@ -120,6 +134,7 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
 
         return `${header}\n${cleanupBreakLine(block.content)}\n${footer}\n`;
       })
+      .filter((item) => !!item)
       .join("\n");
     addOutput({
       path: input.path,
