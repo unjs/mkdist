@@ -47,6 +47,7 @@ export async function mkdist(
   const filePaths = await glob(options.pattern || "**", {
     absolute: false,
     cwd: options.srcDir,
+    dot: true,
   });
 
   const files: InputFile[] = filePaths.map((path) => {
