@@ -625,6 +625,34 @@ describe("mkdist with vue-tsc v1", () => {
 
     expect(
       await readFile(
+        resolve(rootDir, "dist/components/script-multi-block.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<script>
+      import { defineComponent as _defineComponent } from "vue";
+      export default /* @__PURE__ */ _defineComponent({
+        __name: "script-multi-block",
+        props: {
+          msg: { type: String, required: true }
+        },
+        setup(__props, { expose: __expose }) {
+          __expose();
+          const __returned__ = {};
+          Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+          return __returned__;
+        }
+      });
+      </script>
+
+      <template>
+        <div>{{ msg }}</div>
+      </template>
+      "
+    `);
+
+    expect(
+      await readFile(
         resolve(rootDir, "dist/components/script-multi-block.vue.d.ts"),
         "utf8",
       ),
@@ -812,6 +840,34 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
           str: "test";
       }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
       export default _default;
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-multi-block.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<script>
+      import { defineComponent as _defineComponent } from "vue";
+      export default /* @__PURE__ */ _defineComponent({
+        __name: "script-multi-block",
+        props: {
+          msg: { type: String, required: true }
+        },
+        setup(__props, { expose: __expose }) {
+          __expose();
+          const __returned__ = {};
+          Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+          return __returned__;
+        }
+      });
+      </script>
+
+      <template>
+        <div>{{ msg }}</div>
+      </template>
       "
     `);
 
