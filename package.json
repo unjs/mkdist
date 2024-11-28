@@ -39,7 +39,7 @@
     "pathe": "^1.1.2",
     "pkg-types": "^1.2.1",
     "postcss": "^8.4.49",
-    "postcss-nested": "^6.2.0",
+    "postcss-nested": "^7.0.2",
     "semver": "^7.6.3",
     "tinyglobby": "^0.2.10"
   },
