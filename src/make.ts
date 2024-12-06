@@ -44,9 +44,20 @@ export async function mkdist(
   }
 
   // Scan input files
+  const ignored = await fsp
+    .readFile(resolve(options.rootDir, ".gitignore"), "utf8")
+    .then((r) =>
+      r
+        .split("\n")
+        .map((r) => r.trim())
+        .filter((r) => r && !r.startsWith("#")),
+    )
+    .catch(() => []);
   const filePaths = await glob(options.pattern || "**", {
     absolute: false,
+    ignore: ignored,
     cwd: options.srcDir,
+    dot: true,
   });
 
   const files: InputFile[] = filePaths.map((path) => {
