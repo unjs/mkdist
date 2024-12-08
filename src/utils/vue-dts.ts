@@ -38,7 +38,12 @@ export async function getVueDeclarations(
       break;
     }
     default: {
-      await emitVueTscLatest(vfs, opts.typescript.compilerOptions, srcFiles);
+      await emitVueTscLatest(
+        vfs,
+        opts.typescript.compilerOptions,
+        srcFiles,
+        opts.rootDir!,
+      );
     }
   }
 
@@ -173,6 +178,7 @@ async function emitVueTscLatest(
   vfs: Map<string, string>,
   compilerOptions: CompilerOptions,
   srcFiles: string[],
+  rootDir: string,
 ) {
   const { resolve: resolveModule } = await import("mlly");
   const ts: typeof import("typescript") = await import("typescript").then(
@@ -213,8 +219,15 @@ async function emitVueTscLatest(
       const vueLanguagePlugin = vueLanguageCore.createVueLanguagePlugin<string>(
         ts,
         options.options,
-        vueLanguageCore.resolveVueCompilerOptions({}),
-        (id) => id as string,
+        vueLanguageCore.createParsedCommandLineByJson(
+          ts,
+          ts.sys,
+          rootDir,
+          {},
+          undefined,
+          true,
+        ).vueOptions,
+        (id) => id,
       );
       return [vueLanguagePlugin];
     },
