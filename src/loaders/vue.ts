@@ -8,7 +8,7 @@ import type {
 } from "../loader";
 
 import fs from "node:fs";
-import { dirname, resolve } from "pathe";
+import { basename, dirname, resolve } from "pathe";
 
 import { compileScript, parse } from "vue/compiler-sfc";
 
@@ -49,7 +49,10 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
     let fakeScriptBlock = false;
 
     const raw = await input.getContents();
-    const sfc = parse(raw, { filename: input.path, ignoreEmpty: true });
+    const sfc = parse(raw, {
+      filename: basename(input.path),
+      ignoreEmpty: true,
+    });
     if (sfc.errors.length > 0) {
       for (const error of sfc.errors) {
         console.error(error);
