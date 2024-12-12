@@ -7,9 +7,6 @@ import type {
   OutputFile,
 } from "../loader";
 
-import fs from "node:fs";
-import { basename, dirname, resolve } from "pathe";
-
 import { compileScript, parse } from "vue/compiler-sfc";
 
 export interface DefineVueLoaderOptions {
@@ -50,7 +47,7 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
 
     const raw = await input.getContents();
     const sfc = parse(raw, {
-      filename: basename(input.path),
+      filename: input.srcPath,
       ignoreEmpty: true,
     });
     if (sfc.errors.length > 0) {
@@ -72,10 +69,7 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
     if (sfc.descriptor.script || sfc.descriptor.scriptSetup) {
       // need to compile script when using typescript with <script setup>
       if (sfc.descriptor.scriptSetup && sfc.descriptor.scriptSetup.lang) {
-        const merged = compileScript(sfc.descriptor, {
-          id: input.path,
-          fs: createFs(input.srcPath),
-        });
+        const merged = compileScript(sfc.descriptor, { id: input.srcPath });
         merged.setup = false;
         merged.attrs = toOmit(merged.attrs, "setup");
         blocks.unshift(merged);
@@ -209,28 +203,6 @@ export const vueLoader = defineVueLoader({
   },
 });
 
-function createFs(pwd?: string) {
-  const realpath = (...paths: string[]) =>
-    pwd ? resolve(dirname(pwd), ...paths) : resolve(...paths);
-  const fileExists = (file: string) => {
-    try {
-      if (!pwd) {
-        return false;
-      }
-      const path = realpath(file);
-
-      fs.accessSync(path);
-      return fs.lstatSync(path).isFile();
-    } catch {
-      return false;
-    }
-  };
-  const readFile = (file: string) => {
-    return fs.readFileSync(realpath(file), "utf8");
-  };
-
-  return { realpath, fileExists, readFile };
-}
 function cleanupBreakLine(str: string): string {
   return str.replaceAll(/(\n\n)\n+/g, "\n\n").replace(/^\s*\n|\n\s*$/g, "");
 }
