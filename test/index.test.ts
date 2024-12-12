@@ -46,6 +46,7 @@ describe("mkdist", () => {
         "dist/ts/test1.mjs",
         "dist/ts/test2.mjs",
         "dist/nested.css",
+        "dist/prop-types/index.mjs",
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
@@ -144,6 +145,8 @@ describe("mkdist", () => {
         "dist/ts/test1.d.mts",
         "dist/ts/test2.d.cts",
         "dist/nested.css",
+        "dist/prop-types/index.mjs",
+        "dist/prop-types/index.d.ts",
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
@@ -234,8 +237,10 @@ describe("mkdist", () => {
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
-      "type __VLS_Props = {
+      "import { Color } from "#prop-types";
+      type __VLS_Props = {
           msg: string;
+          color: Color;
       };
       declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<__VLS_Props>>, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<__VLS_Props>>> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
       export default _default;
@@ -314,6 +319,7 @@ describe("mkdist", () => {
         "dist/ts/test1.mjs",
         "dist/ts/test2.mjs",
         "dist/nested.css",
+        "dist/prop-types/index.mjs",
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
@@ -570,6 +576,8 @@ describe("mkdist with vue-tsc v1", () => {
         "dist/ts/test1.d.mts",
         "dist/ts/test2.d.cts",
         "dist/nested.css",
+        "dist/prop-types/index.mjs",
+        "dist/prop-types/index.d.ts",
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
@@ -620,6 +628,38 @@ describe("mkdist with vue-tsc v1", () => {
           str: "test";
       }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
       export default _default;
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-setup-ts.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<script>
+      import { defineComponent as _defineComponent } from "vue";
+      import { ref } from "vue";
+      export default /* @__PURE__ */ _defineComponent({
+        __name: "script-setup-ts",
+        props: {
+          msg: { type: String, required: true },
+          color: { type: Object, required: true }
+        },
+        setup(__props, { expose: __expose }) {
+          __expose();
+          const props = __props;
+          const str = ref("hello");
+          const __returned__ = { props, str };
+          Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+          return __returned__;
+        }
+      });
+      </script>
+
+      <template>
+        <div>{{ str }}</div>
+      </template>
       "
     `);
 
@@ -680,10 +720,13 @@ describe("mkdist with vue-tsc v1", () => {
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
-      "declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToRuntimeProps<{
+      "import { Color } from "#prop-types";
+      declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToRuntimeProps<{
           msg: string;
+          color: Color;
       }>>, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_TypePropsToRuntimeProps<{
           msg: string;
+          color: Color;
       }>>> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
       export default _default;
       type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
@@ -790,6 +833,8 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         "dist/ts/test1.d.mts",
         "dist/ts/test2.d.cts",
         "dist/nested.css",
+        "dist/prop-types/index.mjs",
+        "dist/prop-types/index.d.ts",
       ]
         .map((f) => resolve(rootDir, f))
         .sort(),
@@ -900,10 +945,13 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
-      "declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<{
+      "import { Color } from "#prop-types";
+      declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<{
           msg: string;
+          color: Color;
       }>>, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<{
           msg: string;
+          color: Color;
       }>>> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
       export default _default;
       type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
