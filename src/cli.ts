@@ -27,13 +27,13 @@ const main = defineCommand({
     },
     dist: {
       type: "string",
-      description: "Destinition directory relative to project root directory",
+      description: "Destination directory relative to project root directory",
       default: "dist",
     },
     clean: {
       type: "boolean",
-      description: "Clean the Destinition directory",
-      default: false,
+      description: "Clean the destination directory",
+      default: true,
     },
     pattern: {
       type: "string",
