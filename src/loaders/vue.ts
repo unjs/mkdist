@@ -7,8 +7,6 @@ import type {
   OutputFile,
 } from "../loader";
 
-import { compileScript, parse } from "vue/compiler-sfc";
-
 export interface DefineVueLoaderOptions {
   blockLoaders?: {
     [blockType: string]: VueBlockLoader | undefined;
@@ -41,6 +39,8 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
     if (input.extension !== ".vue") {
       return;
     }
+
+    const { compileScript, parse } = await import("vue/compiler-sfc");
 
     let modified = false;
     let fakeScriptBlock = false;
