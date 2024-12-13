@@ -21,6 +21,7 @@ export interface OutputFile {
    */
   path: string;
   srcPath?: string;
+  srcExtension?: string;
   extension?: string;
   contents?: string;
   declaration?: boolean;
@@ -38,6 +39,7 @@ export interface LoaderOptions {
   ext?: "js" | "mjs" | "cjs" | "ts" | "mts" | "cts";
   format?: "cjs" | "esm";
   declaration?: boolean;
+  declarationExt?: "infer" | "d.ts" | "d.mts" | "d.cts";
   esbuild?: CommonOptions;
   postcss?:
     | false

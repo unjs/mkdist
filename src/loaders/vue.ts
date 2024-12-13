@@ -124,5 +124,5 @@ const scriptLoader = vueBlockLoader({
   outputLang: "js",
   type: "script",
   exclude: [/\bsetup\b/],
-  validExtensions: [".js", ".mjs"],
+  validExtensions: [".js", ".mjs", ".ts", ".mts"],
 });

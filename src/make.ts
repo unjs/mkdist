@@ -103,7 +103,8 @@ export async function mkdist(
   // Normalize output extensions
   for (const output of outputs.filter((o) => o.extension)) {
     const renamed =
-      basename(output.path, extname(output.path)) + output.extension;
+      basename(output.path, output.srcExtension ?? extname(output.path)) +
+      output.extension;
     output.path = join(dirname(output.path), renamed);
     // Avoid overriding files with original extension
     if (outputs.some((o) => o !== output && o.path === output.path)) {

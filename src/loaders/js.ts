@@ -11,25 +11,56 @@ const KNOWN_EXT_RE = /\.(c|m)?[jt]sx?$/;
 const TS_EXTS = new Set([".ts", ".mts", ".cts"]);
 
 export const jsLoader: Loader = async (input, { options }) => {
-  if (!KNOWN_EXT_RE.test(input.path) || DECLARATION_RE.test(input.path)) {
+  if (!KNOWN_EXT_RE.test(input.path)) {
     return;
   }
 
   const output: LoaderResult = [];
 
   let contents = await input.getContents();
+  const [explicitDtsExtension] = input.srcPath?.match(DECLARATION_RE) ?? [];
+  const isManualDts = !!explicitDtsExtension;
 
   // declaration
-  if (options.declaration && !input.srcPath?.match(DECLARATION_RE)) {
+  if (options.declaration || isManualDts) {
     const cm = input.srcPath?.match(CM_LETTER_RE)?.[0] || "";
-    const extension = `.d.${cm}ts`;
+
+    const extension = (() => {
+      if (options.declarationExt === "infer") {
+        return (
+          {
+            js: ".d.ts",
+            mjs: ".d.mts",
+            cjs: ".d.cts",
+            ts: ".d.ts",
+            mts: ".d.mts",
+            cts: ".d.cts",
+          }[options.ext?.replace(/^\./, "")] ??
+          {
+            esm: ".d.mts",
+            cjs: ".d.ts", // TODO: Change it to ".d.cts" in next major version
+          }[options.format ?? "esm"]
+        );
+      } else if (options.declarationExt) {
+        return `.${options.declarationExt}`;
+      } else {
+        return `.d.${cm}ts`;
+      }
+    })();
+
     output.push({
       contents,
       srcPath: input.srcPath,
+      srcExtension: isManualDts ? explicitDtsExtension : undefined,
       path: input.path,
       extension,
+      raw: isManualDts,
       declaration: true,
     });
+
+    if (isManualDts) {
+      return output;
+    }
   }
 
   // typescript => js
