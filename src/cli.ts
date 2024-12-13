@@ -27,8 +27,13 @@ const main = defineCommand({
     },
     dist: {
       type: "string",
-      description: "Destinition directory relative to project root directory",
+      description: "Destination directory relative to project root directory",
       default: "dist",
+    },
+    clean: {
+      type: "boolean",
+      description: "Clean the destination directory",
+      default: true,
     },
     pattern: {
       type: "string",
@@ -86,6 +91,7 @@ const main = defineCommand({
       rootDir: resolve(args.cwd || process.cwd(), args.dir),
       srcDir: args.src,
       distDir: args.dist,
+      cleanDist: args.clean,
       format: args.format,
       pattern: args.pattern,
       ext: args.ext,
