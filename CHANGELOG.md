@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.0.0
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.6.0...v2.0.0)
+
+### 🚀 Enhancements
+
+- **vue:** ⚠️  Refactor vue loader with vue/compiler-sfc ([#251](https://github.com/unjs/mkdist/pull/251))
+
+### 🩹 Fixes
+
+- Scan dotfiles in source paths ([#253](https://github.com/unjs/mkdist/pull/253))
+- **cli:** Add `--no-clean` option ([#217](https://github.com/unjs/mkdist/pull/217))
+
+### 🏡 Chore
+
+- Dedupe lockfile ([15c1e70](https://github.com/unjs/mkdist/commit/15c1e70))
+
+#### ⚠️ Breaking Changes
+
+- **vue:** ⚠️  Refactor vue loader with vue/compiler-sfc ([#251](https://github.com/unjs/mkdist/pull/251))
+
+### ❤️ Contributors
+
+- ꤷꤵꤲꤱꛎ߀ⵤꚧ꓾ <metaory@gmail.com>
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+- Teages ([@Teages](http://github.com/Teages))
+
 ## v1.6.0
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.5.9...v1.6.0)
