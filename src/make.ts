@@ -52,7 +52,7 @@ export async function mkdist(
         .map((r) => r.trim())
         .filter((r) => r && !r.startsWith("#"))
         // Gitignore => Glob
-        // TODO: Handle !negate and * => ** conversion 
+        // TODO: Handle !negate and * => ** conversion
         .map((r) => (r.startsWith("/") ? r.slice(1) : r)),
     )
     .catch(() => []);
