@@ -51,7 +51,7 @@ export async function mkdist(
         .split("\n")
         .map((r) => r.trim())
         .filter((r) => r && !r.startsWith("#"))
-        .map(r => r.startsWith("/") ? r.slice(1) : r),
+        .map((r) => (r.startsWith("/") ? r.slice(1) : r)),
     )
     .catch(() => []);
   const filePaths = await glob(options.pattern || "**", {
