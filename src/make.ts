@@ -1,5 +1,5 @@
 import { resolve, extname, join, basename, dirname } from "pathe";
-import fse from "fs-extra";
+import fsp from "node:fs/promises";
 import type { TSConfig } from "pkg-types";
 import defu from "defu";
 import { copyFileWithStream } from "./utils/fs";
@@ -13,6 +13,7 @@ import {
 import { getDeclarations, normalizeCompilerOptions } from "./utils/dts";
 import { getVueDeclarations } from "./utils/vue-dts";
 import { LoaderName } from "./loaders";
+import { glob } from "tinyglobby";
 
 export interface MkdistOptions extends LoaderOptions {
   rootDir?: string;
@@ -37,16 +38,26 @@ export async function mkdist(
 
   // Setup dist
   if (options.cleanDist === true) {
-    await fse.unlink(options.distDir).catch(() => {});
-    await fse.emptyDir(options.distDir);
-    await fse.mkdirp(options.distDir);
+    await fsp.unlink(options.distDir).catch(() => {});
+    await fsp.rm(options.distDir, { recursive: true, force: true });
+    await fsp.mkdir(options.distDir, { recursive: true });
   }
 
   // Scan input files
-  const { globby } = await import("globby");
-  const filePaths = await globby(options.pattern || "**", {
+  const ignored = await fsp
+    .readFile(resolve(options.rootDir, ".gitignore"), "utf8")
+    .then((r) =>
+      r
+        .split("\n")
+        .map((r) => r.trim())
+        .filter((r) => r && !r.startsWith("#")),
+    )
+    .catch(() => []);
+  const filePaths = await glob(options.pattern || "**", {
     absolute: false,
+    ignore: ignored,
     cwd: options.srcDir,
+    dot: true,
   });
 
   const files: InputFile[] = filePaths.map((path) => {
@@ -55,7 +66,7 @@ export async function mkdist(
       path,
       srcPath: sourcePath,
       extension: extname(path),
-      getContents: () => fse.readFile(sourcePath, { encoding: "utf8" }),
+      getContents: () => fsp.readFile(sourcePath, { encoding: "utf8" }),
     };
   });
 
@@ -176,10 +187,10 @@ export async function mkdist(
       .filter((o) => !o.skip)
       .map(async (output) => {
         const outFile = join(options.distDir, output.path);
-        await fse.mkdirp(dirname(outFile));
+        await fsp.mkdir(dirname(outFile), { recursive: true });
         await (output.raw
           ? copyFileWithStream(output.srcPath, outFile)
-          : fse.writeFile(outFile, output.contents, "utf8"));
+          : fsp.writeFile(outFile, output.contents, "utf8"));
         writtenFiles.push(outFile);
       }),
   );

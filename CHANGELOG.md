@@ -2,6 +2,148 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.6.0
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.9...v1.6.0)
+
+### 🚀 Enhancements
+
+- Update esbuild to 0.24 ([d0dd1f7](https://github.com/unjs/mkdist/commit/d0dd1f7))
+
+### 💅 Refactors
+
+- **dts:** Improve  internal `extractDeclarations` readability ([#248](https://github.com/unjs/mkdist/pull/248))
+- Replace fast-glob with tinyglobby ([#237](https://github.com/unjs/mkdist/pull/237))
+
+### 🏡 Chore
+
+- **release:** V1.5.9 ([9fdcf8a](https://github.com/unjs/mkdist/commit/9fdcf8a))
+- Update dev dependencies ([39390b3](https://github.com/unjs/mkdist/commit/39390b3))
+- Update eslint config ([10032ee](https://github.com/unjs/mkdist/commit/10032ee))
+
+### ✅ Tests
+
+- Add test for `components/index.ts` dts behavior ([eb495b0](https://github.com/unjs/mkdist/commit/eb495b0))
+
+### ❤️ Contributors
+
+- Superchupu ([@SuperchupuDev](http://github.com/SuperchupuDev))
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
+## v1.5.9
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.8...v1.5.9)
+
+### 🩹 Fixes
+
+- **dts:** Handle dir + file of same name ([#245](https://github.com/unjs/mkdist/pull/245))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
+## v1.5.8
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.7...v1.5.8)
+
+### 🩹 Fixes
+
+- **dts:** Resolve directory exports in `.dts` files ([#244](https://github.com/unjs/mkdist/pull/244))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
+## v1.5.7
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.6...v1.5.7)
+
+### 🩹 Fixes
+
+- **vue:** Skip transpilation with multiple script blocks ([#243](https://github.com/unjs/mkdist/pull/243))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
+## v1.5.6
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.5...v1.5.6)
+
+### 🩹 Fixes
+
+- **dts:** Compatible with `vue-tsc` 2.0.x ([#242](https://github.com/unjs/mkdist/pull/242))
+
+### ❤️ Contributors
+
+- Teages ([@Teages](http://github.com/Teages))
+
+## v1.5.5
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.4...v1.5.5)
+
+### 🩹 Fixes
+
+- **dts:** Update for compatibility with `vue-tsc` >=2.1 ([#240](https://github.com/unjs/mkdist/pull/240))
+
+### ❤️ Contributors
+
+- Teages ([@Teages](http://github.com/Teages))
+
+## v1.5.4
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.3...v1.5.4)
+
+### 💅 Refactors
+
+- Replace `fs-extra` with `node:fs/promises` ([#231](https://github.com/unjs/mkdist/pull/231))
+- Replace globby w/ fast-glob ([#230](https://github.com/unjs/mkdist/pull/230))
+
+### 🏡 Chore
+
+- Update deps ([3515d36](https://github.com/unjs/mkdist/commit/3515d36))
+- Remove unused `mri` dependency ([d43b142](https://github.com/unjs/mkdist/commit/d43b142))
+- Remove unused `globby` dependency` ([eb1f556](https://github.com/unjs/mkdist/commit/eb1f556))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Sukka <isukkaw@gmail.com>
+
+## v1.5.3
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.2...v1.5.3)
+
+### 🩹 Fixes
+
+- **dts:** Use `ts.convertCompilerOptionsFromJson` to normalise ([#224](https://github.com/unjs/mkdist/pull/224))
+
+### 🏡 Chore
+
+- Bump deps ([#225](https://github.com/unjs/mkdist/pull/225))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
+## v1.5.2
+
+[compare changes](https://github.com/unjs/mkdist/compare/v1.5.1...v1.5.2)
+
+### 🩹 Fixes
+
+- Upgrade volar implementation ([#222](https://github.com/unjs/mkdist/pull/222))
+
+### 🏡 Chore
+
+- **release:** V1.5.1 ([b4c0a82](https://github.com/unjs/mkdist/commit/b4c0a82))
+- Bump all dependencies ([#221](https://github.com/unjs/mkdist/pull/221))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
 ## v1.5.1
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.5.0...v1.5.1)
