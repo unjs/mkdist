@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.0.1
+
+[compare changes](https://github.com/unjs/mkdist/compare/v2.0.0...v2.0.1)
+
+### 🩹 Fixes
+
+- **vue:** Conditionally import `vue/compiler-sfc` ([c2f1a2e](https://github.com/unjs/mkdist/commit/c2f1a2e))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
 ## v2.0.0
 
 [compare changes](https://github.com/unjs/mkdist/compare/v1.6.0...v2.0.0)
