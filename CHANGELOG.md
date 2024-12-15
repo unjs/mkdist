@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.1.0
+
+[compare changes](https://github.com/unjs/mkdist/compare/v2.0.1...v2.1.0)
+
+### 🚀 Enhancements
+
+- Support `globOptions` ([#266](https://github.com/unjs/mkdist/pull/266))
+
+### 🩹 Fixes
+
+- Convert absolute gitignore patterns to relative ([#265](https://github.com/unjs/mkdist/pull/265))
+
+### 🏡 Chore
+
+- Update deps ([d2aa83d](https://github.com/unjs/mkdist/commit/d2aa83d))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+
 ## v2.0.1
 
 [compare changes](https://github.com/unjs/mkdist/compare/v2.0.0...v2.0.1)
