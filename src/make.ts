@@ -13,12 +13,13 @@ import {
 import { getDeclarations, normalizeCompilerOptions } from "./utils/dts";
 import { getVueDeclarations } from "./utils/vue-dts";
 import { LoaderName } from "./loaders";
-import { glob } from "tinyglobby";
+import { glob, type GlobOptions } from "tinyglobby";
 
 export interface MkdistOptions extends LoaderOptions {
   rootDir?: string;
   srcDir?: string;
   pattern?: string | string[];
+  globOptions?: GlobOptions;
   distDir?: string;
   cleanDist?: boolean;
   loaders?: (LoaderName | Loader)[];
@@ -58,6 +59,7 @@ export async function mkdist(
     ignore: ignored,
     cwd: options.srcDir,
     dot: true,
+    ...options.globOptions,
   });
 
   const files: InputFile[] = filePaths.map((path) => {
