@@ -34,7 +34,7 @@
     "cssnano": "^7.0.6",
     "defu": "^6.1.4",
     "esbuild": "^0.24.0",
-    "jiti": "^1.21.6",
+    "jiti": "^1.21.7",
     "mlly": "^1.7.3",
     "pathe": "^1.1.2",
     "pkg-types": "^1.2.1",
@@ -68,7 +68,7 @@
   "peerDependencies": {
     "sass": "^1.83.0",
     "typescript": ">=5.7.2",
-    "vue": "^3.2.13",
+    "vue": "^3.5.13",
     "vue-tsc": "^1.8.27 || ^2.0.21"
   },
   "peerDependenciesMeta": {
