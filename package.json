@@ -48,7 +48,7 @@
     "@types/semver": "^7.5.8",
     "@vitest/coverage-v8": "^2.1.8",
     "@volar/typescript": "^2.4.11",
-    "@vue/language-core": "^2.1.10",
+    "@vue/language-core": "^2.2.0",
     "@vue/language-core2.0": "npm:@vue/language-core@2.0.29",
     "c8": "latest",
     "changelogen": "^0.5.7",
@@ -61,7 +61,7 @@
     "unbuild": "^3.0.1",
     "vitest": "^2.1.8",
     "vue": "^3.5.13",
-    "vue-tsc": "^2.1.10",
+    "vue-tsc": "^2.2.0",
     "vue-tsc1": "npm:vue-tsc@^1.8.27",
     "vue-tsc2.0": "npm:vue-tsc@2.0.29"
   },
