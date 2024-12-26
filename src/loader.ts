@@ -24,6 +24,7 @@ export interface OutputFile {
   extension?: string;
   contents?: string;
   declaration?: boolean;
+  errors?: Error[];
   raw?: boolean;
   skip?: boolean;
 }

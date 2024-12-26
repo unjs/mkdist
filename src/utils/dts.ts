@@ -3,6 +3,7 @@ import { findStaticImports, findExports, findTypeExports } from "mlly";
 import { resolve } from "pathe";
 import type { TSConfig } from "pkg-types";
 import type { MkdistOptions } from "../make";
+import type { CompilerHost, EmitResult } from "typescript";
 
 export async function normalizeCompilerOptions(
   _options: TSConfig["compilerOptions"],
@@ -11,10 +12,15 @@ export async function normalizeCompilerOptions(
   return ts.convertCompilerOptionsFromJson(_options, process.cwd()).options;
 }
 
+export type DeclarationOutput = Record<
+  string,
+  { contents: string; errors?: Error[] }
+>;
+
 export async function getDeclarations(
   vfs: Map<string, string>,
   opts?: MkdistOptions,
-) {
+): Promise<DeclarationOutput> {
   const ts = await import("typescript").then((r) => r.default || r);
 
   const inputFiles = [...vfs.keys()];
@@ -38,11 +44,10 @@ export async function getDeclarations(
     tsHost,
   );
   const result = program.emit();
-  if (result.diagnostics?.length) {
-    console.error(ts.formatDiagnostics(result.diagnostics, tsHost));
-  }
+  const output = extractDeclarations(vfs, inputFiles, opts);
+  augmentWithDiagnostics(result, output, tsHost, ts);
 
-  return extractDeclarations(vfs, inputFiles, opts);
+  return output;
 }
 
 const JS_EXT_RE = /\.(m|c)?(ts|js)$/;
@@ -53,8 +58,8 @@ export function extractDeclarations(
   vfs: Map<string, string>,
   inputFiles: string[],
   opts?: MkdistOptions,
-) {
-  const output: Record<string, string> = {};
+): DeclarationOutput {
+  const output: DeclarationOutput = {};
 
   for (const filename of inputFiles) {
     const dtsFilename = filename.replace(JSX_EXT_RE, ".d.$1ts");
@@ -88,10 +93,32 @@ export function extractDeclarations(
         );
       }
     }
-    output[filename] = contents;
+    output[filename] = { contents };
 
     vfs.delete(filename);
   }
 
   return output;
+}
+
+export function augmentWithDiagnostics(
+  result: EmitResult,
+  output: DeclarationOutput,
+  tsHost: CompilerHost,
+  ts: typeof import("typescript"),
+) {
+  if (result.diagnostics?.length) {
+    for (const diagnostic of result.diagnostics) {
+      const filename = diagnostic.file?.fileName;
+      if (filename in output) {
+        output[filename].errors = output[filename].errors || [];
+        output[filename].errors.push(
+          new TypeError(ts.formatDiagnostics([diagnostic], tsHost), {
+            cause: diagnostic,
+          }),
+        );
+      }
+    }
+    console.error(ts.formatDiagnostics(result.diagnostics, tsHost));
+  }
 }

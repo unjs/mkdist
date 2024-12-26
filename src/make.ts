@@ -10,7 +10,11 @@ import {
   OutputFile,
   Loader,
 } from "./loader";
-import { getDeclarations, normalizeCompilerOptions } from "./utils/dts";
+import {
+  DeclarationOutput,
+  getDeclarations,
+  normalizeCompilerOptions,
+} from "./utils/dts";
 import { getVueDeclarations } from "./utils/vue-dts";
 import { LoaderName } from "./loaders";
 import { glob, type GlobOptions } from "tinyglobby";
@@ -83,17 +87,17 @@ export async function mkdist(
     );
   }
   options.typescript.compilerOptions = defu(
-    { noEmit: false },
+    { noEmit: false } satisfies TSConfig["compilerOptions"],
     options.typescript.compilerOptions,
     {
       allowJs: true,
       declaration: true,
-      incremental: true,
       skipLibCheck: true,
       strictNullChecks: true,
       emitDeclarationOnly: true,
+      allowImportingTsExtensions: true,
       allowNonTsExtensions: true,
-    },
+    } satisfies TSConfig["compilerOptions"],
   );
 
   // Create loader
@@ -120,12 +124,16 @@ export async function mkdist(
   const dtsOutputs = outputs.filter((o) => o.declaration && !o.skip);
   if (dtsOutputs.length > 0) {
     const vfs = new Map(dtsOutputs.map((o) => [o.srcPath, o.contents || ""]));
-    const declarations = Object.create(null);
+    const declarations: DeclarationOutput = Object.create(null);
     for (const loader of [getVueDeclarations, getDeclarations]) {
       Object.assign(declarations, await loader(vfs, options));
     }
     for (const output of dtsOutputs) {
-      output.contents = declarations[output.srcPath] || "";
+      const result = declarations[output.srcPath];
+      output.contents = result?.contents || "";
+      if (result.errors) {
+        output.errors = result.errors;
+      }
     }
   }
 
@@ -187,6 +195,7 @@ export async function mkdist(
 
   // Write outputs
   const writtenFiles: string[] = [];
+  const errors: Array<{ filename: string; errors: TypeError[] }> = [];
   await Promise.all(
     outputs
       .filter((o) => !o.skip)
@@ -197,10 +206,15 @@ export async function mkdist(
           ? copyFileWithStream(output.srcPath, outFile)
           : fsp.writeFile(outFile, output.contents, "utf8"));
         writtenFiles.push(outFile);
+
+        if (output.errors) {
+          errors.push({ filename: outFile, errors: output.errors });
+        }
       }),
   );
 
   return {
+    errors,
     writtenFiles,
   };
 }
