@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { resolve } from "pathe";
+import { relative, resolve } from "pathe";
 import {
   describe,
   it,
@@ -497,6 +497,28 @@ describe("mkdist", () => {
       "
     `);
   });
+
+  it("emits DTS errors", async () => {
+    const rootDir = resolve(__dirname, "fixture");
+    const { mkdist } = await import("../src/make");
+    const { errors } = await mkdist({
+      rootDir,
+      declaration: true,
+      typescript: {
+        compilerOptions: {
+          // force compiler errors to be emitted
+          noEmitOnError: true,
+        },
+      },
+    });
+    const files = errors.map((e) => relative(rootDir, e.filename));
+    expect(files).toMatchInlineSnapshot(`
+      [
+        "dist/components/index.d.ts",
+        "dist/components/tsx.d.ts",
+      ]
+    `);
+  }, 50_000);
 });
 
 describe("mkdist with vue-tsc v1", () => {

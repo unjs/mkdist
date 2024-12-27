@@ -1,17 +1,21 @@
 import { createRequire } from "node:module";
-import { CompilerOptions, CreateProgramOptions } from "typescript";
+import { CreateProgramOptions } from "typescript";
 import { readPackageJSON } from "pkg-types";
 import { satisfies } from "semver";
 import { normalize } from "pathe";
 import { MkdistOptions } from "../make";
-import { extractDeclarations } from "./dts";
+import {
+  augmentWithDiagnostics,
+  DeclarationOutput,
+  extractDeclarations,
+} from "./dts";
 
 const require = createRequire(import.meta.url);
 
 export async function getVueDeclarations(
   vfs: Map<string, string>,
   opts?: MkdistOptions,
-) {
+): Promise<DeclarationOutput> {
   const fileMapping = getFileMapping(vfs);
   const srcFiles = Object.keys(fileMapping);
   const originFiles = Object.values(fileMapping);
@@ -28,26 +32,22 @@ export async function getVueDeclarations(
   }
 
   const { version } = pkgInfo;
+  let output: DeclarationOutput;
   switch (true) {
     case satisfies(version, "^1.8.27"): {
-      await emitVueTscV1(vfs, opts.typescript.compilerOptions, srcFiles);
+      output = await emitVueTscV1(vfs, srcFiles, originFiles, opts);
       break;
     }
     case satisfies(version, "~v2.0.0"): {
-      await emitVueTscV2(vfs, opts.typescript.compilerOptions, srcFiles);
+      output = await emitVueTscV2(vfs, srcFiles, originFiles, opts);
       break;
     }
     default: {
-      await emitVueTscLatest(
-        vfs,
-        opts.typescript.compilerOptions,
-        srcFiles,
-        opts.rootDir!,
-      );
+      output = await emitVueTscLatest(vfs, srcFiles, originFiles, opts);
     }
   }
 
-  return extractDeclarations(vfs, originFiles, opts);
+  return output;
 }
 
 const SFC_EXT_RE = /\.vue\.[cm]?[jt]s$/;
@@ -64,8 +64,9 @@ function getFileMapping(vfs: Map<string, string>): Record<string, string> {
 
 async function emitVueTscV1(
   vfs: Map<string, string>,
-  compilerOptions: CompilerOptions,
-  srcFiles: string[],
+  inputFiles: string[],
+  originFiles: string[],
+  opts?: MkdistOptions,
 ) {
   const vueTsc: typeof import("vue-tsc1") = await import("vue-tsc")
     .then((r) => r.default || r)
@@ -75,7 +76,7 @@ async function emitVueTscV1(
   const ts =
     require("typescript") as typeof import("typescript/lib/tsserverlibrary");
 
-  const tsHost = ts.createCompilerHost(compilerOptions);
+  const tsHost = ts.createCompilerHost(opts.typescript.compilerOptions);
 
   const _tsSysWriteFile = ts.sys.writeFile;
   ts.sys.writeFile = (filename, content) => {
@@ -91,15 +92,17 @@ async function emitVueTscV1(
 
   try {
     const program = vueTsc.createProgram({
-      rootNames: srcFiles,
-      options: compilerOptions,
+      rootNames: inputFiles,
+      options: opts.typescript.compilerOptions,
       host: tsHost,
     });
 
     const result = program.emit();
-    if (result.diagnostics?.length) {
-      console.error(ts.formatDiagnostics(result.diagnostics, tsHost));
-    }
+    const output = extractDeclarations(vfs, originFiles, opts);
+
+    augmentWithDiagnostics(result, output, tsHost, ts);
+
+    return output;
   } finally {
     ts.sys.writeFile = _tsSysWriteFile;
     ts.sys.readFile = _tsSysReadFile;
@@ -108,8 +111,9 @@ async function emitVueTscV1(
 
 async function emitVueTscV2(
   vfs: Map<string, string>,
-  compilerOptions: CompilerOptions,
-  srcFiles: string[],
+  inputFiles: string[],
+  originFiles: string[],
+  opts?: MkdistOptions,
 ) {
   const { resolve: resolveModule } = await import("mlly");
   const ts: typeof import("typescript") = await import("typescript").then(
@@ -124,7 +128,7 @@ async function emitVueTscV2(
   const volarTs: typeof import("@volar/typescript") =
     requireFromVueTsc("@volar/typescript");
 
-  const tsHost = ts.createCompilerHost(compilerOptions);
+  const tsHost = ts.createCompilerHost(opts.typescript.compilerOptions);
   tsHost.writeFile = (filename, content) => {
     vfs.set(filename, vueTsc.removeEmitGlobalTypes(content));
   };
@@ -140,8 +144,8 @@ async function emitVueTscV2(
     return vfs.has(filename) || _tsFileExist(filename);
   };
   const programOptions: CreateProgramOptions = {
-    rootNames: srcFiles,
-    options: compilerOptions,
+    rootNames: inputFiles,
+    options: opts.typescript.compilerOptions,
     host: tsHost,
   };
   const createProgram = volarTs.proxyCreateProgram(
@@ -167,18 +171,22 @@ async function emitVueTscV2(
       return [vueLanguagePlugin];
     },
   );
+
   const program = createProgram(programOptions);
+
   const result = program.emit();
-  if (result.diagnostics?.length) {
-    console.error(ts.formatDiagnostics(result.diagnostics, tsHost));
-  }
+  const output = extractDeclarations(vfs, originFiles, opts);
+
+  augmentWithDiagnostics(result, output, tsHost, ts);
+
+  return output;
 }
 
 async function emitVueTscLatest(
   vfs: Map<string, string>,
-  compilerOptions: CompilerOptions,
-  srcFiles: string[],
-  rootDir: string,
+  inputFiles: string[],
+  originFiles: string[],
+  opts?: MkdistOptions,
 ) {
   const { resolve: resolveModule } = await import("mlly");
   const ts: typeof import("typescript") = await import("typescript").then(
@@ -190,7 +198,7 @@ async function emitVueTscLatest(
   const volarTs: typeof import("@volar/typescript") =
     requireFromVueTsc("@volar/typescript");
 
-  const tsHost = ts.createCompilerHost(compilerOptions);
+  const tsHost = ts.createCompilerHost(opts.typescript.compilerOptions);
   tsHost.writeFile = (filename, content) => {
     vfs.set(filename, content);
   };
@@ -207,8 +215,8 @@ async function emitVueTscLatest(
   };
 
   const programOptions: CreateProgramOptions = {
-    rootNames: srcFiles,
-    options: compilerOptions,
+    rootNames: inputFiles,
+    options: opts.typescript.compilerOptions,
     host: tsHost,
   };
 
@@ -222,7 +230,7 @@ async function emitVueTscLatest(
         vueLanguageCore.createParsedCommandLineByJson(
           ts,
           ts.sys,
-          rootDir,
+          opts.rootDir,
           {},
           undefined,
           true,
@@ -234,8 +242,11 @@ async function emitVueTscLatest(
   );
 
   const program = createProgram(programOptions);
+
   const result = program.emit();
-  if (result.diagnostics?.length) {
-    console.error(ts.formatDiagnostics(result.diagnostics, tsHost));
-  }
+  const output = extractDeclarations(vfs, originFiles, opts);
+
+  augmentWithDiagnostics(result, output, tsHost, ts);
+
+  return output;
 }
