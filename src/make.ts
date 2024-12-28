@@ -49,21 +49,9 @@ export async function mkdist(
   }
 
   // Scan input files
-  const ignored = await fsp
-    .readFile(resolve(options.rootDir, ".gitignore"), "utf8")
-    .then((r) =>
-      r
-        .split("\n")
-        .map((r) => r.trim())
-        .filter((r) => r && !r.startsWith("#"))
-        // Gitignore => Glob
-        // TODO: https://github.com/unjs/mkdist/issues/271
-        .map((r) => (r.startsWith("/") ? r.slice(1) : r)),
-    )
-    .catch(() => []);
   const filePaths = await glob(options.pattern || "**", {
     absolute: false,
-    ignore: ignored,
+    ignore: ["**/node_modules", "**/coverage", "**/.git"],
     cwd: options.srcDir,
     dot: true,
     ...options.globOptions,
