@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.2.0
+
+[compare changes](https://github.com/unjs/mkdist/compare/v2.1.0...v2.2.0)
+
+### 🚀 Enhancements
+
+- **dts:** Expose ts compiler errors ([#278](https://github.com/unjs/mkdist/pull/278))
+
+### 🩹 Fixes
+
+- Only add known ignore patterns by default ([#279](https://github.com/unjs/mkdist/pull/279))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
 ## v2.1.0
 
 [compare changes](https://github.com/unjs/mkdist/compare/v2.0.1...v2.1.0)
