@@ -36,7 +36,7 @@
     "esbuild": "^0.24.2",
     "jiti": "^1.21.7",
     "mlly": "^1.7.3",
-    "pathe": "^1.1.2",
+    "pathe": "^2.0.0",
     "pkg-types": "^1.2.1",
     "postcss": "^8.4.49",
     "postcss-nested": "^7.0.2",
