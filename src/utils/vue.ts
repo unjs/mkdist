@@ -122,44 +122,11 @@ function handleNode(
       addExpression({ loc: node.loc, src: node.loc.source });
       return;
     }
-    case NodeTypes.IF: {
-      for (const child of node.branches) {
-        search(child);
-      }
-      return;
-    }
-    case NodeTypes.IF_BRANCH: {
-      const nodes = [node.condition, node.userKey, ...node.children].filter(
-        (item) => !!item,
-      );
-      for (const child of nodes) {
-        search(child);
-      }
-      return;
-    }
-    case NodeTypes.FOR: {
-      const nodes = [
-        node.source,
-        node.valueAlias,
-        node.keyAlias,
-        node.objectIndexAlias,
-        // node.parseResult?.source,
-        // node.parseResult?.value,
-        // node.parseResult?.key,
-        // node.parseResult?.index,
-        ...node.children,
-      ].filter((item) => !!item);
-      for (const child of nodes) {
-        search(child);
-      }
-      return;
-    }
-    case NodeTypes.TEXT_CALL: {
-      search(node.content);
-      return;
-    }
+    // case NodeTypes.IF:
+    // case NodeTypes.FOR:
+    // case NodeTypes.TEXT_CALL:
     default: {
-      throw new Error(`Unknown node`);
+      throw new Error(`Unexpected node type: ${node.type}`);
     }
   }
 }
@@ -195,20 +162,26 @@ export async function transpileVueTemplate(
   handleNode(root, (...items) => expressions.push(...items));
   await Promise.all(
     expressions.map(async (item) => {
-      // `{ key: val } as any` in `<div :style="{ key: val } as any" />` is a valid js snippet,
-      // but it can't be transformed.
-      // We can warp it with `()` to make it a valid js file
-      let res = (await transform(`(${item.src})`)).trim();
-
-      // result will be wrapped in `({content});\n` or `{content};\n`, we need to remove it
-      if (res.endsWith(";")) {
-        res = res.slice(0, -1);
-      }
-      if (res.startsWith("(") && res.endsWith(")")) {
-        res = res.slice(1, -1);
+      if (item.src.trim() === "") {
+        item.replacement = item.src;
+        return;
       }
 
-      item.replacement = res;
+      try {
+        // `{ key: val } as any` in `<div :style="{ key: val } as any" />` is a valid js snippet,
+        // but it can't be transformed.
+        // We can warp it with `()` to make it a valid js file
+        let res = (await transform(`(${item.src})`)).trim();
+
+        // result will be wrapped in `{content};\n`, we need to remove it
+        if (res.endsWith(";")) {
+          res = res.slice(0, -1);
+        }
+
+        item.replacement = res;
+      } catch {
+        item.replacement = item.src;
+      }
     }),
   );
 
