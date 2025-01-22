@@ -57,9 +57,14 @@ function handleNode(
     | ExpressionNode
     | TemplateChildNode
     | AttributeNode
-    | DirectiveNode,
+    | DirectiveNode
+    | undefined,
   addExpression: (...expressions: Expression[]) => void,
 ) {
+  if (!node) {
+    return;
+  }
+
   const search = (
     node: ExpressionNode | TemplateChildNode | AttributeNode | DirectiveNode,
   ) => handleNode(node, addExpression);

@@ -64,6 +64,7 @@ describe("vue template", () => {
     expect(
       await fixture(`<div :key="(value as any)" data-test="test" />`),
     ).toEqual(`<div :key="value" data-test="test" />`);
+    expect(await fixture(`<input disabled />`)).toEqual(`<input disabled />`);
   });
 
   it("interpolation", async () => {
