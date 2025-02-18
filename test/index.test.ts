@@ -495,7 +495,7 @@ describe("mkdist", () => {
       },
     });
     const files = errors.map((e) => relative(rootDir, e.filename));
-    expect(files).toMatchInlineSnapshot(`
+    expect(files.sort()).toMatchInlineSnapshot(`
       [
         "dist/components/index.d.ts",
         "dist/components/tsx.d.ts",
