@@ -160,6 +160,7 @@ describe("mkdist", () => {
       .toMatchInlineSnapshot(`
         "export * from "./other.js";
         export type { Other } from "./other.js";
+        export declare function wonder(twinkle: import("./other.js").Other): string;
         "
       `);
 
@@ -217,17 +218,8 @@ describe("mkdist", () => {
       "interface MyComponentProps {
           msg: string;
       }
-      declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<MyComponentProps>>, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<MyComponentProps>>> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      declare const _default: import("vue").DefineComponent<MyComponentProps, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<MyComponentProps> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, false, {}, any>;
       export default _default;
-      type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
-      type __VLS_TypePropsToOption<T> = {
-          [K in keyof T]-?: {} extends Pick<T, K> ? {
-              type: import('vue').PropType<__VLS_NonUndefinedable<T[K]>>;
-          } : {
-              type: import('vue').PropType<T[K]>;
-              required: true;
-          };
-      };
       "
     `);
 
@@ -242,17 +234,8 @@ describe("mkdist", () => {
           msg: string;
           color: Color;
       };
-      declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<__VLS_Props>>, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<__VLS_Props>>> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      declare const _default: import("vue").DefineComponent<__VLS_Props, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<__VLS_Props> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, false, {}, any>;
       export default _default;
-      type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
-      type __VLS_TypePropsToOption<T> = {
-          [K in keyof T]-?: {} extends Pick<T, K> ? {
-              type: import('vue').PropType<__VLS_NonUndefinedable<T[K]>>;
-          } : {
-              type: import('vue').PropType<T[K]>;
-              required: true;
-          };
-      };
       "
     `);
   }, 50_000);
@@ -577,7 +560,7 @@ describe("mkdist", () => {
       },
     });
     const files = errors.map((e) => relative(rootDir, e.filename));
-    expect(files).toMatchInlineSnapshot(`
+    expect(files.sort()).toMatchInlineSnapshot(`
       [
         "dist/components/index.d.ts",
         "dist/components/tsx.d.ts",
@@ -678,6 +661,7 @@ describe("mkdist with vue-tsc v1", () => {
       .toMatchInlineSnapshot(`
         "export * from "./other.js";
         export type { Other } from "./other.js";
+        export declare function wonder(twinkle: import("./other.js").Other): string;
         "
       `);
     expect(
@@ -935,6 +919,7 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
       .toMatchInlineSnapshot(`
         "export * from "./other.js";
         export type { Other } from "./other.js";
+        export declare function wonder(twinkle: import("./other.js").Other): string;
         "
       `);
     expect(
