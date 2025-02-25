@@ -645,6 +645,7 @@ describe("mkdist with vue-tsc v1", () => {
     ).toMatchInlineSnapshot(`
       "<script>
       import { defineComponent as _defineComponent } from "vue";
+      import { toDisplayString as _toDisplayString, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue";
       import { ref } from "vue";
       export default /* @__PURE__ */ _defineComponent({
         __name: "script-setup-ts",
@@ -652,20 +653,21 @@ describe("mkdist with vue-tsc v1", () => {
           msg: { type: String, required: true },
           color: { type: Object, required: true }
         },
-        setup(__props, { expose: __expose }) {
-          __expose();
+        setup(__props) {
           const props = __props;
           const str = ref("hello");
-          const __returned__ = { props, str };
-          Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-          return __returned__;
+          return (_ctx, _cache) => {
+            return _openBlock(), _createElementBlock(
+              "div",
+              null,
+              _toDisplayString(str.value),
+              1
+              /* TEXT */
+            );
+          };
         }
       });
       </script>
-
-      <template>
-        <div>{{ str }}</div>
-      </template>
       "
     `);
 
@@ -677,23 +679,25 @@ describe("mkdist with vue-tsc v1", () => {
     ).toMatchInlineSnapshot(`
       "<script>
       import { defineComponent as _defineComponent } from "vue";
+      import { toDisplayString as _toDisplayString, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue";
       export default /* @__PURE__ */ _defineComponent({
         __name: "script-multi-block",
         props: {
           msg: { type: String, required: true }
         },
-        setup(__props, { expose: __expose }) {
-          __expose();
-          const __returned__ = {};
-          Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-          return __returned__;
+        setup(__props) {
+          return (_ctx, _cache) => {
+            return _openBlock(), _createElementBlock(
+              "div",
+              null,
+              _toDisplayString(_ctx.msg),
+              1
+              /* TEXT */
+            );
+          };
         }
       });
       </script>
-
-      <template>
-        <div>{{ msg }}</div>
-      </template>
       "
     `);
 
@@ -903,23 +907,25 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
     ).toMatchInlineSnapshot(`
       "<script>
       import { defineComponent as _defineComponent } from "vue";
+      import { toDisplayString as _toDisplayString, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue";
       export default /* @__PURE__ */ _defineComponent({
         __name: "script-multi-block",
         props: {
           msg: { type: String, required: true }
         },
-        setup(__props, { expose: __expose }) {
-          __expose();
-          const __returned__ = {};
-          Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-          return __returned__;
+        setup(__props) {
+          return (_ctx, _cache) => {
+            return _openBlock(), _createElementBlock(
+              "div",
+              null,
+              _toDisplayString(_ctx.msg),
+              1
+              /* TEXT */
+            );
+          };
         }
       });
       </script>
-
-      <template>
-        <div>{{ msg }}</div>
-      </template>
       "
     `);
 
