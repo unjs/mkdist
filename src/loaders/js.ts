@@ -21,13 +21,12 @@ export const jsLoader: Loader = async (input, { options }) => {
   let contents = await input.getContents();
 
   const isCjs = options.format === "cjs";
+  const defaultExtension = isCjs ? ".cjs" : ".mjs";
 
   // TODO: Default to .cjs in next major version
   const extension = options.ext
     ? withLeadingDot(options.ext)
-    : isCjs
-      ? ".js"
-      : ".mjs";
+    : defaultExtension;
 
   // declaration
   if (options.declaration && !input.srcPath?.match(DECLARATION_RE)) {
