@@ -1,6 +1,6 @@
 import { createRequire } from "node:module";
 import { CreateProgramOptions } from "typescript";
-import { readPackageJSON } from "pkg-types";
+// import { readPackageJSON } from "pkg-types"; // TODO: use normal import in next major
 import { satisfies } from "semver";
 import { normalize } from "pathe";
 import { MkdistOptions } from "../make";
@@ -23,6 +23,7 @@ export async function getVueDeclarations(
     return;
   }
 
+  const { readPackageJSON } = await import("pkg-types"); // TODO
   const pkgInfo = await readPackageJSON("vue-tsc").catch(() => {});
   if (!pkgInfo) {
     console.warn(
