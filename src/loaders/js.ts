@@ -21,10 +21,9 @@ export const jsLoader: Loader = async (input, { options }) => {
   let contents = await input.getContents();
 
   const isCjs = options.format === "cjs";
-  let extension = isCjs ? ".js" : ".mjs"; // TODO: Default to .cjs in next major version
-  if (options.ext) {
-    extension = options.ext.startsWith(".") ? options.ext : `.${options.ext}`;
-  }
+  
+  // TODO: Default to .cjs in next major version
+  const extension = options.ext ? withLeadingDot(options.ext) : (isCjs ? ".js" : ".mjs");
 
   // declaration
   if (options.declaration && !input.srcPath?.match(DECLARATION_RE)) {
@@ -71,3 +70,7 @@ export const jsLoader: Loader = async (input, { options }) => {
 
   return output;
 };
+
+function withLeadingDot (ext: string) {
+  return ext.startsWith(".") ? ext : `.${ext}`;
+}
