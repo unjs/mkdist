@@ -60,6 +60,9 @@ importers:
       '@volar/typescript':
         specifier: ^2.4.12
         version: 2.4.12
+      '@vue/compiler-dom-types':
+        specifier: npm:@vue/compiler-dom@^3.5.13
+        version: '@vue/compiler-dom@3.5.13'
       '@vue/language-core':
         specifier: ^2.2.8
         version: 2.2.8(typescript@5.8.2)
