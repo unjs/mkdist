@@ -6,7 +6,7 @@ import type {
   LoaderResult,
   OutputFile,
 } from "../loader";
-import { transpileVueTemplate } from "../utils/vue";
+import { transpileVueTemplate } from "../utils/vue/template";
 
 export interface DefineVueLoaderOptions {
   blockLoaders?: {

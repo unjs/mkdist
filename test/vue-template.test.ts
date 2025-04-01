@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { transform } from "esbuild";
-import { transpileVueTemplate } from "../src/utils/vue";
+import { transpileVueTemplate } from "../src/utils/vue/template";
 import { createRequire } from "node:module";
 
 describe("vue template", () => {
