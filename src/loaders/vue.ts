@@ -62,10 +62,9 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
     }
 
     // we need to remove typescript from template block if the block is typescript
-    const isTs = [
-      sfc.descriptor.script,
-      sfc.descriptor.scriptSetup,
-    ].some((block) => block?.lang === "ts");
+    const isTs = [sfc.descriptor.script, sfc.descriptor.scriptSetup].some(
+      (block) => block?.lang === "ts",
+    );
 
     const output: LoaderResult = [];
     const addOutput = (...files: OutputFile[]) => output.push(...files);
@@ -76,18 +75,18 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
     ].filter((item) => !!item);
 
     if (sfc.descriptor.template) {
-      blocks.unshift(sfc.descriptor.template)
+      blocks.unshift(sfc.descriptor.template);
     }
 
     if (sfc.descriptor.script) {
-      blocks.unshift(sfc.descriptor.script)
+      blocks.unshift(sfc.descriptor.script);
     }
     if (sfc.descriptor.scriptSetup) {
       blocks.unshift(
         isTs
           ? await preTranspileScriptSetup(sfc.descriptor, input.srcPath)
           : sfc.descriptor.scriptSetup,
-      )
+      );
     }
     if (!sfc.descriptor.script && !sfc.descriptor.scriptSetup) {
       // push a fake script block to generate dts
@@ -195,7 +194,10 @@ export function defineDefaultBlockLoader(
   };
 }
 
-const templateLoader: VueBlockLoader = async (rawBlock, { requireTranspileTemplate, loadFile, rawInput }) => {
+const templateLoader: VueBlockLoader = async (
+  rawBlock,
+  { requireTranspileTemplate, loadFile, rawInput },
+) => {
   if (rawBlock.type !== "template") {
     return;
   }
@@ -230,7 +232,7 @@ const templateLoader: VueBlockLoader = async (rawBlock, { requireTranspileTempla
     content: transformed,
     attrs: block.attrs,
   };
-}
+};
 
 const styleLoader = defineDefaultBlockLoader({
   defaultLang: "css",
