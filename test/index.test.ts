@@ -35,6 +35,7 @@ describe("mkdist", () => {
         "dist/star/other.mjs",
         "dist/components/index.mjs",
         "dist/components/blank.vue",
+        "dist/components/emit-and-with-default.vue",
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
@@ -63,6 +64,7 @@ describe("mkdist", () => {
       [
         "dist/components/index.mjs",
         "dist/components/blank.vue",
+        "dist/components/emit-and-with-default.vue",
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
@@ -85,6 +87,7 @@ describe("mkdist", () => {
       [
         "dist/components/index.mjs",
         "dist/components/blank.vue",
+        "dist/components/emit-and-with-default.vue",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
@@ -124,6 +127,8 @@ describe("mkdist", () => {
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
         "dist/components/blank.vue.d.ts",
+        "dist/components/emit-and-with-default.vue",
+        "dist/components/emit-and-with-default.vue.d.ts",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
@@ -291,6 +296,7 @@ describe("mkdist", () => {
         "dist/star/other.mjs",
         "dist/components/index.mjs",
         "dist/components/blank.vue",
+        "dist/components/emit-and-with-default.vue",
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
@@ -560,6 +566,8 @@ describe("mkdist with vue-tsc v1", () => {
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
         "dist/components/blank.vue.d.ts",
+        "dist/components/emit-and-with-default.vue",
+        "dist/components/emit-and-with-default.vue.d.ts",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
@@ -643,24 +651,19 @@ describe("mkdist with vue-tsc v1", () => {
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
-      "<script>
-      import { defineComponent as _defineComponent } from "vue";
+      "<script setup>
       import { ref } from "vue";
-      export default /* @__PURE__ */ _defineComponent({
-        __name: "script-setup-ts",
-        props: {
-          msg: { type: String, required: true },
-          color: { type: Object, required: true }
+      const props = defineProps({
+        msg: {
+          type: String,
+          required: true
         },
-        setup(__props, { expose: __expose }) {
-          __expose();
-          const props = __props;
-          const str = ref("hello");
-          const __returned__ = { props, str };
-          Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-          return __returned__;
+        color: {
+          type: Object,
+          required: true
         }
       });
+      const str = ref("hello");
       </script>
 
       <template>
@@ -675,20 +678,17 @@ describe("mkdist with vue-tsc v1", () => {
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
-      "<script>
-      import { defineComponent as _defineComponent } from "vue";
-      export default /* @__PURE__ */ _defineComponent({
-        __name: "script-multi-block",
-        props: {
-          msg: { type: String, required: true }
-        },
-        setup(__props, { expose: __expose }) {
-          __expose();
-          const __returned__ = {};
-          Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-          return __returned__;
+      "<script setup>
+      defineProps({
+        msg: {
+          type: String,
+          required: true
         }
       });
+      </script>
+
+      <script>
+
       </script>
 
       <template>
@@ -818,6 +818,8 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
         "dist/components/blank.vue.d.ts",
+        "dist/components/emit-and-with-default.vue",
+        "dist/components/emit-and-with-default.vue.d.ts",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
@@ -901,24 +903,46 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
-      "<script>
-      import { defineComponent as _defineComponent } from "vue";
-      export default /* @__PURE__ */ _defineComponent({
-        __name: "script-multi-block",
-        props: {
-          msg: { type: String, required: true }
-        },
-        setup(__props, { expose: __expose }) {
-          __expose();
-          const __returned__ = {};
-          Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-          return __returned__;
+      "<script setup>
+      defineProps({
+        msg: {
+          type: String,
+          required: true
         }
       });
       </script>
 
+      <script>
+
+      </script>
+
       <template>
         <div>{{ msg }}</div>
+      </template>
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/emit-and-with-default.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<script setup>
+      const props = defineProps({
+        buttonText: {
+          type: String,
+          required: false,
+          default: "Click"
+        }
+      });
+      const emit = defineEmits(["clickBtn"]);
+      </script>
+
+      <template>
+        <div>
+          <button @click="emit('clickBtn')">{{ buttonText }}</button>
+        </div>
       </template>
       "
     `);
