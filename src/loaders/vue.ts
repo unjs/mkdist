@@ -225,6 +225,7 @@ const templateLoader: VueBlockLoader = async (
           ?.contents || code
       );
     },
+    block.loc.start.offset,
   );
 
   return {

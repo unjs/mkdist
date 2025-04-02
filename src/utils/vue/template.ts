@@ -136,32 +136,13 @@ function handleNode(
   }
 }
 
-export function replaceBySourceLocation(
-  src: string,
-  input: { loc: SourceLocation; replacement: string }[],
-) {
-  if (input.length === 0) {
-    return src;
-  }
-
-  const data = [...input].sort(
-    (a, b) => b.loc.start.offset - a.loc.start.offset,
-  );
-  let result = src;
-  for (const { loc, replacement } of data) {
-    const start = loc.start.offset;
-    const end = loc.end.offset;
-    result = result.slice(0, start) + replacement + result.slice(end);
-  }
-
-  return result;
-}
-
 export async function transpileVueTemplate(
   content: string,
   root: RootNode,
   transform: (code: string) => string | Promise<string>,
+  offset = 0,
 ): Promise<string> {
+  const { MagicString } = await import("vue/compiler-sfc");
   const expressions: Expression[] = [];
 
   handleNode(root, (...items) => expressions.push(...items));
@@ -190,12 +171,14 @@ export async function transpileVueTemplate(
     }),
   );
 
-  const result = replaceBySourceLocation(
-    content,
-    expressions.filter((item) => !!item.replacement) as (Expression & {
-      replacement: string;
-    })[],
-  );
+  const s = new MagicString(content);
+  for (const item of expressions.filter((item) => !!item.replacement)) {
+    s.overwrite(
+      item.loc.start.offset - offset,
+      item.loc.end.offset - offset,
+      item.replacement,
+    );
+  }
 
-  return result;
+  return s.toString();
 }
