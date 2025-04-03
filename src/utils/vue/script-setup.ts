@@ -3,11 +3,16 @@ import type {
   CallExpression,
   Expression,
   Node,
+  Identifier,
+  ArrayExpression,
+  ObjectExpression,
+  ObjectProperty,
+  StringLiteral,
 } from "@babel/types";
 import type {
   extractRuntimeEmits,
   extractRuntimeProps,
-  resolveTypeElements,
+  inferRuntimeType,
   SFCScriptBlock,
   SimpleTypeResolveContext,
 } from "vue/compiler-sfc";
@@ -18,7 +23,7 @@ interface Context {
   utils: {
     extractRuntimeProps: typeof extractRuntimeProps;
     extractRuntimeEmits: typeof extractRuntimeEmits;
-    resolveTypeElements: typeof resolveTypeElements;
+    inferRuntimeType: typeof inferRuntimeType;
     MagicString: typeof import("vue/compiler-sfc").MagicString;
     babel: {
       parse: typeof import("@babel/parser").parse;
@@ -30,6 +35,7 @@ interface Context {
 const DEFINE_EMITS = "defineEmits";
 const DEFINE_PROPS = "defineProps";
 const WITH_DEFAULTS = "withDefaults";
+const DEFINE_MODEL = "defineModel";
 
 /**
  * Pre-transpile script setup block to remove type syntax and replace it with runtime declarations.
@@ -49,7 +55,8 @@ export async function preTranspileScriptSetup(
       const processedTypeSyntax =
         processDefineProps(node.expression, context) ||
         processDefineEmits(node.expression, context) ||
-        processWithDefaults(node.expression, context);
+        processWithDefaults(node.expression, context) ||
+        processDefineModel(node.expression, context);
 
       if (processedTypeSyntax !== undefined) {
         resultBuilder.overwrite(node.start!, node.end!, processedTypeSyntax);
@@ -67,7 +74,8 @@ export async function preTranspileScriptSetup(
         const processedTypeSyntax =
           processDefineProps(decl.init, context) ||
           processDefineEmits(decl.init, context) ||
-          processWithDefaults(decl.init, context);
+          processWithDefaults(decl.init, context) ||
+          processDefineModel(decl.init, context);
 
         if (processedTypeSyntax !== undefined) {
           resultBuilder.overwrite(
@@ -91,7 +99,7 @@ function processDefineProps(
   context: Context,
 ): string | undefined {
   if (!isCallOf(node, DEFINE_PROPS)) {
-    return undefined;
+    return;
   }
 
   const propsRuntimeDecl = node.arguments[0];
@@ -170,7 +178,7 @@ function processWithDefaults(
   context: Context,
 ): string | undefined {
   if (!isCallOf(node, WITH_DEFAULTS)) {
-    return undefined;
+    return;
   }
 
   context.ctx.propsRuntimeDefaults = node.arguments[1];
@@ -198,6 +206,90 @@ function processWithDefaults(
 
   return res;
 }
+function processDefineModel(
+  node: Expression,
+  context: Context,
+): string | undefined {
+  if (!isCallOf(node, DEFINE_MODEL)) {
+    return;
+  }
+
+  const [modelNameDecl, modelRuntimeDecl] = getDefineModelRuntimeDecl(
+    node,
+    context,
+  );
+
+  const modelTypeDecl = node.typeParameters?.params[0];
+  if (!modelTypeDecl) {
+    return;
+  }
+
+  const model = context.utils.inferRuntimeType(context.ctx, modelTypeDecl);
+  if (!model || model.length === 0 || model[0] === "Unknown") {
+    return;
+  }
+
+  // { type: String } or { type: [String, Number] } if model have multiple types
+  const modelCodegenTypeDecl =
+    model.length === 1
+      ? ({ type: "Identifier", name: model[0] } satisfies Identifier)
+      : ({
+          type: "ArrayExpression",
+          elements: model.map(
+            (name) => ({ type: "Identifier", name }) satisfies Identifier,
+          ),
+        } satisfies ArrayExpression);
+
+  const modelCodegenDecl: ObjectExpression = {
+    type: "ObjectExpression",
+    properties: [
+      {
+        type: "ObjectProperty",
+        key: { type: "StringLiteral", value: "type" },
+        value: modelCodegenTypeDecl,
+        computed: false,
+        shorthand: false,
+      } satisfies ObjectProperty,
+    ],
+  };
+  if (modelRuntimeDecl) {
+    modelCodegenDecl.properties.push({
+      type: "SpreadElement",
+      argument: modelRuntimeDecl,
+    });
+  }
+
+  node.typeArguments = undefined;
+  node.typeParameters = undefined;
+  node.arguments = modelNameDecl
+    ? [modelNameDecl, modelCodegenDecl]
+    : [modelCodegenDecl];
+
+  return context.utils.babel.generate(node).code;
+}
+
+function getDefineModelRuntimeDecl(
+  node: CallExpression,
+  context: Context,
+): [StringLiteral | undefined, ObjectExpression | undefined] {
+  const [arg0, arg1] = node.arguments;
+  if (arg0 && arg0.type === "StringLiteral") {
+    if (arg1 && arg1.type !== "ObjectExpression") {
+      context.ctx.error(
+        `${DEFINE_MODEL}()'s second argument must be an object.`,
+        arg1,
+      );
+    }
+
+    return [arg0, arg1 as ObjectExpression];
+  }
+
+  if (arg0 && arg0.type !== "ObjectExpression") {
+    context.ctx.error(`Unexpected argument type for ${DEFINE_MODEL}().`, arg0);
+  }
+
+  return [undefined, arg0 as ObjectExpression | undefined];
+}
 
 async function prepareContext(
   { script, scriptSetup }: SFCDescriptor,
@@ -206,7 +298,7 @@ async function prepareContext(
   const {
     extractRuntimeProps,
     extractRuntimeEmits,
-    resolveTypeElements,
+    inferRuntimeType,
     MagicString,
   } = await import("vue/compiler-sfc");
   const { parse } = await import("@babel/parser");
@@ -250,7 +342,7 @@ async function prepareContext(
       MagicString,
       extractRuntimeProps,
       extractRuntimeEmits,
-      resolveTypeElements,
+      inferRuntimeType,
       babel: {
         parse,
         generate,
