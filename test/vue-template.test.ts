@@ -107,16 +107,16 @@ describe("vue template", () => {
   });
 
   it("quotes", async () => {
-    expect(
-      await fixture(`<div @click="emit('click')" />`),
-    ).toEqual(`<div @click="emit('click')" />`);
-    expect(
-      await fixture(`<div @click='emit("click")' />`),
-    ).toEqual(`<div @click='emit("click")' />`);
-    expect(
-      await fixture(`<div @click="emit('click', '\\'')" />`),
-    ).toEqual(`<div @click="emit('click', '\\'')" />`);
-  })
+    expect(await fixture(`<div @click="emit('click')" />`)).toEqual(
+      `<div @click="emit('click')" />`,
+    );
+    expect(await fixture(`<div @click='emit("click")' />`)).toEqual(
+      `<div @click='emit("click")' />`,
+    );
+    expect(await fixture(`<div @click="emit('click', '\\'')" />`)).toEqual(
+      `<div @click="emit('click', '\\'')" />`,
+    );
+  });
 
   async function fixture(src: string) {
     const { resolve: resolveModule } = await import("mlly");

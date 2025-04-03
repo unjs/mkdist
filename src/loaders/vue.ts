@@ -225,7 +225,7 @@ const templateLoader: VueBlockLoader = async (
         res.find((f) => [".js", ".mjs", ".cjs"].includes(f.extension))
           ?.contents || code
       );
-    }
+    },
   );
 
   return {

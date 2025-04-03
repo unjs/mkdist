@@ -165,7 +165,11 @@ export async function transpileVueTemplate(
         );
         if (surrounding) {
           const replace = surrounding.code === `"` ? `'` : `"`;
-          item.replacement = replaceQuote(item.replacement, surrounding.code, replace);
+          item.replacement = replaceQuote(
+            item.replacement,
+            surrounding.code,
+            replace,
+          );
         }
       } catch {
         item.replacement = item.src;
@@ -224,7 +228,10 @@ function getSurrounding(code: string, start: number, end: number) {
     : undefined;
 }
 
-async function transformJsSnippet(code: string, transform: (code: string) => Promise<string>): Promise<string> {
+async function transformJsSnippet(
+  code: string,
+  transform: (code: string) => Promise<string>,
+): Promise<string> {
   // `{ key: val } as any` in `<div :style="{ key: val } as any" />` is a valid js snippet,
   // but it can't be transformed.
   // We can warp it with `()` to make it a valid js file
