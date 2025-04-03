@@ -35,6 +35,7 @@ describe("mkdist", () => {
         "dist/star/other.mjs",
         "dist/components/index.mjs",
         "dist/components/blank.vue",
+        "dist/components/define-model.vue",
         "dist/components/emit-and-with-default.vue",
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
@@ -64,6 +65,7 @@ describe("mkdist", () => {
       [
         "dist/components/index.mjs",
         "dist/components/blank.vue",
+        "dist/components/define-model.vue",
         "dist/components/emit-and-with-default.vue",
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
@@ -87,6 +89,7 @@ describe("mkdist", () => {
       [
         "dist/components/index.mjs",
         "dist/components/blank.vue",
+        "dist/components/define-model.vue",
         "dist/components/emit-and-with-default.vue",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
@@ -127,6 +130,8 @@ describe("mkdist", () => {
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
         "dist/components/blank.vue.d.ts",
+        "dist/components/define-model.vue",
+        "dist/components/define-model.vue.d.ts",
         "dist/components/emit-and-with-default.vue",
         "dist/components/emit-and-with-default.vue.d.ts",
         "dist/components/js.vue",
@@ -296,6 +301,7 @@ describe("mkdist", () => {
         "dist/star/other.mjs",
         "dist/components/index.mjs",
         "dist/components/blank.vue",
+        "dist/components/define-model.vue",
         "dist/components/emit-and-with-default.vue",
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
@@ -566,6 +572,8 @@ describe("mkdist with vue-tsc v1", () => {
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
         "dist/components/blank.vue.d.ts",
+        "dist/components/define-model.vue",
+        "dist/components/define-model.vue.d.ts",
         "dist/components/emit-and-with-default.vue",
         "dist/components/emit-and-with-default.vue.d.ts",
         "dist/components/js.vue",
@@ -818,6 +826,8 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
         "dist/components/blank.vue.d.ts",
+        "dist/components/define-model.vue",
+        "dist/components/define-model.vue.d.ts",
         "dist/components/emit-and-with-default.vue",
         "dist/components/emit-and-with-default.vue.d.ts",
         "dist/components/js.vue",
@@ -942,6 +952,49 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
       <template>
         <div>
           <button @click="emit('clickBtn')">{{ buttonText }}</button>
+        </div>
+      </template>
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/define-model.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<script setup>
+      const model = defineModel({
+        "type": String,
+        ...{
+          required: true
+        }
+      });
+      const twoType = defineModel("twoType", {
+        "type": [String, Number],
+        ...{
+          required: true
+        }
+      });
+      const runtimeOnly = defineModel("runtimeOnly", {
+        type: String,
+        required: true
+      });
+      const nameOnly = defineModel("nameOnly");
+      const empty = defineModel();
+      const { disabled } = defineProps({
+        disabled: {
+          type: Boolean,
+          required: false
+        }
+      });
+      const emit = defineEmits(["submit"]);
+      </script>
+
+      <template>
+        <div>
+          <input v-model="model" :disabled />
+          <button @click="emit('submit', model)">Submit</button>
         </div>
       </template>
       "
