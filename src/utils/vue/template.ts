@@ -139,11 +139,13 @@ function handleNode(
 export async function transpileVueTemplate(
   content: string,
   root: RootNode,
-  transform: (code: string) => string | Promise<string>,
   offset = 0,
+  transform: (code: string) => Promise<string>,
 ): Promise<string> {
   const { MagicString } = await import("vue/compiler-sfc");
   const expressions: Expression[] = [];
+
+  const s = new MagicString(content);
 
   handleNode(root, (...items) => expressions.push(...items));
   await Promise.all(
@@ -154,24 +156,23 @@ export async function transpileVueTemplate(
       }
 
       try {
-        // `{ key: val } as any` in `<div :style="{ key: val } as any" />` is a valid js snippet,
-        // but it can't be transformed.
-        // We can warp it with `()` to make it a valid js file
-        let res = (await transform(`(${item.src})`)).trim();
+        item.replacement = await transformJsSnippet(item.src, transform);
 
-        // result will be wrapped in `{content};\n`, we need to remove it
-        if (res.endsWith(";")) {
-          res = res.slice(0, -1);
+        const surrounding = getSurrounding(
+          content,
+          item.loc.start.offset - offset,
+          item.loc.end.offset - offset,
+        );
+        if (surrounding) {
+          const replace = surrounding.code === `"` ? `'` : `"`;
+          item.replacement = replaceQuote(item.replacement, surrounding.code, replace);
         }
-
-        item.replacement = res;
       } catch {
         item.replacement = item.src;
       }
     }),
   );
 
-  const s = new MagicString(content);
   for (const item of expressions.filter((item) => !!item.replacement)) {
     s.overwrite(
       item.loc.start.offset - offset,
@@ -181,4 +182,61 @@ export async function transpileVueTemplate(
   }
 
   return s.toString();
+}
+
+function replaceQuote(code: string, target: string, replace: string): string {
+  let res = code;
+
+  if (res.includes(target)) {
+    /**
+     * Due to the way Vue parses templates,
+     * the symbol of target would never appear in the code.
+     * We just need to replace the symbol of target.
+     *
+     * But for replace symbol exist in code, we need to escape it,
+     * because esbuild have removed the escape character.
+     */
+    res = res.replaceAll(replace, `\\${replace}`);
+    res = res.replaceAll(target, replace);
+  }
+
+  return res;
+}
+
+function getSurrounding(code: string, start: number, end: number) {
+  const empty = new Set([" ", "\n", "\r", "\t"]);
+  let startIndex = start - 1;
+  let endIndex = end;
+
+  while (startIndex > 0 && empty.has(code.at(startIndex))) {
+    startIndex--;
+  }
+
+  while (endIndex < code.length && empty.has(code.at(endIndex))) {
+    endIndex++;
+  }
+
+  const prev = startIndex >= 0 ? code.at(startIndex) : "";
+  const next = endIndex < code.length ? code.at(endIndex) : "";
+
+  return prev && next && prev === next
+    ? { code: prev, prevAt: startIndex, nextAt: endIndex }
+    : undefined;
+}
+
+async function transformJsSnippet(code: string, transform: (code: string) => Promise<string>): Promise<string> {
+  // `{ key: val } as any` in `<div :style="{ key: val } as any" />` is a valid js snippet,
+  // but it can't be transformed.
+  // We can warp it with `()` to make it a valid js file
+
+  let res = await transform(`(${code})`);
+
+  res = res.trim();
+
+  // result will be wrapped in `{content};\n`, we need to remove it
+  if (res.endsWith(";")) {
+    res = res.slice(0, -1);
+  }
+
+  return res;
 }

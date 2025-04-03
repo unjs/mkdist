@@ -212,6 +212,7 @@ const templateLoader: VueBlockLoader = async (
     // for lower version of @vue/compiler-sfc, `ast.source` is the whole .vue file
     block.content,
     block.ast,
+    block.loc.start.offset,
     async (code) => {
       const res = await loadFile({
         getContents: () => code,
@@ -224,8 +225,7 @@ const templateLoader: VueBlockLoader = async (
         res.find((f) => [".js", ".mjs", ".cjs"].includes(f.extension))
           ?.contents || code
       );
-    },
-    block.loc.start.offset,
+    }
   );
 
   return {

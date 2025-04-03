@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest";
-import { transform } from "esbuild";
-import { transpileVueTemplate } from "../src/utils/vue/template";
 import { createRequire } from "node:module";
+import { transform } from "esbuild";
+import { describe, it, expect } from "vitest";
+import { transpileVueTemplate } from "../src/utils/vue/template";
 
 describe("vue template", () => {
   it("v-for", async () => {
@@ -106,6 +106,18 @@ describe("vue template", () => {
     );
   });
 
+  it("quotes", async () => {
+    expect(
+      await fixture(`<div @click="emit('click')" />`),
+    ).toEqual(`<div @click="emit('click')" />`);
+    expect(
+      await fixture(`<div @click='emit("click")' />`),
+    ).toEqual(`<div @click='emit("click")' />`);
+    expect(
+      await fixture(`<div @click="emit('click', '\\'')" />`),
+    ).toEqual(`<div @click="emit('click', '\\'')" />`);
+  })
+
   async function fixture(src: string) {
     const { resolve: resolveModule } = await import("mlly");
     const requireFromVue = createRequire(await resolveModule("vue"));
@@ -116,6 +128,7 @@ describe("vue template", () => {
     return await transpileVueTemplate(
       src,
       parse(src, { parseMode: "base" }),
+      0,
       async (code) => {
         const res = await transform(code, { loader: "ts", target: "esnext" });
         return res.code;
