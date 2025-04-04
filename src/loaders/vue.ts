@@ -31,7 +31,7 @@ export interface DefaultBlockLoaderOptions {
   validExtensions?: string[];
 }
 
-let warnnedTypescript = false;
+let warnedTypescript = false;
 function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
   const blockLoaders = options?.blockLoaders || {};
 
@@ -60,11 +60,11 @@ function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
       sfc.descriptor.script?.lang,
       sfc.descriptor.scriptSetup?.lang,
     ].some((lang) => lang && lang.startsWith("ts"));
-    if (isTs && !warnnedTypescript) {
+    if (isTs && !warnedTypescript) {
       console.warn(
-        "[mkdist] vue-sfc-transformer is not installed, mkdist will not transforme typescript syntax in the Vue SFC",
+        "[mkdist] vue-sfc-transformer is not installed. mkdist will not transform typescript syntax in Vue SFCs.",
       );
-      warnnedTypescript = true;
+      warnedTypescript = true;
     }
 
     const output: LoaderResult = [];
