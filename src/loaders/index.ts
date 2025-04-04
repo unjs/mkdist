@@ -11,7 +11,6 @@ export const loaders = {
   vue:
     cachedVueLoader ||
     (async (...args) => {
-      // @ts-expect-error need to fix node module resolution types
       cachedVueLoader = await import("vue-sfc-transformer/mkdist")
         .then((r) => r.vueLoader)
         .catch(() => vueLoader);

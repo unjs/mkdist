@@ -100,8 +100,8 @@ importers:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.2)
       vue-sfc-transformer:
-        specifier: ^0.1.0
-        version: 0.1.0(vue@3.5.13(typescript@5.8.2))
+        specifier: ^0.1.1
+        version: 0.1.1(vue@3.5.13(typescript@5.8.2))
       vue-tsc:
         specifier: ^2.2.8
         version: 2.2.8(typescript@5.8.2)
@@ -2448,8 +2448,8 @@ packages:
   vscode-uri@3.1.0:
     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
 
-  vue-sfc-transformer@0.1.0:
-    resolution: {integrity: sha512-glehgmlPkuCFuKKt42fjdNgWali81wY7ENCSWYGkKYePVubYeTKZGnbZA3q/W0C4I9KlwgbFMkYRYcUp+9JeGw==}
+  vue-sfc-transformer@0.1.1:
+    resolution: {integrity: sha512-ZQrAljAIZH69euSQDaoTCKhVduSrfw/6l6OXS9ZYFQYScd6f+c+iKJra/vi+rtZghnYtXRfVSK9VPtVNS6abXQ==}
     engines: {node: '>=6.9.0'}
     peerDependencies:
       vue: ^3.5.13
@@ -4825,7 +4825,7 @@ snapshots:
 
   vscode-uri@3.1.0: {}
 
-  vue-sfc-transformer@0.1.0(vue@3.5.13(typescript@5.8.2)):
+  vue-sfc-transformer@0.1.1(vue@3.5.13(typescript@5.8.2)):
     dependencies:
       '@babel/generator': 7.27.0
       '@babel/parser': 7.27.0

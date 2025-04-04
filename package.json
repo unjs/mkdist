@@ -61,7 +61,7 @@
     "unbuild": "^3.5.0",
     "vitest": "^3.1.1",
     "vue": "^3.5.13",
-    "vue-sfc-transformer": "^0.1.0",
+    "vue-sfc-transformer": "^0.1.1",
     "vue-tsc": "^2.2.8",
     "vue-tsc1": "npm:vue-tsc@^1.8.27",
     "vue-tsc2.0": "npm:vue-tsc@2.0.29"
@@ -70,7 +70,7 @@
     "sass": "^1.85.0",
     "typescript": ">=5.7.3",
     "vue": "^3.5.13",
-    "vue-sfc-transformer": "^0.1.0",
+    "vue-sfc-transformer": "^0.1.1",
     "vue-tsc": "^1.8.27 || ^2.0.21"
   },
   "peerDependenciesMeta": {
