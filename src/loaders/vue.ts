@@ -28,11 +28,11 @@ export interface VueBlockLoader {
 export interface DefaultBlockLoaderOptions {
   type: "script" | "style" | "template";
   outputLang: string;
-  defaultLang?: string;
   validExtensions?: string[];
 }
 
-export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
+let warnnedTypescript = false;
+function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
   const blockLoaders = options?.blockLoaders || {};
 
   return async (input, context) => {
@@ -40,10 +40,9 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
       return;
     }
 
-    const { compileScript, parse } = await import("vue/compiler-sfc");
+    const { parse } = await import("vue/compiler-sfc");
 
     let modified = false;
-    let fakeScriptBlock = false;
 
     const raw = await input.getContents();
     const sfc = parse(raw, {
@@ -57,38 +56,32 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
       return;
     }
 
+    const isTs = [
+      sfc.descriptor.script?.lang,
+      sfc.descriptor.scriptSetup?.lang,
+    ].some((lang) => lang && lang.startsWith("ts"));
+    if (isTs && !warnnedTypescript) {
+      console.warn(
+        "[mkdist] vue-sfc-transformer is not installed, mkdist will not transforme typescript syntax in the Vue SFC",
+      );
+      warnnedTypescript = true;
+    }
+
     const output: LoaderResult = [];
     const addOutput = (...files: OutputFile[]) => output.push(...files);
 
-    const blocks: VueBlock[] = [
-      sfc.descriptor.template,
+    const blocks: SFCBlock[] = [
       ...sfc.descriptor.styles,
       ...sfc.descriptor.customBlocks,
     ].filter((item) => !!item);
-    // merge script blocks
-    if (sfc.descriptor.script || sfc.descriptor.scriptSetup) {
-      // need to compile script when using typescript with <script setup>
-      if (sfc.descriptor.scriptSetup && sfc.descriptor.scriptSetup.lang) {
-        const merged = compileScript(sfc.descriptor, { id: input.srcPath });
-        merged.setup = false;
-        merged.attrs = toOmit(merged.attrs, "setup");
-        blocks.unshift(merged);
-      } else {
-        const scriptBlocks = [
-          sfc.descriptor.script,
-          sfc.descriptor.scriptSetup,
-        ].filter((item) => !!item);
-        blocks.unshift(...scriptBlocks);
-      }
-    } else {
-      // push a fake script block to generate dts
-      blocks.unshift({
-        type: "script",
-        content: "export default {}",
-        attrs: {},
-      });
-      fakeScriptBlock = true;
-    }
+
+    // generate dts
+    await context.loadFile({
+      path: `${input.path}.js`,
+      srcPath: `${input.srcPath}.js`,
+      extension: ".js",
+      getContents: () => "export default {}",
+    });
 
     const results = await Promise.all(
       blocks.map(async (data) => {
@@ -101,7 +94,7 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
         if (result) {
           modified = true;
         }
-        return result || data;
+        return { block: result || data, offset: data.loc.start.offset };
       }),
     );
 
@@ -109,12 +102,29 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
       return;
     }
 
-    const contents = results
-      .map((block) => {
-        if (block.type === "script" && fakeScriptBlock) {
-          return undefined;
-        }
+    // skiped blocks
+    if (sfc.descriptor.template) {
+      results.unshift({
+        block: sfc.descriptor.template,
+        offset: sfc.descriptor.template.loc.start.offset,
+      });
+    }
+    if (sfc.descriptor.script) {
+      results.unshift({
+        block: sfc.descriptor.script,
+        offset: sfc.descriptor.script.loc.start.offset,
+      });
+    }
+    if (sfc.descriptor.scriptSetup) {
+      results.unshift({
+        block: sfc.descriptor.scriptSetup,
+        offset: sfc.descriptor.scriptSetup.loc.start.offset,
+      });
+    }
 
+    const contents = results
+      .sort((a, b) => a.offset - b.offset)
+      .map(({ block }) => {
         const attrs = Object.entries(block.attrs)
           .map(([key, value]) => {
             if (!value) {
@@ -129,9 +139,8 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
         const header = `<${`${block.type} ${attrs}`.trim()}>`;
         const footer = `</${block.type}>`;
 
-        return `${header}\n${cleanupBreakLine(block.content)}\n${footer}\n`;
+        return `${header}\n${block.content.trim()}\n${footer}\n`;
       })
-      .filter((item) => !!item)
       .join("\n");
     addOutput({
       path: input.path,
@@ -145,7 +154,7 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
   };
 }
 
-export function defineDefaultBlockLoader(
+function defineDefaultBlockLoader(
   options: DefaultBlockLoaderOptions,
 ): VueBlockLoader {
   return async (block, { loadFile, rawInput, addOutput }) => {
@@ -172,7 +181,7 @@ export function defineDefaultBlockLoader(
         f.extension === `.${options.outputLang}` ||
         options.validExtensions?.includes(f.extension as string),
     );
-    if (!blockOutputFile?.contents) {
+    if (!blockOutputFile) {
       return;
     }
     addOutput(...files.filter((f) => f !== blockOutputFile));
@@ -190,22 +199,25 @@ const styleLoader = defineDefaultBlockLoader({
   type: "style",
 });
 
-const scriptLoader = defineDefaultBlockLoader({
-  outputLang: "js",
-  type: "script",
-  validExtensions: [".js", ".mjs"],
-});
-
-export const vueLoader = defineVueLoader({
+export const fallbackVueLoader = defineVueLoader({
   blockLoaders: {
     style: styleLoader,
-    script: scriptLoader,
   },
 });
 
-function cleanupBreakLine(str: string): string {
-  return str.replaceAll(/(\n\n)\n+/g, "\n\n").replace(/^\s*\n|\n\s*$/g, "");
-}
+let cachedVueLoader: Loader | undefined;
+export const vueLoader: Loader = async (
+  file: InputFile,
+  ctx: LoaderContext,
+) => {
+  if (!cachedVueLoader) {
+    cachedVueLoader = await import("vue-sfc-transformer/mkdist")
+      .then((r) => r.vueLoader)
+      .catch(() => fallbackVueLoader);
+  }
+  return cachedVueLoader(file, ctx);
+};
+
 function toOmit<R extends Record<keyof object, unknown>, K extends keyof R>(
   record: R,
   toRemove: K,

@@ -10,6 +10,7 @@ import {
   afterAll,
 } from "vitest";
 import { createLoader } from "../src/loader";
+import { afterEach } from "vitest";
 
 describe("mkdist", () => {
   let mkdist: typeof import("../src/make").mkdist;
@@ -634,6 +635,100 @@ describe("mkdist", () => {
       ]
     `);
   }, 50_000);
+});
+
+describe("mkdist with fallback vue loader", () => {
+  const consoleWarnSpy = vi.spyOn(console, "warn");
+  beforeAll(() => {
+    vi.resetModules();
+    vi.doMock("vue-sfc-transformer/mkdist", async () => {
+      throw new Error("vue-sfc-transformer is not installed");
+    });
+  });
+
+  afterAll(() => {
+    vi.doUnmock("vue-sfc-transformer/mkdist");
+  });
+
+  afterEach(() => {
+    consoleWarnSpy.mockReset();
+  })
+
+  it("keep the template and script block", async () => {
+    expect(await fixture(`<script lang="ts">const a: number = 1</script>`))
+      .toMatchInlineSnapshot(`
+      "<script lang="ts">const a: number = 1</script>"
+    `);
+
+    expect(
+      await fixture(`<script setup lang="ts">const a: number = 1</script>`),
+    ).toMatchInlineSnapshot(
+      `"<script setup lang="ts">const a: number = 1</script>"`,
+    );
+
+    expect(
+      await fixture(
+        [
+          `<script setup lang="ts">const a: number | null = 1</script>`,
+          `<template><div>{{ a!.toFixed(2) }}</div></template>`,
+        ].join("\n"),
+      ),
+    ).toMatchInlineSnapshot(`
+        "<script setup lang="ts">const a: number | null = 1</script>
+        <template><div>{{ a!.toFixed(2) }}</div></template>"
+      `);
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      "[mkdist] vue-sfc-transformer is not installed, mkdist will not transforme typescript syntax in the Vue SFC",
+    );
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("transform style block", async () => {
+    expect(
+      await fixture(
+        [
+          `<script setup lang="ts">const a: number | null = 1</script>`,
+          `<style>a { color: red }</style>`,
+        ].join("\n"),
+      ),
+    ).toMatchInlineSnapshot(`
+        "<script setup lang="ts">const a: number | null = 1</script>
+        <style>a { color: red }</style>"
+      `);
+
+    expect(
+      await fixture(
+        [
+          `<script setup lang="ts">const a: number | null = 1</script>`,
+          `<style lang="scss">.a { .b { color: red } }</style>`,
+        ].join("\n"),
+      ),
+    ).toMatchInlineSnapshot(`
+        "<script setup lang="ts">
+        const a: number | null = 1
+        </script>
+
+        <style>
+        .a .b {
+          color: red;
+        }
+        </style>
+        "
+      `);
+  });
+
+  async function fixture(input: string) {
+    const { loadFile } = createLoader({
+      loaders: ["vue", "js", "sass"],
+    });
+    const results = await loadFile({
+      extension: ".vue",
+      getContents: () => input,
+      path: "test.vue",
+    });
+    return results?.[0].contents || input;
+  }
 });
 
 describe("mkdist with vue-tsc v1", () => {
