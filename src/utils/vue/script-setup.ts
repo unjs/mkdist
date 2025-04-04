@@ -302,7 +302,7 @@ async function prepareContext(
   } = await import("vue/compiler-sfc");
   const { parse } = await import("@babel/parser");
   const generate = (await import("@babel/generator").then(
-    (m) => m.default || m,
+    (m) => (m.default as any)?.generate || m.default || m,
   )) as typeof import("@babel/generator").default;
 
   const helper = new Set<string>();
