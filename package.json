@@ -41,15 +41,13 @@
     "postcss": "^8.5.3",
     "postcss-nested": "^7.0.2",
     "semver": "^7.7.1",
-    "tinyglobby": "^0.2.12",
-    "vue-sfc-transformer": "^0.0.2"
+    "tinyglobby": "^0.2.12"
   },
   "devDependencies": {
     "@types/node": "^22.13.14",
     "@types/semver": "^7.7.0",
     "@vitest/coverage-v8": "^3.1.1",
     "@volar/typescript": "^2.4.12",
-    "@vue/compiler-dom-types": "npm:@vue/compiler-dom@^3.5.13",
     "@vue/language-core": "^2.2.8",
     "@vue/language-core2.0": "npm:@vue/language-core@2.0.29",
     "c8": "latest",
@@ -63,6 +61,7 @@
     "unbuild": "^3.5.0",
     "vitest": "^3.1.1",
     "vue": "^3.5.13",
+    "vue-sfc-transformer": "^0.1.0",
     "vue-tsc": "^2.2.8",
     "vue-tsc1": "npm:vue-tsc@^1.8.27",
     "vue-tsc2.0": "npm:vue-tsc@2.0.29"
@@ -71,6 +70,7 @@
     "sass": "^1.85.0",
     "typescript": ">=5.7.3",
     "vue": "^3.5.13",
+    "vue-sfc-transformer": "^0.1.0",
     "vue-tsc": "^1.8.27 || ^2.0.21"
   },
   "peerDependenciesMeta": {
@@ -81,6 +81,9 @@
       "optional": true
     },
     "vue": {
+      "optional": true
+    },
+    "vue-sfc-transformer": {
       "optional": true
     },
     "vue-tsc": {

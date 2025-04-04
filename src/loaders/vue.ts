@@ -1,4 +1,4 @@
-import type { SFCBlock, SFCTemplateBlock } from "vue/compiler-sfc";
+import type { SFCBlock } from "vue/compiler-sfc";
 import type {
   InputFile,
   Loader,
@@ -6,10 +6,6 @@ import type {
   LoaderResult,
   OutputFile,
 } from "../loader";
-import {
-  transpileVueTemplate,
-  preTranspileScriptSetup,
-} from "vue-sfc-transformer";
 
 export interface DefineVueLoaderOptions {
   blockLoaders?: {
@@ -17,24 +13,22 @@ export interface DefineVueLoaderOptions {
   };
 }
 
-export type VueBlockOutput = Pick<SFCBlock, "type" | "content" | "attrs">;
-
-export interface VueBlockLoaderContext extends LoaderContext {
-  requireTranspileTemplate: boolean;
-  rawInput: InputFile;
-  addOutput: (...files: OutputFile[]) => void;
-}
+export type VueBlock = Pick<SFCBlock, "type" | "content" | "attrs">;
 
 export interface VueBlockLoader {
   (
-    block: SFCBlock,
-    context: VueBlockLoaderContext,
-  ): Promise<VueBlockOutput | undefined>;
+    block: VueBlock,
+    context: LoaderContext & {
+      rawInput: InputFile;
+      addOutput: (...files: OutputFile[]) => void;
+    },
+  ): Promise<VueBlock | undefined>;
 }
 
 export interface DefaultBlockLoaderOptions {
   type: "script" | "style" | "template";
-  defaultLang: string;
+  outputLang: string;
+  defaultLang?: string;
   validExtensions?: string[];
 }
 
@@ -46,7 +40,7 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
       return;
     }
 
-    const { parse } = await import("vue/compiler-sfc");
+    const { compileScript, parse } = await import("vue/compiler-sfc");
 
     let modified = false;
     let fakeScriptBlock = false;
@@ -63,52 +57,35 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
       return;
     }
 
-    // we need to remove typescript from template block if the block is typescript
-    const isTs = [sfc.descriptor.script, sfc.descriptor.scriptSetup].some(
-      (block) => block?.lang === "ts",
-    );
-
     const output: LoaderResult = [];
     const addOutput = (...files: OutputFile[]) => output.push(...files);
 
-    const blocks: SFCBlock[] = [
+    const blocks: VueBlock[] = [
+      sfc.descriptor.template,
       ...sfc.descriptor.styles,
       ...sfc.descriptor.customBlocks,
     ].filter((item) => !!item);
-
-    if (sfc.descriptor.template) {
-      blocks.unshift(sfc.descriptor.template);
-    }
-
-    if (sfc.descriptor.script) {
-      blocks.unshift(sfc.descriptor.script);
-    }
-    if (sfc.descriptor.scriptSetup) {
-      blocks.unshift(
-        isTs
-          ? await preTranspileScriptSetup(sfc.descriptor, input.srcPath)
-          : sfc.descriptor.scriptSetup,
-      );
-    }
-    if (!sfc.descriptor.script && !sfc.descriptor.scriptSetup) {
+    // merge script blocks
+    if (sfc.descriptor.script || sfc.descriptor.scriptSetup) {
+      // need to compile script when using typescript with <script setup>
+      if (sfc.descriptor.scriptSetup && sfc.descriptor.scriptSetup.lang) {
+        const merged = compileScript(sfc.descriptor, { id: input.srcPath });
+        merged.setup = false;
+        merged.attrs = toOmit(merged.attrs, "setup");
+        blocks.unshift(merged);
+      } else {
+        const scriptBlocks = [
+          sfc.descriptor.script,
+          sfc.descriptor.scriptSetup,
+        ].filter((item) => !!item);
+        blocks.unshift(...scriptBlocks);
+      }
+    } else {
       // push a fake script block to generate dts
       blocks.unshift({
         type: "script",
         content: "export default {}",
         attrs: {},
-        loc: {
-          start: {
-            offset: 0,
-            line: 1,
-            column: 1,
-          },
-          end: {
-            offset: 0,
-            line: 1,
-            column: 1,
-          },
-          source: "",
-        },
       });
       fakeScriptBlock = true;
     }
@@ -120,12 +97,11 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
           ...context,
           rawInput: input,
           addOutput,
-          requireTranspileTemplate: isTs,
         });
         if (result) {
           modified = true;
         }
-        return { block: result || data, offset: data.loc.start.offset };
+        return result || data;
       }),
     );
 
@@ -134,8 +110,7 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
     }
 
     const contents = results
-      .sort((a, b) => a.offset - b.offset)
-      .map(({ block }) => {
+      .map((block) => {
         if (block.type === "script" && fakeScriptBlock) {
           return undefined;
         }
@@ -181,7 +156,7 @@ export function defineDefaultBlockLoader(
     const lang =
       typeof block.attrs.lang === "string"
         ? block.attrs.lang
-        : options.defaultLang;
+        : options.outputLang;
     const extension = `.${lang}`;
 
     const files =
@@ -194,10 +169,10 @@ export function defineDefaultBlockLoader(
 
     const blockOutputFile = files.find(
       (f) =>
-        f.extension === `.${options.defaultLang}` ||
+        f.extension === `.${options.outputLang}` ||
         options.validExtensions?.includes(f.extension as string),
     );
-    if (!blockOutputFile) {
+    if (!blockOutputFile?.contents) {
       return;
     }
     addOutput(...files.filter((f) => f !== blockOutputFile));
@@ -210,63 +185,21 @@ export function defineDefaultBlockLoader(
   };
 }
 
-const templateLoader: VueBlockLoader = async (
-  rawBlock,
-  { requireTranspileTemplate, loadFile, rawInput },
-) => {
-  if (rawBlock.type !== "template") {
-    return;
-  }
-
-  if (!requireTranspileTemplate) {
-    return;
-  }
-
-  const block = rawBlock as SFCTemplateBlock;
-
-  const transformed = await transpileVueTemplate(
-    // for lower version of @vue/compiler-sfc, `ast.source` is the whole .vue file
-    block.content,
-    block.ast,
-    block.loc.start.offset,
-    async (code) => {
-      const res = await loadFile({
-        getContents: () => code,
-        path: `${rawInput.path}.ts`,
-        srcPath: `${rawInput.srcPath}.ts`,
-        extension: ".ts",
-      });
-
-      return (
-        res.find((f) => [".js", ".mjs", ".cjs"].includes(f.extension))
-          ?.contents || code
-      );
-    },
-  );
-
-  return {
-    type: "template",
-    content: transformed,
-    attrs: block.attrs,
-  };
-};
-
 const styleLoader = defineDefaultBlockLoader({
-  defaultLang: "css",
+  outputLang: "css",
   type: "style",
 });
 
 const scriptLoader = defineDefaultBlockLoader({
-  defaultLang: "js",
+  outputLang: "js",
   type: "script",
   validExtensions: [".js", ".mjs"],
 });
 
 export const vueLoader = defineVueLoader({
   blockLoaders: {
-    script: scriptLoader,
-    template: templateLoader,
     style: styleLoader,
+    script: scriptLoader,
   },
 });
 

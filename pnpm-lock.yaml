@@ -47,9 +47,6 @@ importers:
       tinyglobby:
         specifier: ^0.2.12
         version: 0.2.12
-      vue-sfc-transformer:
-        specifier: ^0.0.2
-        version: 0.0.2(vue@3.5.13(typescript@5.8.2))
     devDependencies:
       '@types/node':
         specifier: ^22.13.14
@@ -63,9 +60,6 @@ importers:
       '@volar/typescript':
         specifier: ^2.4.12
         version: 2.4.12
-      '@vue/compiler-dom-types':
-        specifier: npm:@vue/compiler-dom@^3.5.13
-        version: '@vue/compiler-dom@3.5.13'
       '@vue/language-core':
         specifier: ^2.2.8
         version: 2.2.8(typescript@5.8.2)
@@ -105,6 +99,9 @@ importers:
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.2)
+      vue-sfc-transformer:
+        specifier: ^0.1.0
+        version: 0.1.0(vue@3.5.13(typescript@5.8.2))
       vue-tsc:
         specifier: ^2.2.8
         version: 2.2.8(typescript@5.8.2)
@@ -2451,8 +2448,8 @@ packages:
   vscode-uri@3.1.0:
     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
 
-  vue-sfc-transformer@0.0.2:
-    resolution: {integrity: sha512-RtJ5ng94ZZmgt+UrhuxDZKajYAgAidhRbovpzbp37W+llTKgZOVrRrUVcMbuSzOFef3lgVpPWg1kgKitmtNG2A==}
+  vue-sfc-transformer@0.1.0:
+    resolution: {integrity: sha512-glehgmlPkuCFuKKt42fjdNgWali81wY7ENCSWYGkKYePVubYeTKZGnbZA3q/W0C4I9KlwgbFMkYRYcUp+9JeGw==}
     engines: {node: '>=6.9.0'}
     peerDependencies:
       vue: ^3.5.13
@@ -4828,7 +4825,7 @@ snapshots:
 
   vscode-uri@3.1.0: {}
 
-  vue-sfc-transformer@0.0.2(vue@3.5.13(typescript@5.8.2)):
+  vue-sfc-transformer@0.1.0(vue@3.5.13(typescript@5.8.2)):
     dependencies:
       '@babel/generator': 7.27.0
       '@babel/parser': 7.27.0
