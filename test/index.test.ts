@@ -679,7 +679,7 @@ describe("mkdist with fallback vue loader", () => {
       `);
 
     expect(consoleWarnSpy).toHaveBeenCalledWith(
-      "[mkdist] vue-sfc-transformer is not installed, mkdist will not transforme typescript syntax in the Vue SFC",
+      "[mkdist] vue-sfc-transformer is not installed. mkdist will not transform typescript syntax in Vue SFCs.",
     );
     expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
   });
