@@ -67,6 +67,12 @@ describe("vueLoader", () => {
         await fixture(`<div :key="(value as any)" data-test="test" />`),
       ).toEqual(`<div :key="value" data-test="test" />`);
       expect(await fixture(`<input disabled />`)).toEqual(`<input disabled />`);
+      expect(await fixture(`<input :disabled />`)).toEqual(
+        `<input :disabled />`,
+      );
+      expect(await fixture(`<input v-bind:disabled />`)).toEqual(
+        `<input v-bind:disabled />`,
+      );
     });
 
     it("interpolation", async () => {
