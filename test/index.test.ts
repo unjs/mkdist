@@ -652,7 +652,7 @@ describe("mkdist with fallback vue loader", () => {
 
   afterEach(() => {
     consoleWarnSpy.mockReset();
-  })
+  });
 
   it("keep the template and script block", async () => {
     expect(await fixture(`<script lang="ts">const a: number = 1</script>`))
