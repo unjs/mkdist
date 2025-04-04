@@ -15,7 +15,7 @@ export interface DefineVueLoaderOptions {
   };
 }
 
-export type VueBlock = Pick<SFCBlock, "type" | "content" | "attrs">;
+export type VueBlockOutput = Pick<SFCBlock, "type" | "content" | "attrs">;
 
 export interface VueBlockLoaderContext extends LoaderContext {
   requireTranspileTemplate: boolean;
@@ -25,9 +25,9 @@ export interface VueBlockLoaderContext extends LoaderContext {
 
 export interface VueBlockLoader {
   (
-    block: VueBlock,
+    block: SFCBlock,
     context: VueBlockLoaderContext,
-  ): Promise<VueBlock | undefined>;
+  ): Promise<VueBlockOutput | undefined>;
 }
 
 export interface DefaultBlockLoaderOptions {
@@ -69,7 +69,7 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
     const output: LoaderResult = [];
     const addOutput = (...files: OutputFile[]) => output.push(...files);
 
-    const blocks: VueBlock[] = [
+    const blocks: SFCBlock[] = [
       ...sfc.descriptor.styles,
       ...sfc.descriptor.customBlocks,
     ].filter((item) => !!item);
@@ -94,6 +94,19 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
         type: "script",
         content: "export default {}",
         attrs: {},
+        loc: {
+          start: {
+            offset: 0,
+            line: 1,
+            column: 1,
+          },
+          end: {
+            offset: 0,
+            line: 1,
+            column: 1,
+          },
+          source: "",
+        },
       });
       fakeScriptBlock = true;
     }
@@ -110,7 +123,7 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
         if (result) {
           modified = true;
         }
-        return result || data;
+        return { block: result || data, offset: data.loc.start.offset };
       }),
     );
 
@@ -119,7 +132,8 @@ export function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
     }
 
     const contents = results
-      .map((block) => {
+      .sort((a, b) => a.offset - b.offset)
+      .map(({ block }) => {
         if (block.type === "script" && fakeScriptBlock) {
           return undefined;
         }

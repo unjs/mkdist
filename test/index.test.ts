@@ -659,7 +659,11 @@ describe("mkdist with vue-tsc v1", () => {
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
-      "<script setup>
+      "<template>
+        <div>{{ str }}</div>
+      </template>
+
+      <script setup>
       import { ref } from "vue";
       const props = defineProps({
         msg: {
@@ -673,10 +677,6 @@ describe("mkdist with vue-tsc v1", () => {
       });
       const str = ref("hello");
       </script>
-
-      <template>
-        <div>{{ str }}</div>
-      </template>
       "
     `);
 
@@ -686,7 +686,15 @@ describe("mkdist with vue-tsc v1", () => {
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
-      "<script setup>
+      "<template>
+        <div>{{ msg }}</div>
+      </template>
+
+      <script>
+
+      </script>
+
+      <script setup>
       defineProps({
         msg: {
           type: String,
@@ -694,14 +702,6 @@ describe("mkdist with vue-tsc v1", () => {
         }
       });
       </script>
-
-      <script>
-
-      </script>
-
-      <template>
-        <div>{{ msg }}</div>
-      </template>
       "
     `);
 
@@ -913,7 +913,15 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
-      "<script setup>
+      "<template>
+        <div>{{ msg }}</div>
+      </template>
+
+      <script>
+
+      </script>
+
+      <script setup>
       defineProps({
         msg: {
           type: String,
@@ -921,14 +929,6 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         }
       });
       </script>
-
-      <script>
-
-      </script>
-
-      <template>
-        <div>{{ msg }}</div>
-      </template>
       "
     `);
 
