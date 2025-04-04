@@ -10,9 +10,6 @@ import type {
   StringLiteral,
 } from "@babel/types";
 import type {
-  extractRuntimeEmits,
-  extractRuntimeProps,
-  inferRuntimeType,
   SFCScriptBlock,
   SimpleTypeResolveContext,
 } from "vue/compiler-sfc";
@@ -21,9 +18,9 @@ import type { SFCDescriptor } from "vue/compiler-sfc";
 interface Context {
   ctx: SimpleTypeResolveContext;
   utils: {
-    extractRuntimeProps: typeof extractRuntimeProps;
-    extractRuntimeEmits: typeof extractRuntimeEmits;
-    inferRuntimeType: typeof inferRuntimeType;
+    extractRuntimeProps: typeof import("vue/compiler-sfc").extractRuntimeProps;
+    extractRuntimeEmits: typeof import("vue/compiler-sfc").extractRuntimeEmits;
+    inferRuntimeType: typeof import("vue/compiler-sfc").inferRuntimeType;
     MagicString: typeof import("vue/compiler-sfc").MagicString;
     babel: {
       parse: typeof import("@babel/parser").parse;
