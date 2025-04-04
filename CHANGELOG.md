@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.3.0
+
+[compare changes](https://github.com/unjs/mkdist/compare/v2.2.0...v2.3.0)
+
+### 🚀 Enhancements
+
+- **vue:** Support adding relative extensions to dynamic imports ([#269](https://github.com/unjs/mkdist/pull/269))
+- **vue:** Use `vue-sfc-transformer` if installed ([#300](https://github.com/unjs/mkdist/pull/300))
+
+### 🩹 Fixes
+
+- Use dynamic import `pkg-types` ([9d6065b](https://github.com/unjs/mkdist/commit/9d6065b))
+
+### 🏡 Chore
+
+- Update deps ([c3ff125](https://github.com/unjs/mkdist/commit/c3ff125))
+
+### ✅ Tests
+
+- Sort file list before snapshot ([152817d](https://github.com/unjs/mkdist/commit/152817d))
+
+### 🤖 CI
+
+- Force enable latest corepack ([587a5e4](https://github.com/unjs/mkdist/commit/587a5e4))
+
+### ❤️ Contributors
+
+- Teages ([@Teages](https://github.com/Teages))
+- Pooya Parsa ([@pi0](https://github.com/pi0))
+- Daniel Roe ([@danielroe](https://github.com/danielroe))
+- Connor Pearson ([@cjpearson](https://github.com/cjpearson))
+
 ## v2.2.0
 
 [compare changes](https://github.com/unjs/mkdist/compare/v2.1.0...v2.2.0)
