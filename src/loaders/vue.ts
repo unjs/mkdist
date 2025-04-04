@@ -6,8 +6,10 @@ import type {
   LoaderResult,
   OutputFile,
 } from "../loader";
-import { transpileVueTemplate } from "../utils/vue/template";
-import { preTranspileScriptSetup } from "../utils/vue/script-setup";
+import {
+  transpileVueTemplate,
+  preTranspileScriptSetup,
+} from "vue-sfc-transformer";
 
 export interface DefineVueLoaderOptions {
   blockLoaders?: {

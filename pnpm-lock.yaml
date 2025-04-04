@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@babel/generator':
-        specifier: ^7.27.0
-        version: 7.27.0
       autoprefixer:
         specifier: ^10.4.21
         version: 10.4.21(postcss@8.5.3)
@@ -50,16 +47,10 @@ importers:
       tinyglobby:
         specifier: ^0.2.12
         version: 0.2.12
+      vue-sfc-transformer:
+        specifier: ^0.0.2
+        version: 0.0.2(vue@3.5.13(typescript@5.8.2))
     devDependencies:
-      '@babel/parser':
-        specifier: ^7.27.0
-        version: 7.27.0
-      '@babel/types':
-        specifier: ^7.27.0
-        version: 7.27.0
-      '@types/babel__generator':
-        specifier: ^7.6.8
-        version: 7.6.8
       '@types/node':
         specifier: ^22.13.14
         version: 22.13.14
@@ -798,9 +789,6 @@ packages:
   '@trysound/sax@0.2.0':
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
     engines: {node: '>=10.13.0'}
-
-  '@types/babel__generator@7.6.8':
-    resolution: {integrity: sha512-ASsj+tpEDsEiFr1arWrlN6V3mdfjRMZt6LtK/Vp/kreFLnr5QH5+DhvD5nINYZXzwJvXeGq+05iUXcAzVrqWtw==}
 
   '@types/estree@1.0.7':
     resolution: {integrity: sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ==}
@@ -2463,6 +2451,12 @@ packages:
   vscode-uri@3.1.0:
     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
 
+  vue-sfc-transformer@0.0.2:
+    resolution: {integrity: sha512-RtJ5ng94ZZmgt+UrhuxDZKajYAgAidhRbovpzbp37W+llTKgZOVrRrUVcMbuSzOFef3lgVpPWg1kgKitmtNG2A==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      vue: ^3.5.13
+
   vue-template-compiler@2.7.16:
     resolution: {integrity: sha512-AYbUWAJHLGGQM7+cNTELw+KsOG9nl2CnSv467WobS5Cv9uk3wFcnr1Etsz2sEIHEZvw1U+o9mRlEO6QbZvUPGQ==}
 
@@ -2990,10 +2984,6 @@ snapshots:
     optional: true
 
   '@trysound/sax@0.2.0': {}
-
-  '@types/babel__generator@7.6.8':
-    dependencies:
-      '@babel/types': 7.27.0
 
   '@types/estree@1.0.7': {}
 
@@ -4837,6 +4827,12 @@ snapshots:
       - yaml
 
   vscode-uri@3.1.0: {}
+
+  vue-sfc-transformer@0.0.2(vue@3.5.13(typescript@5.8.2)):
+    dependencies:
+      '@babel/generator': 7.27.0
+      '@babel/parser': 7.27.0
+      vue: 3.5.13(typescript@5.8.2)
 
   vue-template-compiler@2.7.16:
     dependencies:

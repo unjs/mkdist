@@ -29,7 +29,6 @@
     "test": "pnpm lint && vitest run --coverage"
   },
   "dependencies": {
-    "@babel/generator": "^7.27.0",
     "autoprefixer": "^10.4.21",
     "citty": "^0.1.6",
     "cssnano": "^7.0.6",
@@ -42,12 +41,10 @@
     "postcss": "^8.5.3",
     "postcss-nested": "^7.0.2",
     "semver": "^7.7.1",
-    "tinyglobby": "^0.2.12"
+    "tinyglobby": "^0.2.12",
+    "vue-sfc-transformer": "^0.0.2"
   },
   "devDependencies": {
-    "@babel/parser": "^7.27.0",
-    "@babel/types": "^7.27.0",
-    "@types/babel__generator": "^7.6.8",
     "@types/node": "^22.13.14",
     "@types/semver": "^7.7.0",
     "@vitest/coverage-v8": "^3.1.1",
@@ -71,16 +68,12 @@
     "vue-tsc2.0": "npm:vue-tsc@2.0.29"
   },
   "peerDependencies": {
-    "@babel/parser": "^7.27.0",
     "sass": "^1.85.0",
     "typescript": ">=5.7.3",
     "vue": "^3.5.13",
     "vue-tsc": "^1.8.27 || ^2.0.21"
   },
   "peerDependenciesMeta": {
-    "@babel/parser": {
-      "optional": true
-    },
     "sass": {
       "optional": true
     },
