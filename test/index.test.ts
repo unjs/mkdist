@@ -319,6 +319,126 @@ describe("mkdist", () => {
         .map((f) => resolve(rootDir, f))
         .sort(),
     );
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-setup-ts.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<template>
+        <div>{{ str }}</div>
+      </template>
+
+      <script setup>
+      import { ref } from "vue";
+      const props = defineProps({
+        msg: {
+          type: String,
+          required: true
+        },
+        color: {
+          type: Object,
+          required: true
+        }
+      });
+      const str = ref("hello");
+      </script>
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-multi-block.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<template>
+        <div>{{ msg }}</div>
+      </template>
+
+      <script>
+
+      </script>
+
+      <script setup>
+      defineProps({
+        msg: {
+          type: String,
+          required: true
+        }
+      });
+      </script>
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/emit-and-with-default.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<script setup>
+      const props = defineProps({
+        buttonText: {
+          type: String,
+          required: false,
+          default: "Click"
+        }
+      });
+      const emit = defineEmits(["clickBtn"]);
+      </script>
+
+      <template>
+        <div>
+          <button @click="emit('clickBtn')">{{ buttonText }}</button>
+        </div>
+      </template>
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/define-model.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<script setup>
+      const model = defineModel({
+        "type": String,
+        ...{
+          required: true
+        }
+      });
+      const twoType = defineModel("twoType", {
+        "type": [String, Number],
+        ...{
+          required: true
+        }
+      });
+      const runtimeOnly = defineModel("runtimeOnly", {
+        type: String,
+        required: true
+      });
+      const nameOnly = defineModel("nameOnly");
+      const empty = defineModel();
+      const { disabled } = defineProps({
+        disabled: {
+          type: Boolean,
+          required: false
+        }
+      });
+      const emit = defineEmits(["submit"]);
+      </script>
+
+      <template>
+        <div>
+          <input v-model="model" :disabled />
+          <button @click="emit('submit', model)">Submit</button>
+        </div>
+      </template>
+      "
+    `);
   });
 
   describe("createLoader", () => {
@@ -655,58 +775,6 @@ describe("mkdist with vue-tsc v1", () => {
 
     expect(
       await readFile(
-        resolve(rootDir, "dist/components/script-setup-ts.vue"),
-        "utf8",
-      ),
-    ).toMatchInlineSnapshot(`
-      "<template>
-        <div>{{ str }}</div>
-      </template>
-
-      <script setup>
-      import { ref } from "vue";
-      const props = defineProps({
-        msg: {
-          type: String,
-          required: true
-        },
-        color: {
-          type: Object,
-          required: true
-        }
-      });
-      const str = ref("hello");
-      </script>
-      "
-    `);
-
-    expect(
-      await readFile(
-        resolve(rootDir, "dist/components/script-multi-block.vue"),
-        "utf8",
-      ),
-    ).toMatchInlineSnapshot(`
-      "<template>
-        <div>{{ msg }}</div>
-      </template>
-
-      <script>
-
-      </script>
-
-      <script setup>
-      defineProps({
-        msg: {
-          type: String,
-          required: true
-        }
-      });
-      </script>
-      "
-    `);
-
-    expect(
-      await readFile(
         resolve(rootDir, "dist/components/script-multi-block.vue.d.ts"),
         "utf8",
       ),
@@ -904,99 +972,6 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
           str: "test";
       }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
       export default _default;
-      "
-    `);
-
-    expect(
-      await readFile(
-        resolve(rootDir, "dist/components/script-multi-block.vue"),
-        "utf8",
-      ),
-    ).toMatchInlineSnapshot(`
-      "<template>
-        <div>{{ msg }}</div>
-      </template>
-
-      <script>
-
-      </script>
-
-      <script setup>
-      defineProps({
-        msg: {
-          type: String,
-          required: true
-        }
-      });
-      </script>
-      "
-    `);
-
-    expect(
-      await readFile(
-        resolve(rootDir, "dist/components/emit-and-with-default.vue"),
-        "utf8",
-      ),
-    ).toMatchInlineSnapshot(`
-      "<script setup>
-      const props = defineProps({
-        buttonText: {
-          type: String,
-          required: false,
-          default: "Click"
-        }
-      });
-      const emit = defineEmits(["clickBtn"]);
-      </script>
-
-      <template>
-        <div>
-          <button @click="emit('clickBtn')">{{ buttonText }}</button>
-        </div>
-      </template>
-      "
-    `);
-
-    expect(
-      await readFile(
-        resolve(rootDir, "dist/components/define-model.vue"),
-        "utf8",
-      ),
-    ).toMatchInlineSnapshot(`
-      "<script setup>
-      const model = defineModel({
-        "type": String,
-        ...{
-          required: true
-        }
-      });
-      const twoType = defineModel("twoType", {
-        "type": [String, Number],
-        ...{
-          required: true
-        }
-      });
-      const runtimeOnly = defineModel("runtimeOnly", {
-        type: String,
-        required: true
-      });
-      const nameOnly = defineModel("nameOnly");
-      const empty = defineModel();
-      const { disabled } = defineProps({
-        disabled: {
-          type: Boolean,
-          required: false
-        }
-      });
-      const emit = defineEmits(["submit"]);
-      </script>
-
-      <template>
-        <div>
-          <input v-model="model" :disabled />
-          <button @click="emit('submit', model)">Submit</button>
-        </div>
-      </template>
       "
     `);
 
