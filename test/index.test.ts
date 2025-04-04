@@ -10,6 +10,7 @@ import {
   afterAll,
 } from "vitest";
 import { createLoader } from "../src/loader";
+import { afterEach } from "vitest";
 
 describe("mkdist", () => {
   let mkdist: typeof import("../src/make").mkdist;
@@ -35,6 +36,8 @@ describe("mkdist", () => {
         "dist/star/other.mjs",
         "dist/components/index.mjs",
         "dist/components/blank.vue",
+        "dist/components/define-model.vue",
+        "dist/components/emit-and-with-default.vue",
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
@@ -63,6 +66,8 @@ describe("mkdist", () => {
       [
         "dist/components/index.mjs",
         "dist/components/blank.vue",
+        "dist/components/define-model.vue",
+        "dist/components/emit-and-with-default.vue",
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
@@ -85,6 +90,8 @@ describe("mkdist", () => {
       [
         "dist/components/index.mjs",
         "dist/components/blank.vue",
+        "dist/components/define-model.vue",
+        "dist/components/emit-and-with-default.vue",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
         "dist/components/ts.vue",
@@ -124,6 +131,10 @@ describe("mkdist", () => {
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
         "dist/components/blank.vue.d.ts",
+        "dist/components/define-model.vue",
+        "dist/components/define-model.vue.d.ts",
+        "dist/components/emit-and-with-default.vue",
+        "dist/components/emit-and-with-default.vue.d.ts",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
@@ -291,6 +302,8 @@ describe("mkdist", () => {
         "dist/star/other.mjs",
         "dist/components/index.mjs",
         "dist/components/blank.vue",
+        "dist/components/define-model.vue",
+        "dist/components/emit-and-with-default.vue",
         "dist/components/js.vue",
         "dist/components/script-multi-block.vue",
         "dist/components/script-setup-ts.vue",
@@ -307,6 +320,126 @@ describe("mkdist", () => {
         .map((f) => resolve(rootDir, f))
         .sort(),
     );
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-setup-ts.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<template>
+        <div>{{ str }}</div>
+      </template>
+
+      <script setup>
+      import { ref } from "vue";
+      const props = defineProps({
+        msg: {
+          type: String,
+          required: true
+        },
+        color: {
+          type: Object,
+          required: true
+        }
+      });
+      const str = ref("hello");
+      </script>
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-multi-block.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<template>
+        <div>{{ msg }}</div>
+      </template>
+
+      <script>
+
+      </script>
+
+      <script setup>
+      defineProps({
+        msg: {
+          type: String,
+          required: true
+        }
+      });
+      </script>
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/emit-and-with-default.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<script setup>
+      const props = defineProps({
+        buttonText: {
+          type: String,
+          required: false,
+          default: "Click"
+        }
+      });
+      const emit = defineEmits(["clickBtn"]);
+      </script>
+
+      <template>
+        <div>
+          <button @click="emit('clickBtn')">{{ buttonText }}</button>
+        </div>
+      </template>
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/define-model.vue"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "<script setup>
+      const model = defineModel({
+        "type": String,
+        ...{
+          required: true
+        }
+      });
+      const twoType = defineModel("twoType", {
+        "type": [String, Number],
+        ...{
+          required: true
+        }
+      });
+      const runtimeOnly = defineModel("runtimeOnly", {
+        type: String,
+        required: true
+      });
+      const nameOnly = defineModel("nameOnly");
+      const empty = defineModel();
+      const { disabled } = defineProps({
+        disabled: {
+          type: Boolean,
+          required: false
+        }
+      });
+      const emit = defineEmits(["submit"]);
+      </script>
+
+      <template>
+        <div>
+          <input v-model="model" :disabled />
+          <button @click="emit('submit', model)">Submit</button>
+        </div>
+      </template>
+      "
+    `);
   });
 
   describe("createLoader", () => {
@@ -504,6 +637,100 @@ describe("mkdist", () => {
   }, 50_000);
 });
 
+describe("mkdist with fallback vue loader", () => {
+  const consoleWarnSpy = vi.spyOn(console, "warn");
+  beforeAll(() => {
+    vi.resetModules();
+    vi.doMock("vue-sfc-transformer/mkdist", async () => {
+      throw new Error("vue-sfc-transformer is not installed");
+    });
+  });
+
+  afterAll(() => {
+    vi.doUnmock("vue-sfc-transformer/mkdist");
+  });
+
+  afterEach(() => {
+    consoleWarnSpy.mockReset();
+  });
+
+  it("keep the template and script block", async () => {
+    expect(await fixture(`<script lang="ts">const a: number = 1</script>`))
+      .toMatchInlineSnapshot(`
+      "<script lang="ts">const a: number = 1</script>"
+    `);
+
+    expect(
+      await fixture(`<script setup lang="ts">const a: number = 1</script>`),
+    ).toMatchInlineSnapshot(
+      `"<script setup lang="ts">const a: number = 1</script>"`,
+    );
+
+    expect(
+      await fixture(
+        [
+          `<script setup lang="ts">const a: number | null = 1</script>`,
+          `<template><div>{{ a!.toFixed(2) }}</div></template>`,
+        ].join("\n"),
+      ),
+    ).toMatchInlineSnapshot(`
+        "<script setup lang="ts">const a: number | null = 1</script>
+        <template><div>{{ a!.toFixed(2) }}</div></template>"
+      `);
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      "[mkdist] vue-sfc-transformer is not installed. mkdist will not transform typescript syntax in Vue SFCs.",
+    );
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("transform style block", async () => {
+    expect(
+      await fixture(
+        [
+          `<script setup lang="ts">const a: number | null = 1</script>`,
+          `<style>a { color: red }</style>`,
+        ].join("\n"),
+      ),
+    ).toMatchInlineSnapshot(`
+        "<script setup lang="ts">const a: number | null = 1</script>
+        <style>a { color: red }</style>"
+      `);
+
+    expect(
+      await fixture(
+        [
+          `<script setup lang="ts">const a: number | null = 1</script>`,
+          `<style lang="scss">.a { .b { color: red } }</style>`,
+        ].join("\n"),
+      ),
+    ).toMatchInlineSnapshot(`
+        "<script setup lang="ts">
+        const a: number | null = 1
+        </script>
+
+        <style>
+        .a .b {
+          color: red;
+        }
+        </style>
+        "
+      `);
+  });
+
+  async function fixture(input: string) {
+    const { loadFile } = createLoader({
+      loaders: ["vue", "js", "sass"],
+    });
+    const results = await loadFile({
+      extension: ".vue",
+      getContents: () => input,
+      path: "test.vue",
+    });
+    return results?.[0].contents || input;
+  }
+});
+
 describe("mkdist with vue-tsc v1", () => {
   beforeAll(() => {
     vi.resetModules();
@@ -560,6 +787,10 @@ describe("mkdist with vue-tsc v1", () => {
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
         "dist/components/blank.vue.d.ts",
+        "dist/components/define-model.vue",
+        "dist/components/define-model.vue.d.ts",
+        "dist/components/emit-and-with-default.vue",
+        "dist/components/emit-and-with-default.vue.d.ts",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
@@ -634,66 +865,6 @@ describe("mkdist with vue-tsc v1", () => {
           str: "test";
       }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
       export default _default;
-      "
-    `);
-
-    expect(
-      await readFile(
-        resolve(rootDir, "dist/components/script-setup-ts.vue"),
-        "utf8",
-      ),
-    ).toMatchInlineSnapshot(`
-      "<script>
-      import { defineComponent as _defineComponent } from "vue";
-      import { ref } from "vue";
-      export default /* @__PURE__ */ _defineComponent({
-        __name: "script-setup-ts",
-        props: {
-          msg: { type: String, required: true },
-          color: { type: Object, required: true }
-        },
-        setup(__props, { expose: __expose }) {
-          __expose();
-          const props = __props;
-          const str = ref("hello");
-          const __returned__ = { props, str };
-          Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-          return __returned__;
-        }
-      });
-      </script>
-
-      <template>
-        <div>{{ str }}</div>
-      </template>
-      "
-    `);
-
-    expect(
-      await readFile(
-        resolve(rootDir, "dist/components/script-multi-block.vue"),
-        "utf8",
-      ),
-    ).toMatchInlineSnapshot(`
-      "<script>
-      import { defineComponent as _defineComponent } from "vue";
-      export default /* @__PURE__ */ _defineComponent({
-        __name: "script-multi-block",
-        props: {
-          msg: { type: String, required: true }
-        },
-        setup(__props, { expose: __expose }) {
-          __expose();
-          const __returned__ = {};
-          Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-          return __returned__;
-        }
-      });
-      </script>
-
-      <template>
-        <div>{{ msg }}</div>
-      </template>
       "
     `);
 
@@ -818,6 +989,10 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
         "dist/components/blank.vue.d.ts",
+        "dist/components/define-model.vue",
+        "dist/components/define-model.vue.d.ts",
+        "dist/components/emit-and-with-default.vue",
+        "dist/components/emit-and-with-default.vue.d.ts",
         "dist/components/js.vue",
         "dist/components/js.vue.d.ts",
         "dist/components/script-multi-block.vue",
@@ -892,34 +1067,6 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
           str: "test";
       }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
       export default _default;
-      "
-    `);
-
-    expect(
-      await readFile(
-        resolve(rootDir, "dist/components/script-multi-block.vue"),
-        "utf8",
-      ),
-    ).toMatchInlineSnapshot(`
-      "<script>
-      import { defineComponent as _defineComponent } from "vue";
-      export default /* @__PURE__ */ _defineComponent({
-        __name: "script-multi-block",
-        props: {
-          msg: { type: String, required: true }
-        },
-        setup(__props, { expose: __expose }) {
-          __expose();
-          const __returned__ = {};
-          Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-          return __returned__;
-        }
-      });
-      </script>
-
-      <template>
-        <div>{{ msg }}</div>
-      </template>
       "
     `);
 

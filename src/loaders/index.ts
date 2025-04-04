@@ -4,9 +4,18 @@ import { vueLoader } from "./vue";
 import { sassLoader } from "./sass";
 import { postcssLoader } from "./postcss";
 
+let cachedVueLoader: Loader | undefined;
+
 export const loaders = {
   js: jsLoader,
-  vue: vueLoader,
+  vue:
+    cachedVueLoader ||
+    (async (...args) => {
+      cachedVueLoader = await import("vue-sfc-transformer/mkdist")
+        .then((r) => r.vueLoader)
+        .catch(() => vueLoader);
+      return cachedVueLoader(...args);
+    }),
   sass: sassLoader,
   postcss: postcssLoader,
 };
