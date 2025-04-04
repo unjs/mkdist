@@ -107,9 +107,10 @@ function processDefineProps(
     return;
   }
   if (propsRuntimeDecl) {
-    throw new Error(
+    context.ctx.error(
       `${DEFINE_PROPS}() cannot accept both type and non-type arguments ` +
         `at the same time. Use one or the other.`,
+      node,
     );
   }
 
@@ -147,9 +148,10 @@ function processDefineEmits(
     return;
   }
   if (emitsRuntimeDecl) {
-    throw new Error(
+    context.ctx.error(
       `${DEFINE_EMITS}() cannot accept both type and non-type arguments ` +
         `at the same time. Use one or the other.`,
+      node,
     );
   }
 
