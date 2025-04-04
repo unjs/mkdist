@@ -283,7 +283,11 @@ function getDefineModelRuntimeDecl(
     return [arg0, arg1 as ObjectExpression];
   }
 
-  if (arg0 && arg0.type !== "ObjectExpression") {
+  if (
+    arg0 &&
+    arg0.type !== "ObjectExpression" &&
+    !(arg0.type === "Identifier" && arg0.name === "undefined")
+  ) {
     context.ctx.error(`Unexpected argument type for ${DEFINE_MODEL}().`, arg0);
   }
 
