@@ -10,7 +10,6 @@ import {
   afterAll,
 } from "vitest";
 import { createLoader } from "../src/loader";
-import { afterEach } from "vitest";
 
 describe("mkdist", () => {
   let mkdist: typeof import("../src/make").mkdist;
@@ -638,12 +637,8 @@ describe("mkdist", () => {
 });
 
 describe("mkdist with fallback vue loader", () => {
-  let mkdist: typeof import("../src/make").mkdist;
-
   const consoleWarnSpy = vi.spyOn(console, "warn");
   beforeAll(async () => {
-    mkdist = (await import("../src/make")).mkdist;
-
     vi.resetModules();
     vi.doMock("vue-sfc-transformer/mkdist", async () => {
       throw new Error("vue-sfc-transformer is not installed");
@@ -654,7 +649,7 @@ describe("mkdist with fallback vue loader", () => {
     vi.doUnmock("vue-sfc-transformer/mkdist");
   });
 
-  afterEach(() => {
+  beforeEach(() => {
     consoleWarnSpy.mockReset();
   });
 
@@ -720,6 +715,40 @@ describe("mkdist with fallback vue loader", () => {
         </style>
         "
       `);
+  });
+
+  async function fixture(input: string) {
+    const { loadFile } = createLoader({
+      loaders: ["vue", "js", "sass"],
+    });
+    const results = await loadFile({
+      extension: ".vue",
+      getContents: () => input,
+      path: "test.vue",
+    });
+    return results?.[0].contents || input;
+  }
+});
+
+describe("mkdist with fallback vue loader (emit types)", () => {
+  let mkdist: typeof import("../src/make").mkdist;
+
+  const consoleWarnSpy = vi.spyOn(console, "warn");
+  beforeAll(async () => {
+    mkdist = (await import("../src/make")).mkdist;
+
+    vi.resetModules();
+    vi.doMock("vue-sfc-transformer/mkdist", async () => {
+      throw new Error("vue-sfc-transformer is not installed");
+    });
+  });
+
+  afterAll(() => {
+    vi.doUnmock("vue-sfc-transformer/mkdist");
+  });
+
+  beforeEach(() => {
+    consoleWarnSpy.mockReset();
   });
 
   it("emit types", async () => {
@@ -874,18 +903,6 @@ describe("mkdist with fallback vue loader", () => {
     );
     expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
   }, 50_000);
-
-  async function fixture(input: string) {
-    const { loadFile } = createLoader({
-      loaders: ["vue", "js", "sass"],
-    });
-    const results = await loadFile({
-      extension: ".vue",
-      getContents: () => input,
-      path: "test.vue",
-    });
-    return results?.[0].contents || input;
-  }
 });
 
 describe("mkdist with vue-tsc v1", () => {
