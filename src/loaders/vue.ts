@@ -76,12 +76,13 @@ function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
     ].filter((item) => !!item);
 
     // generate dts
-    await context.loadFile({
+    const files = await context.loadFile({
       path: `${input.path}.js`,
       srcPath: `${input.srcPath}.js`,
       extension: ".js",
       getContents: () => "export default {}",
     });
+    addOutput(...(files?.filter((f) => f.declaration) || []));
 
     const results = await Promise.all(
       blocks.map(async (data) => {
@@ -99,7 +100,14 @@ function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
     );
 
     if (!modified) {
-      return;
+      addOutput({
+        path: input.path,
+        srcPath: input.srcPath,
+        extension: ".vue",
+        contents: raw,
+        declaration: false,
+      });
+      return output;
     }
 
     // skiped blocks
