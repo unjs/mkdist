@@ -638,8 +638,12 @@ describe("mkdist", () => {
 });
 
 describe("mkdist with fallback vue loader", () => {
+  let mkdist: typeof import("../src/make").mkdist;
+
   const consoleWarnSpy = vi.spyOn(console, "warn");
-  beforeAll(() => {
+  beforeAll(async () => {
+    mkdist = (await import("../src/make")).mkdist;
+
     vi.resetModules();
     vi.doMock("vue-sfc-transformer/mkdist", async () => {
       throw new Error("vue-sfc-transformer is not installed");
@@ -717,6 +721,159 @@ describe("mkdist with fallback vue loader", () => {
         "
       `);
   });
+
+  it("emit types", async () => {
+    const rootDir = resolve(__dirname, "fixture");
+    const { writtenFiles } = await mkdist({
+      rootDir,
+      declaration: true,
+      addRelativeDeclarationExtensions: true,
+    });
+    expect(writtenFiles.sort()).toEqual(
+      [
+        "dist/README.md",
+        "dist/bar.d.ts",
+        "dist/bar.mjs",
+        "dist/demo.css",
+        "dist/dir-export.d.ts",
+        "dist/dir-export.mjs",
+        "dist/foo.mjs",
+        "dist/foo.d.ts",
+        "dist/index.mjs",
+        "dist/index.d.ts",
+        "dist/star/index.mjs",
+        "dist/star/index.d.ts",
+        "dist/star/other.mjs",
+        "dist/star/other.d.ts",
+        "dist/types.d.ts",
+        "dist/components/index.mjs",
+        "dist/components/index.d.ts",
+        "dist/components/blank.vue",
+        "dist/components/blank.vue.d.ts",
+        "dist/components/define-model.vue",
+        "dist/components/define-model.vue.d.ts",
+        "dist/components/emit-and-with-default.vue",
+        "dist/components/emit-and-with-default.vue.d.ts",
+        "dist/components/js.vue",
+        "dist/components/js.vue.d.ts",
+        "dist/components/script-multi-block.vue",
+        "dist/components/script-multi-block.vue.d.ts",
+        "dist/components/script-setup-ts.vue",
+        "dist/components/script-setup-ts.vue.d.ts",
+        "dist/components/ts.vue",
+        "dist/components/ts.vue.d.ts",
+        "dist/components/jsx.mjs",
+        "dist/components/tsx.mjs",
+        "dist/components/jsx.d.ts",
+        "dist/components/tsx.d.ts",
+        "dist/bar/index.mjs",
+        "dist/bar/index.d.ts",
+        "dist/bar/esm.mjs",
+        "dist/bar/esm.d.mts",
+        "dist/ts/test1.mjs",
+        "dist/ts/test2.mjs",
+        "dist/ts/test1.d.mts",
+        "dist/ts/test2.d.cts",
+        "dist/nested.css",
+        "dist/prop-types/index.mjs",
+        "dist/prop-types/index.d.ts",
+      ]
+        .map((f) => resolve(rootDir, f))
+        .sort(),
+    );
+
+    expect(await readFile(resolve(rootDir, "dist/foo.d.ts"), "utf8")).toMatch(
+      "manual declaration",
+    );
+
+    expect(await readFile(resolve(rootDir, "dist/star/index.d.ts"), "utf8"))
+      .toMatchInlineSnapshot(`
+        "export * from "./other.js";
+        export type { Other } from "./other.js";
+        export declare function wonder(twinkle: import("./other.js").Other): string;
+        "
+      `);
+
+    expect(await readFile(resolve(rootDir, "dist/dir-export.d.ts"), "utf8"))
+      .toMatchInlineSnapshot(`
+        "export { default as bar } from "./bar.js";
+        export * from "./star/index.js";
+        "
+      `);
+
+    expect(
+      await readFile(resolve(rootDir, "dist/bar/esm.d.mts"), "utf8"),
+    ).toMatch("declare");
+
+    expect(
+      await readFile(resolve(rootDir, "dist/components/index.d.ts"), "utf8"),
+    ).toMatchInlineSnapshot(`
+      "export * as jsx from "./jsx.jsx.js";
+      export * as tsx from "./tsx.tsx.js";
+      export * as blank from "./blank.vue.js";
+      export * as scriptSetupTS from "./script-setup-ts.vue.js";
+      export * as scriptMultiBlock from "./script-multi-block.vue.js";
+      export * as ts from "./ts.vue.js";
+      "
+    `);
+
+    expect(
+      await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
+    ).toMatchInlineSnapshot(`
+      "declare const _default: import("vue").DefineComponent<{}, {}, {
+          test: string;
+          str: "test";
+      }, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/blank.vue.d.ts"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "declare const _default: import("vue").DefineComponent<{}, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, true, {}, any>;
+      export default _default;
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-multi-block.vue.d.ts"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "interface MyComponentProps {
+          msg: string;
+      }
+      declare const _default: import("vue").DefineComponent<MyComponentProps, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<MyComponentProps> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, false, {}, any>;
+      export default _default;
+      "
+    `);
+
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/components/script-setup-ts.vue.d.ts"),
+        "utf8",
+      ),
+    ).toMatchInlineSnapshot(`
+      "import { Color } from "#prop-types";
+      type __VLS_Props = {
+          msg: string;
+          color: Color;
+      };
+      declare const _default: import("vue").DefineComponent<__VLS_Props, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<__VLS_Props> & Readonly<{}>, {}, {}, {}, {}, string, import("vue").ComponentProvideOptions, false, {}, any>;
+      export default _default;
+      "
+    `);
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      "[mkdist] vue-sfc-transformer is not installed. mkdist will not transform typescript syntax in Vue SFCs.",
+    );
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+  }, 50_000);
 
   async function fixture(input: string) {
     const { loadFile } = createLoader({
