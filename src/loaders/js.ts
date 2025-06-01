@@ -1,5 +1,5 @@
 import { transform } from "esbuild";
-import jiti from "jiti";
+import { createJiti } from "jiti";
 
 import type { Loader, LoaderResult } from "../loader";
 
@@ -48,7 +48,7 @@ export const jsLoader: Loader = async (input, { options }) => {
   // esm => cjs
   const isCjs = options.format === "cjs";
   if (isCjs) {
-    contents = jiti("")
+    contents = createJiti("")
       .transform({ source: contents, retainLines: false })
       .replace(/^exports.default = /gm, "module.exports = ")
       .replace(/^var _default = exports.default = /gm, "module.exports = ")
