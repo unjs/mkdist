@@ -31,46 +31,46 @@
   "dependencies": {
     "autoprefixer": "^10.4.21",
     "citty": "^0.1.6",
-    "cssnano": "^7.0.6",
+    "cssnano": "^7.0.7",
     "defu": "^6.1.4",
-    "esbuild": "^0.25.2",
+    "esbuild": "^0.25.5",
     "jiti": "^1.21.7",
     "mlly": "^1.7.4",
     "pathe": "^2.0.3",
     "pkg-types": "^2.1.0",
-    "postcss": "^8.5.3",
+    "postcss": "^8.5.6",
     "postcss-nested": "^7.0.2",
-    "semver": "^7.7.1",
-    "tinyglobby": "^0.2.12"
+    "semver": "^7.7.2",
+    "tinyglobby": "^0.2.14"
   },
   "devDependencies": {
-    "@types/node": "^22.13.14",
+    "@types/node": "^22.15.32",
     "@types/semver": "^7.7.0",
-    "@vitest/coverage-v8": "^3.1.1",
-    "@volar/typescript": "^2.4.12",
-    "@vue/language-core": "^2.2.8",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@volar/typescript": "^2.4.14",
+    "@vue/language-core": "^2.2.10",
     "@vue/language-core2.0": "npm:@vue/language-core@2.0.29",
     "c8": "latest",
     "changelogen": "^0.6.1",
-    "eslint": "^9.23.0",
+    "eslint": "^9.29.0",
     "eslint-config-unjs": "^0.4.2",
     "modern-normalize": "^3.0.1",
     "prettier": "^3.5.3",
-    "sass": "^1.86.0",
-    "typescript": "^5.8.2",
+    "sass": "^1.89.2",
+    "typescript": "^5.8.3",
     "unbuild": "^3.5.0",
-    "vitest": "^3.1.1",
-    "vue": "^3.5.13",
-    "vue-sfc-transformer": "^0.1.2",
-    "vue-tsc": "^2.2.8",
+    "vitest": "^3.2.4",
+    "vue": "^3.5.17",
+    "vue-sfc-transformer": "^0.1.16",
+    "vue-tsc": "^2.2.10",
     "vue-tsc1": "npm:vue-tsc@^1.8.27",
     "vue-tsc2.0": "npm:vue-tsc@2.0.29"
   },
   "peerDependencies": {
-    "sass": "^1.85.0",
-    "typescript": ">=5.7.3",
-    "vue": "^3.5.13",
-    "vue-sfc-transformer": "^0.1.1",
+    "sass": "^1.89.2",
+    "typescript": ">=5.8.3",
+    "vue": "^3.5.17",
+    "vue-sfc-transformer": "^0.1.16",
     "vue-tsc": "^1.8.27 || ^2.0.21"
   },
   "peerDependenciesMeta": {
@@ -90,5 +90,5 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@10.7.0"
+  "packageManager": "pnpm@10.12.1"
 }
