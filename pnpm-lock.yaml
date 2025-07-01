@@ -61,8 +61,8 @@ importers:
         specifier: ^2.4.12
         version: 2.4.12
       '@vue/language-core':
-        specifier: ^2.2.8
-        version: 2.2.8(typescript@5.8.2)
+        specifier: ^3.0.0
+        version: 3.0.0(typescript@5.8.2)
       '@vue/language-core2.0':
         specifier: npm:@vue/language-core@2.0.29
         version: '@vue/language-core@2.0.29(typescript@5.8.2)'
