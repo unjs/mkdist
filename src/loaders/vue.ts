@@ -85,7 +85,7 @@ function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
         declaration: true,
       },
       {
-        contents: `export default {}`,
+        contents: await input.getContents(),
         path: input.path,
         srcPath: input.srcPath,
         extension: ".d.vue.ts",
