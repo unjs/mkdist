@@ -76,13 +76,22 @@ function defineVueLoader(options?: DefineVueLoaderOptions): Loader {
     ].filter((item) => !!item);
 
     // generate dts
-    const files = await context.loadFile({
-      path: `${input.path}.js`,
-      srcPath: `${input.srcPath}.js`,
-      extension: ".js",
-      getContents: () => "export default {}",
-    });
-    addOutput(...(files?.filter((f) => f.declaration) || []));
+    addOutput(
+      {
+        contents: "export default {}",
+        path: `${input.path}.js`,
+        srcPath: `${input.srcPath}.js`,
+        extension: ".d.ts",
+        declaration: true,
+      },
+      {
+        contents: `export default {}`,
+        path: input.path,
+        srcPath: input.srcPath,
+        extension: ".d.vue.ts",
+        declaration: true,
+      },
+    );
 
     const results = await Promise.all(
       blocks.map(async (data) => {

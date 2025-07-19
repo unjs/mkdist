@@ -30,7 +30,9 @@ export async function getDeclarations(
 ): Promise<DeclarationOutput> {
   const ts = await import("typescript").then((r) => r.default || r);
 
-  const inputFiles = [...vfs.keys()].filter(path => path.match(KNOWN_TS_SOURCE_EXT_RE));
+  const inputFiles = [...vfs.keys()].filter((path) =>
+    path.match(KNOWN_TS_SOURCE_EXT_RE),
+  );
 
   const tsHost = ts.createCompilerHost(opts.typescript.compilerOptions);
 
