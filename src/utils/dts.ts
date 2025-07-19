@@ -22,13 +22,15 @@ export type DeclarationOutput = Record<
   { contents: string; errors?: Error[] }
 >;
 
+const KNOWN_TS_SOURCE_EXT_RE = /\.[cm]?[jt]sx?$/;
+
 export async function getDeclarations(
   vfs: Map<string, string>,
   opts?: MkdistOptions,
 ): Promise<DeclarationOutput> {
   const ts = await import("typescript").then((r) => r.default || r);
 
-  const inputFiles = [...vfs.keys()];
+  const inputFiles = [...vfs.keys()].filter(path => path.match(KNOWN_TS_SOURCE_EXT_RE));
 
   const tsHost = ts.createCompilerHost(opts.typescript.compilerOptions);
 
