@@ -48,6 +48,10 @@ export async function getVueDeclarations(
     }
   }
 
+  for (const [vuePath, dtsSrcPath] of Object.entries(fileMapping)) {
+    output[vuePath] = output[dtsSrcPath];
+  }
+
   return output;
 }
 
