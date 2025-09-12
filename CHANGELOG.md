@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.4.0
+
+[compare changes](https://github.com/unjs/mkdist/compare/v2.3.0...v2.4.0)
+
+### 🚀 Enhancements
+
+- **dts:** Emit `.d.vue.ts` as type declaration of `.vue` files ([#301](https://github.com/unjs/mkdist/pull/301))
+
+### 🤖 CI
+
+- Test against previous lts verison ([946852b](https://github.com/unjs/mkdist/commit/946852b))
+- Remove install of corepack ([73894e6](https://github.com/unjs/mkdist/commit/73894e6))
+- Bump setup/checkout action versions ([8a909da](https://github.com/unjs/mkdist/commit/8a909da))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](https://github.com/danielroe))
+- Teages ([@Teages](https://github.com/Teages))
+
 ## v2.3.0
 
 [compare changes](https://github.com/unjs/mkdist/compare/v2.2.0...v2.3.0)
