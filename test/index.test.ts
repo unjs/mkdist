@@ -246,7 +246,7 @@ describe("mkdist", () => {
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
-      "import { Color } from "#prop-types";
+      "import type { Color } from "#prop-types";
       type __VLS_Props = {
           msg: string;
           color: Color;
@@ -340,14 +340,8 @@ describe("mkdist", () => {
       <script setup>
       import { ref } from "vue";
       const props = defineProps({
-        msg: {
-          type: String,
-          required: true
-        },
-        color: {
-          type: Object,
-          required: true
-        }
+        msg: { type: String, required: true },
+        color: { type: Object, required: true }
       });
       const str = ref("hello");
       </script>
@@ -370,10 +364,7 @@ describe("mkdist", () => {
 
       <script setup>
       defineProps({
-        msg: {
-          type: String,
-          required: true
-        }
+        msg: { type: String, required: true }
       });
       </script>
       "
@@ -387,11 +378,7 @@ describe("mkdist", () => {
     ).toMatchInlineSnapshot(`
       "<script setup>
       const props = defineProps({
-        buttonText: {
-          type: String,
-          required: false,
-          default: "Click"
-        }
+        buttonText: { type: String, required: false, default: "Click" }
       });
       const emit = defineEmits(["clickBtn"]);
       </script>
@@ -411,18 +398,8 @@ describe("mkdist", () => {
       ),
     ).toMatchInlineSnapshot(`
       "<script setup>
-      const model = defineModel({
-        "type": String,
-        ...{
-          required: true
-        }
-      });
-      const twoType = defineModel("twoType", {
-        "type": [String, Number],
-        ...{
-          required: true
-        }
-      });
+      const model = defineModel({ type: String, ...{ required: true } });
+      const twoType = defineModel("twoType", { type: [String, Number], ...{ required: true } });
       const runtimeOnly = defineModel("runtimeOnly", {
         type: String,
         required: true
@@ -430,10 +407,7 @@ describe("mkdist", () => {
       const nameOnly = defineModel("nameOnly");
       const empty = defineModel();
       const { disabled } = defineProps({
-        disabled: {
-          type: Boolean,
-          required: false
-        }
+        disabled: { type: Boolean, required: false }
       });
       const emit = defineEmits(["submit"]);
       </script>
@@ -468,7 +442,15 @@ describe("mkdist", () => {
         getContents: () => "<script>Test</script>",
         path: "test.vue",
       });
-      expect(results).toMatchObject([{ raw: true }]);
+      expect(results).toMatchObject([
+        {
+          contents: `<script>\nTest;\n</script>\n`,
+          declaration: false,
+          extension: ".vue",
+          path: "test.vue",
+          srcPath: undefined,
+        },
+      ]);
     });
 
     it("vueLoader handles script tags with attributes", async () => {
@@ -502,7 +484,7 @@ describe("mkdist", () => {
         {
           contents: [
             "<script>",
-            "export default {}",
+            "export default {};",
             "</script>",
             "",
             "<style scoped>",
@@ -902,7 +884,7 @@ describe("mkdist with fallback vue loader (emit types)", () => {
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
-      "import { Color } from "#prop-types";
+      "import type { Color } from "#prop-types";
       type __VLS_Props = {
           msg: string;
           color: Color;
@@ -1092,7 +1074,7 @@ describe("mkdist with vue-tsc v1", () => {
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
-      "import { Color } from "#prop-types";
+      "import type { Color } from "#prop-types";
       declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToRuntimeProps<{
           msg: string;
           color: Color;
@@ -1301,7 +1283,7 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
-      "import { Color } from "#prop-types";
+      "import type { Color } from "#prop-types";
       declare const _default: import("vue").DefineComponent<import("vue").ExtractPropTypes<__VLS_TypePropsToOption<{
           msg: string;
           color: Color;

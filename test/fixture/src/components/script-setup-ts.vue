@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { Color } from "#prop-types";
+import type { Color } from "#prop-types";
 
 const props = defineProps<{
   msg: string;
