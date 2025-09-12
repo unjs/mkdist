@@ -103,7 +103,14 @@ export async function mkdist(
       basename(output.path, extname(output.path)) + output.extension;
     output.path = join(dirname(output.path), renamed);
     // Avoid overriding files with original extension
-    if (outputs.some((o) => o !== output && o.path === output.path)) {
+    if (
+      outputs.some(
+        (o) =>
+          o !== output &&
+          o.path === output.path &&
+          (!o.extension || o.extension === output.extension),
+      )
+    ) {
       output.skip = true;
     }
   }
