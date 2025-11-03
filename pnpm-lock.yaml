@@ -49,14 +49,14 @@ importers:
         version: 0.2.15
     devDependencies:
       '@types/node':
-        specifier: ^22.18.1
-        version: 22.18.1
+        specifier: ^24.10.0
+        version: 24.10.0
       '@types/semver':
         specifier: ^7.7.1
         version: 7.7.1
       '@vitest/coverage-v8':
         specifier: ^4.0.1
-        version: 4.0.1(vitest@4.0.1(@types/node@22.18.1)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1))
+        version: 4.0.1(vitest@4.0.1(@types/node@24.10.0)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1))
       '@volar/typescript':
         specifier: ^2.4.23
         version: 2.4.23
@@ -95,7 +95,7 @@ importers:
         version: 3.6.1(sass@1.92.1)(typescript@5.9.2)(vue-sfc-transformer@0.1.17(@vue/compiler-core@3.5.21)(esbuild@0.25.9)(vue@3.5.21(typescript@5.9.2)))(vue-tsc@3.0.6(typescript@5.9.2))(vue@3.5.21(typescript@5.9.2))
       vitest:
         specifier: ^4.0.1
-        version: 4.0.1(@types/node@22.18.1)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1)
+        version: 4.0.1(@types/node@24.10.0)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1)
       vue:
         specifier: ^3.5.21
         version: 3.5.21(typescript@5.9.2)
@@ -657,8 +657,8 @@ packages:
   '@types/mdast@3.0.15':
     resolution: {integrity: sha512-LnwD+mUEfxWMa1QpDraczIn6k0Ee3SMicuYSSzS6ZYl2gKS09EClnJYGd8Du6rfc5r/GZEk5o1mRb8TaTj03sQ==}
 
-  '@types/node@22.18.1':
-    resolution: {integrity: sha512-rzSDyhn4cYznVG+PCzGe1lwuMYJrcBS1fc3JqSa2PvtABwWo+dZ1ij5OVok3tqfpEBCBoaR4d7upFJk73HRJDw==}
+  '@types/node@24.10.0':
+    resolution: {integrity: sha512-qzQZRBqkFsYyaSWXuEHc2WR9c0a0CXwiE5FWUvn7ZM+vdy1uZLfCunD38UzhuB7YN/J11ndbDBcTmOdxJo9Q7A==}
 
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
@@ -2136,8 +2136,8 @@ packages:
       typescript:
         optional: true
 
-  undici-types@6.21.0:
-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
+  undici-types@7.16.0:
+    resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
   unist-util-stringify-position@2.0.3:
     resolution: {integrity: sha512-3faScn5I+hy9VleOq/qNbAd6pAx7iH5jYBMS9I1HgQVijz/4mv5Bvw5iw1sC/90CODiKo81G/ps8AJrISn687g==}
@@ -2716,9 +2716,9 @@ snapshots:
     dependencies:
       '@types/unist': 2.0.11
 
-  '@types/node@22.18.1':
+  '@types/node@24.10.0':
     dependencies:
-      undici-types: 6.21.0
+      undici-types: 7.16.0
 
   '@types/resolve@1.20.2': {}
 
@@ -2819,7 +2819,7 @@ snapshots:
       '@typescript-eslint/types': 8.42.0
       eslint-visitor-keys: 4.2.1
 
-  '@vitest/coverage-v8@4.0.1(vitest@4.0.1(@types/node@22.18.1)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1))':
+  '@vitest/coverage-v8@4.0.1(vitest@4.0.1(@types/node@24.10.0)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1))':
     dependencies:
       '@bcoe/v8-coverage': 1.0.2
       '@vitest/utils': 4.0.1
@@ -2832,7 +2832,7 @@ snapshots:
       magicast: 0.3.5
       std-env: 3.9.0
       tinyrainbow: 3.0.3
-      vitest: 4.0.1(@types/node@22.18.1)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1)
+      vitest: 4.0.1(@types/node@24.10.0)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -2845,13 +2845,13 @@ snapshots:
       chai: 6.2.0
       tinyrainbow: 3.0.3
 
-  '@vitest/mocker@4.0.1(vite@6.2.4(@types/node@22.18.1)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1))':
+  '@vitest/mocker@4.0.1(vite@6.2.4(@types/node@24.10.0)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1))':
     dependencies:
       '@vitest/spy': 4.0.1
       estree-walker: 3.0.3
       magic-string: 0.30.19
     optionalDependencies:
-      vite: 6.2.4(@types/node@22.18.1)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1)
+      vite: 6.2.4(@types/node@24.10.0)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1)
 
   '@vitest/pretty-format@4.0.1':
     dependencies:
@@ -4352,7 +4352,7 @@ snapshots:
       - vue-sfc-transformer
       - vue-tsc
 
-  undici-types@6.21.0: {}
+  undici-types@7.16.0: {}
 
   unist-util-stringify-position@2.0.3:
     dependencies:
@@ -4384,22 +4384,22 @@ snapshots:
       '@types/istanbul-lib-coverage': 2.0.6
       convert-source-map: 2.0.0
 
-  vite@6.2.4(@types/node@22.18.1)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1):
+  vite@6.2.4(@types/node@24.10.0)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1):
     dependencies:
       esbuild: 0.25.9
       postcss: 8.5.6
       rollup: 4.50.0
     optionalDependencies:
-      '@types/node': 22.18.1
+      '@types/node': 24.10.0
       fsevents: 2.3.3
       jiti: 1.21.7
       sass: 1.92.1
       yaml: 2.7.1
 
-  vitest@4.0.1(@types/node@22.18.1)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1):
+  vitest@4.0.1(@types/node@24.10.0)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1):
     dependencies:
       '@vitest/expect': 4.0.1
-      '@vitest/mocker': 4.0.1(vite@6.2.4(@types/node@22.18.1)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1))
+      '@vitest/mocker': 4.0.1(vite@6.2.4(@types/node@24.10.0)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1))
       '@vitest/pretty-format': 4.0.1
       '@vitest/runner': 4.0.1
       '@vitest/snapshot': 4.0.1
@@ -4416,10 +4416,10 @@ snapshots:
       tinyexec: 0.3.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vite: 6.2.4(@types/node@22.18.1)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1)
+      vite: 6.2.4(@types/node@24.10.0)(jiti@1.21.7)(sass@1.92.1)(yaml@2.7.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 22.18.1
+      '@types/node': 24.10.0
     transitivePeerDependencies:
       - jiti
       - less
