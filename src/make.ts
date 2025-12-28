@@ -1,23 +1,23 @@
-import { resolve, extname, join, basename, dirname } from "pathe";
-import fsp from "node:fs/promises";
-import type { TSConfig } from "pkg-types";
 import defu from "defu";
-import { copyFileWithStream } from "./utils/fs";
+import fsp from "node:fs/promises";
+import { basename, dirname, extname, join, resolve } from "pathe";
+import type { TSConfig } from "pkg-types";
+import { glob, type GlobOptions } from "tinyglobby";
 import {
-  InputFile,
-  LoaderOptions,
   createLoader,
-  OutputFile,
+  InputFile,
   Loader,
+  LoaderOptions,
+  OutputFile,
 } from "./loader";
+import { LoaderName } from "./loaders";
 import {
   DeclarationOutput,
   getDeclarations,
   normalizeCompilerOptions,
 } from "./utils/dts";
+import { copyFileWithStream } from "./utils/fs";
 import { getVueDeclarations } from "./utils/vue-dts";
-import { LoaderName } from "./loaders";
-import { glob, type GlobOptions } from "tinyglobby";
 
 export interface MkdistOptions extends LoaderOptions {
   rootDir?: string;
@@ -130,6 +130,32 @@ export async function mkdist(
         output.errors = result.errors;
       }
     }
+  }
+
+  // Only output `.d.vue.ts` for Vue SFCs
+  const outPathSet = new Set(outputs.filter((o) => !o.skip).map((o) => o.path));
+  for (const output of outputs) {
+    if (
+      !output.declaration ||
+      output.skip ||
+      output.extension !== ".d.ts" ||
+      !output.path.endsWith(".vue.d.ts")
+    ) {
+      continue;
+    }
+
+    const pairedPath = output.path.replace(/\.vue\.d\.ts$/, ".d.vue.ts");
+    const hasPaired = outPathSet.has(pairedPath);
+    if (hasPaired) {
+      output.skip = true;
+      outPathSet.delete(output.path);
+      continue;
+    }
+
+    outPathSet.delete(output.path);
+    outPathSet.add(pairedPath);
+    output.path = pairedPath;
+    output.extension = ".d.vue.ts";
   }
 
   // Resolve relative imports
