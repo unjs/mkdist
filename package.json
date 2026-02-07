@@ -52,7 +52,7 @@
     "@vue/language-core2.0": "npm:@vue/language-core@2.0.29",
     "c8": "latest",
     "changelogen": "^0.6.2",
-    "eslint": "^9.35.0",
+    "eslint": "^10.0.0",
     "eslint-config-unjs": "^0.5.0",
     "modern-normalize": "^3.0.1",
     "prettier": "^3.6.2",
