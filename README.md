@@ -17,7 +17,7 @@
 
 ✅ `.d.ts` generation for `.ts`, `.js` and `.vue` files
 
-✅ Support [postcss](https://postcss.org/) ([autoprefixer](https://github.com/postcss/autoprefixer), [cssnano](https://cssnano.co/) and [postcss-nested](https://www.npmjs.com/package/postcss-nested) enabled out of the box!)
+✅ Support [postcss](https://postcss.org/) ([autoprefixer](https://github.com/postcss/autoprefixer), [cssnano](https://cssnano.co/) and [postcss-nested](https://npmx.dev/package/postcss-nested) enabled out of the box!)
 
 ## ❓ Why?
 
@@ -42,10 +42,10 @@ npx mkdist [rootDir] [--src=src] [--dist=dist] [--no-clean] [--pattern=glob [--p
 
 <!-- Badges -->
 
-[npm-version-src]: https://img.shields.io/npm/v/mkdist?style=flat-square
-[npm-version-href]: https://npmjs.com/package/mkdist
-[npm-downloads-src]: https://img.shields.io/npm/dm/mkdist?style=flat-square
-[npm-downloads-href]: https://npmjs.com/package/mkdist
+[npm-version-src]: https://npmx.dev/api/registry/badge/version/mkdist
+[npm-version-href]: https://npmx.dev/package/mkdist
+[npm-downloads-src]: https://npmx.dev/api/registry/badge/downloads/mkdist
+[npm-downloads-href]: https://npmx.dev/package/mkdist
 [github-actions-src]: https://img.shields.io/github/actions/workflow/status/unjs/mkdist/ci.yml?branch=main&style=flat-square
 [github-actions-href]: https://github.com/unjs/mkdist/actions?query=workflow%3Aci
 [codecov-src]: https://img.shields.io/codecov/c/gh/unjs/mkdist/main?style=flat-square
