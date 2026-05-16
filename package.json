@@ -53,7 +53,7 @@
     "c8": "latest",
     "changelogen": "^0.6.2",
     "eslint": "^10.0.2",
-    "eslint-config-unjs": "^0.5.0",
+    "eslint-config-unjs": "^0.6.2",
     "modern-normalize": "^3.0.1",
     "prettier": "^3.6.2",
     "sass": "^1.92.1",
