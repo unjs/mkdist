@@ -715,7 +715,7 @@ describe("mkdist with fallback vue loader", () => {
       getContents: () => input,
       path: "test.vue",
     });
-    return results?.filter((res) => !res.declaration)?.[0].contents || input;
+    return results?.find((res) => !res.declaration).contents || input;
   }
 });
 
