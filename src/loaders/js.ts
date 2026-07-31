@@ -1,5 +1,5 @@
 import { transform } from "esbuild";
-import jiti from "jiti";
+import { createJiti } from "jiti";
 
 import type { Loader, LoaderResult } from "../loader";
 
@@ -9,6 +9,7 @@ const CM_LETTER_RE = /(?<=\.)(c|m)(?=[jt]s$)/;
 const KNOWN_EXT_RE = /\.(c|m)?[jt]sx?$/;
 
 const TS_EXTS = new Set([".ts", ".mts", ".cts"]);
+const jiti = createJiti(process.cwd());
 
 export const jsLoader: Loader = async (input, { options }) => {
   if (!KNOWN_EXT_RE.test(input.path) || DECLARATION_RE.test(input.path)) {
@@ -48,7 +49,7 @@ export const jsLoader: Loader = async (input, { options }) => {
   // esm => cjs
   const isCjs = options.format === "cjs";
   if (isCjs) {
-    contents = jiti("")
+    contents = jiti
       .transform({ source: contents, retainLines: false })
       .replace(/^exports.default = /gm, "module.exports = ")
       .replace(/^var _default = exports.default = /gm, "module.exports = ")
