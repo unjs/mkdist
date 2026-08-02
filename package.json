@@ -29,6 +29,7 @@
     "test": "pnpm lint && vitest run --coverage"
   },
   "dependencies": {
+    "@jridgewell/sourcemap-codec": "1.5.5",
     "autoprefixer": "^10.4.21",
     "citty": "^0.1.6",
     "cssnano": "^8.0.1",
