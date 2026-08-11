@@ -1,13 +1,13 @@
 import { readFile } from "node:fs/promises";
 import { relative, resolve } from "pathe";
 import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  vi,
-  beforeAll,
   afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
 } from "vitest";
 import { createLoader } from "../src/loader";
 
@@ -129,26 +129,19 @@ describe("mkdist", () => {
         "dist/components/index.mjs",
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
-        "dist/components/blank.vue.d.ts",
-        // TODO: "dist/components/blank.d.vue.ts",
+        "dist/components/blank.d.vue.ts",
         "dist/components/define-model.vue",
-        "dist/components/define-model.vue.d.ts",
-        // TODO: "dist/components/define-model.d.vue.ts",
+        "dist/components/define-model.d.vue.ts",
         "dist/components/emit-and-with-default.vue",
-        "dist/components/emit-and-with-default.vue.d.ts",
-        // TODO: "dist/components/emit-and-with-default.d.vue.ts",
+        "dist/components/emit-and-with-default.d.vue.ts",
         "dist/components/js.vue",
-        "dist/components/js.vue.d.ts",
-        // TODO: "dist/components/js.d.vue.ts",
+        "dist/components/js.d.vue.ts",
         "dist/components/script-multi-block.vue",
-        "dist/components/script-multi-block.vue.d.ts",
-        // TODO: "dist/components/script-multi-block.d.vue.ts",
+        "dist/components/script-multi-block.d.vue.ts",
         "dist/components/script-setup-ts.vue",
-        "dist/components/script-setup-ts.vue.d.ts",
-        // TODO: "dist/components/script-setup-ts.d.vue.ts",
+        "dist/components/script-setup-ts.d.vue.ts",
         "dist/components/ts.vue",
-        "dist/components/ts.vue.d.ts",
-        // TODO: "dist/components/ts.d.vue.ts",
+        "dist/components/ts.d.vue.ts",
         "dist/components/jsx.mjs",
         "dist/components/tsx.mjs",
         "dist/components/jsx.d.ts",
@@ -205,7 +198,7 @@ describe("mkdist", () => {
     `);
 
     expect(
-      await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
+      await readFile(resolve(rootDir, "dist/components/ts.d.vue.ts"), "utf8"),
     ).toMatchInlineSnapshot(`
       "declare const _default: import("vue").DefineComponent<{}, {}, {
           test: string;
@@ -217,7 +210,7 @@ describe("mkdist", () => {
 
     expect(
       await readFile(
-        resolve(rootDir, "dist/components/blank.vue.d.ts"),
+        resolve(rootDir, "dist/components/blank.d.vue.ts"),
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
@@ -228,7 +221,7 @@ describe("mkdist", () => {
 
     expect(
       await readFile(
-        resolve(rootDir, "dist/components/script-multi-block.vue.d.ts"),
+        resolve(rootDir, "dist/components/script-multi-block.d.vue.ts"),
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
@@ -242,7 +235,7 @@ describe("mkdist", () => {
 
     expect(
       await readFile(
-        resolve(rootDir, "dist/components/script-setup-ts.vue.d.ts"),
+        resolve(rootDir, "dist/components/script-setup-ts.d.vue.ts"),
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
@@ -626,12 +619,16 @@ describe("mkdist", () => {
 });
 
 describe("mkdist with fallback vue loader", () => {
+  let _createLoader: typeof createLoader;
+
   const consoleWarnSpy = vi.spyOn(console, "warn");
   beforeAll(async () => {
     vi.resetModules();
     vi.doMock("vue-sfc-transformer/mkdist", async () => {
       throw new Error("vue-sfc-transformer is not installed");
     });
+    const loader = await import("../src/loader");
+    _createLoader = loader.createLoader;
   });
 
   afterAll(() => {
@@ -707,7 +704,7 @@ describe("mkdist with fallback vue loader", () => {
   });
 
   async function fixture(input: string) {
-    const { loadFile } = createLoader({
+    const { loadFile } = _createLoader({
       loaders: ["vue", "js", "sass"],
     });
     const results = await loadFile({
@@ -724,12 +721,11 @@ describe("mkdist with fallback vue loader (emit types)", () => {
 
   const consoleWarnSpy = vi.spyOn(console, "warn");
   beforeAll(async () => {
-    mkdist = (await import("../src/make")).mkdist;
-
     vi.resetModules();
     vi.doMock("vue-sfc-transformer/mkdist", async () => {
       throw new Error("vue-sfc-transformer is not installed");
     });
+    mkdist = (await import("../src/make")).mkdist;
   });
 
   afterAll(() => {
@@ -767,25 +763,18 @@ describe("mkdist with fallback vue loader (emit types)", () => {
         "dist/components/index.mjs",
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
-        "dist/components/blank.vue.d.ts",
         "dist/components/blank.d.vue.ts",
         "dist/components/define-model.vue",
-        "dist/components/define-model.vue.d.ts",
         "dist/components/define-model.d.vue.ts",
         "dist/components/emit-and-with-default.vue",
-        "dist/components/emit-and-with-default.vue.d.ts",
         "dist/components/emit-and-with-default.d.vue.ts",
         "dist/components/js.vue",
-        "dist/components/js.vue.d.ts",
         "dist/components/js.d.vue.ts",
         "dist/components/script-multi-block.vue",
-        "dist/components/script-multi-block.vue.d.ts",
         "dist/components/script-multi-block.d.vue.ts",
         "dist/components/script-setup-ts.vue",
-        "dist/components/script-setup-ts.vue.d.ts",
         "dist/components/script-setup-ts.d.vue.ts",
         "dist/components/ts.vue",
-        "dist/components/ts.vue.d.ts",
         "dist/components/ts.d.vue.ts",
         "dist/components/jsx.mjs",
         "dist/components/tsx.mjs",
@@ -843,7 +832,7 @@ describe("mkdist with fallback vue loader (emit types)", () => {
     `);
 
     expect(
-      await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
+      await readFile(resolve(rootDir, "dist/components/ts.d.vue.ts"), "utf8"),
     ).toMatchInlineSnapshot(`
       "declare const _default: import("vue").DefineComponent<{}, {}, {
           test: string;
@@ -855,7 +844,7 @@ describe("mkdist with fallback vue loader (emit types)", () => {
 
     expect(
       await readFile(
-        resolve(rootDir, "dist/components/blank.vue.d.ts"),
+        resolve(rootDir, "dist/components/blank.d.vue.ts"),
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
@@ -866,7 +855,7 @@ describe("mkdist with fallback vue loader (emit types)", () => {
 
     expect(
       await readFile(
-        resolve(rootDir, "dist/components/script-multi-block.vue.d.ts"),
+        resolve(rootDir, "dist/components/script-multi-block.d.vue.ts"),
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
@@ -880,7 +869,7 @@ describe("mkdist with fallback vue loader (emit types)", () => {
 
     expect(
       await readFile(
-        resolve(rootDir, "dist/components/script-setup-ts.vue.d.ts"),
+        resolve(rootDir, "dist/components/script-setup-ts.d.vue.ts"),
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
@@ -956,26 +945,19 @@ describe("mkdist with vue-tsc v1", () => {
         "dist/components/index.mjs",
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
-        "dist/components/blank.vue.d.ts",
-        // TODO: "dist/components/blank.d.vue.ts",
+        "dist/components/blank.d.vue.ts",
         "dist/components/define-model.vue",
-        "dist/components/define-model.vue.d.ts",
-        // TODO: "dist/components/define-model.d.vue.ts",
+        "dist/components/define-model.d.vue.ts",
         "dist/components/emit-and-with-default.vue",
-        "dist/components/emit-and-with-default.vue.d.ts",
-        // TODO: "dist/components/emit-and-with-default.d.vue.ts",
+        "dist/components/emit-and-with-default.d.vue.ts",
         "dist/components/js.vue",
-        "dist/components/js.vue.d.ts",
-        // TODO: "dist/components/js.d.vue.ts",
+        "dist/components/js.d.vue.ts",
         "dist/components/script-multi-block.vue",
-        "dist/components/script-multi-block.vue.d.ts",
-        // TODO: "dist/components/script-multi-block.d.vue.ts",
+        "dist/components/script-multi-block.d.vue.ts",
         "dist/components/script-setup-ts.vue",
-        "dist/components/script-setup-ts.vue.d.ts",
-        // TODO: "dist/components/script-setup-ts.d.vue.ts",
+        "dist/components/script-setup-ts.d.vue.ts",
         "dist/components/ts.vue",
-        "dist/components/ts.vue.d.ts",
-        // TODO: "dist/components/ts.d.vue.ts",
+        "dist/components/ts.d.vue.ts",
         "dist/components/jsx.mjs",
         "dist/components/tsx.mjs",
         "dist/components/jsx.d.ts",
@@ -1025,7 +1007,7 @@ describe("mkdist with vue-tsc v1", () => {
 
     expect(
       await readFile(
-        resolve(rootDir, "dist/components/blank.vue.d.ts"),
+        resolve(rootDir, "dist/components/blank.d.vue.ts"),
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
@@ -1035,7 +1017,7 @@ describe("mkdist with vue-tsc v1", () => {
     `);
 
     expect(
-      await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
+      await readFile(resolve(rootDir, "dist/components/ts.d.vue.ts"), "utf8"),
     ).toMatchInlineSnapshot(`
       "declare const _default: import("vue").DefineComponent<{}, {}, {
           test: string;
@@ -1047,7 +1029,7 @@ describe("mkdist with vue-tsc v1", () => {
 
     expect(
       await readFile(
-        resolve(rootDir, "dist/components/script-multi-block.vue.d.ts"),
+        resolve(rootDir, "dist/components/script-multi-block.d.vue.ts"),
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
@@ -1070,7 +1052,7 @@ describe("mkdist with vue-tsc v1", () => {
 
     expect(
       await readFile(
-        resolve(rootDir, "dist/components/script-setup-ts.vue.d.ts"),
+        resolve(rootDir, "dist/components/script-setup-ts.d.vue.ts"),
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
@@ -1165,26 +1147,19 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
         "dist/components/index.mjs",
         "dist/components/index.d.ts",
         "dist/components/blank.vue",
-        "dist/components/blank.vue.d.ts",
-        // TODO: "dist/components/blank.d.vue.ts",
+        "dist/components/blank.d.vue.ts",
         "dist/components/define-model.vue",
-        "dist/components/define-model.vue.d.ts",
-        // TODO: "dist/components/define-model.d.vue.ts",
+        "dist/components/define-model.d.vue.ts",
         "dist/components/emit-and-with-default.vue",
-        "dist/components/emit-and-with-default.vue.d.ts",
-        // TODO: "dist/components/emit-and-with-default.d.vue.ts",
+        "dist/components/emit-and-with-default.d.vue.ts",
         "dist/components/js.vue",
-        "dist/components/js.vue.d.ts",
-        // TODO: "dist/components/js.d.vue.ts",
+        "dist/components/js.d.vue.ts",
         "dist/components/script-multi-block.vue",
-        "dist/components/script-multi-block.vue.d.ts",
-        // TODO: "dist/components/script-multi-block.d.vue.ts",
+        "dist/components/script-multi-block.d.vue.ts",
         "dist/components/script-setup-ts.vue",
-        "dist/components/script-setup-ts.vue.d.ts",
-        // TODO: "dist/components/script-setup-ts.d.vue.ts",
+        "dist/components/script-setup-ts.d.vue.ts",
         "dist/components/ts.vue",
-        "dist/components/ts.vue.d.ts",
-        // TODO: "dist/components/ts.d.vue.ts",
+        "dist/components/ts.d.vue.ts",
         "dist/components/jsx.mjs",
         "dist/components/tsx.mjs",
         "dist/components/jsx.d.ts",
@@ -1234,7 +1209,7 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
 
     expect(
       await readFile(
-        resolve(rootDir, "dist/components/blank.vue.d.ts"),
+        resolve(rootDir, "dist/components/blank.d.vue.ts"),
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
@@ -1244,7 +1219,7 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
     `);
 
     expect(
-      await readFile(resolve(rootDir, "dist/components/ts.vue.d.ts"), "utf8"),
+      await readFile(resolve(rootDir, "dist/components/ts.d.vue.ts"), "utf8"),
     ).toMatchInlineSnapshot(`
       "declare const _default: import("vue").DefineComponent<{}, {}, {
           test: string;
@@ -1256,7 +1231,7 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
 
     expect(
       await readFile(
-        resolve(rootDir, "dist/components/script-multi-block.vue.d.ts"),
+        resolve(rootDir, "dist/components/script-multi-block.d.vue.ts"),
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
@@ -1279,7 +1254,7 @@ describe("mkdist with vue-tsc ~v2.0.21", () => {
 
     expect(
       await readFile(
-        resolve(rootDir, "dist/components/script-setup-ts.vue.d.ts"),
+        resolve(rootDir, "dist/components/script-setup-ts.d.vue.ts"),
         "utf8",
       ),
     ).toMatchInlineSnapshot(`
