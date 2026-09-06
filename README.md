@@ -33,8 +33,11 @@ While there are tools like [tsc](https://www.typescriptlang.org/docs/handbook/co
 ## 🚀 Usage
 
 ```bash
-npx mkdist [rootDir] [--src=src] [--dist=dist] [--no-clean] [--pattern=glob [--pattern=more-glob]] [--format=cjs|esm] [-d|--declaration] [--ext=mjs|js|ts]
+npx mkdist [rootDir] [--src=src] [--dist=dist] [--no-clean] [--pattern=glob [--pattern=more-glob]] [--format=cjs|esm] [-d|--declaration] [--ext=mjs|js|ts] [--sourcemap[=linked|inline|external|both]]
 ```
+
+Source maps are generated for JavaScript inputs. The Vue loader does not emit
+source maps.
 
 ## License
 
