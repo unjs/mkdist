@@ -90,5 +90,16 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@12.3.0"
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^24.0.0",
+      "onFail": "download"
+    },
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.3.0",
+      "onFail": "download"
+    }
+  }
 }
