@@ -85,8 +85,19 @@ const main = defineCommand({
       type: "string",
       description: "Target environment (esbuild)",
     },
+    sourcemap: {
+      type: "string",
+      description: "Emit sourcemap (esbuild)",
+      valueHint: "linked|inline|external|both",
+    },
   },
   async run({ args }) {
+    if (
+      args.sourcemap !== undefined &&
+      !["linked", "inline", "external", "both"].includes(args.sourcemap)
+    ) {
+      throw new TypeError(`Invalid sourcemap mode: ${args.sourcemap}`);
+    }
     const { writtenFiles } = await mkdist({
       rootDir: resolve(args.cwd || process.cwd(), args.dir),
       srcDir: args.src,
@@ -103,6 +114,7 @@ const main = defineCommand({
         jsxFragment: args.jsxFragment,
         minify: args.minify,
         target: args.target,
+        sourcemap: args.sourcemap,
       },
     } as MkdistOptions);
 
@@ -112,8 +124,36 @@ const main = defineCommand({
   },
 });
 
-// eslint-disable-next-line unicorn/prefer-top-level-await
-runMain(main).catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+const valueOptions = new Set([
+  "--cwd",
+  "--src",
+  "--dist",
+  "--pattern",
+  "--format",
+  "--ext",
+  "--jsx",
+  "--jsxFactory",
+  "--jsx-factory",
+  "--jsxFragment",
+  "--jsx-fragment",
+  "--loaders",
+  "--target",
+]);
+const rawArgs = process.argv.slice(2);
+const separatorIndex = rawArgs.indexOf("--");
+const optionsEnd = separatorIndex === -1 ? rawArgs.length : separatorIndex;
+for (let index = 0; index < optionsEnd; index++) {
+  if (
+    rawArgs[index] === "--sourcemap" &&
+    (index === 0 || !valueOptions.has(rawArgs[index - 1]))
+  ) {
+    rawArgs[index] = "--sourcemap=linked";
+  }
+}
+
+runMain(main, { rawArgs })
+  // eslint-disable-next-line unicorn/prefer-top-level-await
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });

@@ -1,4 +1,6 @@
 import { readFile } from "node:fs/promises";
+import { SourceMap } from "node:module";
+import { spawnSync } from "node:child_process";
 import { relative, resolve } from "pathe";
 import {
   describe,
@@ -12,6 +14,9 @@ import {
 import { createLoader } from "../src/loader";
 
 describe("mkdist", () => {
+  const mapRoot = resolve(__dirname, "sourcemap-fixture");
+  const readSourceMap = async (path: string) =>
+    new SourceMap(JSON.parse(await readFile(resolve(mapRoot, path), "utf8")));
   let mkdist: typeof import("../src/make").mkdist;
 
   beforeAll(async () => {
@@ -256,6 +261,296 @@ describe("mkdist", () => {
       "
     `);
   }, 50_000);
+
+  it("mkdist (emit sourcemaps)", async () => {
+    const rootDir = resolve(__dirname, "fixture");
+    const { writtenFiles } = await mkdist({
+      rootDir,
+      esbuild: {
+        sourcemap: "linked",
+      },
+    });
+
+    expect(writtenFiles.filter((file) => file.endsWith(".map")).sort()).toEqual(
+      [
+        "dist/bar.mjs.map",
+        "dist/dir-export.mjs.map",
+        "dist/foo.mjs.map",
+        "dist/index.mjs.map",
+        "dist/star/index.mjs.map",
+        "dist/star/other.mjs.map",
+        "dist/components/index.mjs.map",
+        "dist/components/jsx.mjs.map",
+        "dist/components/tsx.mjs.map",
+        "dist/bar/index.mjs.map",
+        "dist/bar/esm.mjs.map",
+        "dist/ts/test1.mjs.map",
+        "dist/ts/test2.mjs.map",
+        "dist/prop-types/index.mjs.map",
+      ]
+        .map((f) => resolve(rootDir, f))
+        .sort(),
+    );
+
+    expect(await readFile(resolve(rootDir, "dist/index.mjs"), "utf8")).toMatch(
+      /\n\/\/# sourceMappingURL=index.mjs.map$/,
+    );
+
+    expect(
+      JSON.parse(await readFile(resolve(rootDir, "dist/bar.mjs.map"), "utf8"))
+        .sourcesContent[0],
+    ).toMatch(await readFile(resolve(rootDir, "src/bar.ts"), "utf8"));
+  });
+
+  it.each([
+    ["disabled", false, false, false],
+    ["inline", "inline", true, false],
+    ["external", "external", false, true],
+    ["both", "both", true, true],
+  ] as const)(
+    "mkdist (%s sourcemaps)",
+    async (_, sourcemap, hasInlineMap, hasExternalMap) => {
+      const { writtenFiles } = await mkdist({
+        rootDir: mapRoot,
+        pattern: "input.js",
+        esbuild: { sourcemap },
+      });
+      const output = await readFile(resolve(mapRoot, "dist/input.mjs"), "utf8");
+
+      expect(
+        output.includes("sourceMappingURL=data:application/json;base64,"),
+      ).toBe(hasInlineMap);
+      expect(writtenFiles.some((file) => file.endsWith(".map"))).toBe(
+        hasExternalMap,
+      );
+    },
+  );
+
+  it("source CLI handles sourcemap modes", async () => {
+    const command = [
+      resolve(__dirname, "../node_modules/jiti/bin/jiti.js"),
+      resolve(__dirname, "../src/cli.ts"),
+      mapRoot,
+      "--pattern=input.js",
+    ];
+    const bare = spawnSync(process.execPath, [...command, "--sourcemap"], {
+      encoding: "utf8",
+    });
+
+    expect(bare.status).toBe(0);
+    expect(bare.stdout).toContain("input.mjs.map");
+    expect(await readFile(resolve(mapRoot, "dist/input.mjs"), "utf8")).toMatch(
+      /\n\/\/# sourceMappingURL=input.mjs.map$/,
+    );
+
+    const optionValue = spawnSync(
+      process.execPath,
+      [...command, "--ext", "--sourcemap"],
+      { encoding: "utf8" },
+    );
+    expect(optionValue.status).toBe(1);
+    expect(optionValue.stderr).toContain("Invalid sourcemap mode:");
+
+    const invalid = spawnSync(
+      process.execPath,
+      [...command, "--sourcemap=invalid"],
+      { encoding: "utf8" },
+    );
+    expect(invalid.status).toBe(1);
+    expect(invalid.stderr).toContain("Invalid sourcemap mode: invalid");
+
+    const empty = spawnSync(process.execPath, [...command, "--sourcemap="], {
+      encoding: "utf8",
+    });
+    expect(empty.status).toBe(1);
+    expect(empty.stderr).toContain("Invalid sourcemap mode:");
+  });
+
+  it("mkdist (emits sourcemaps for native JavaScript extensions)", async () => {
+    const { writtenFiles } = await mkdist({
+      rootDir: mapRoot,
+      pattern: ["native-cjs.cjs", "native-esm.mjs"],
+      esbuild: { sourcemap: "external" },
+    });
+
+    expect(writtenFiles.map((file) => relative(mapRoot, file)).sort()).toEqual([
+      "dist/native-cjs.mjs",
+      "dist/native-cjs.mjs.map",
+      "dist/native-esm.mjs",
+      "dist/native-esm.mjs.map",
+    ]);
+  });
+
+  it("mkdist (keep sourcemaps aligned with true)", async () => {
+    const { writtenFiles } = await mkdist({
+      rootDir: mapRoot,
+      pattern: "input.js",
+      esbuild: {
+        sourcemap: true,
+      },
+    });
+
+    const output = await readFile(resolve(mapRoot, "dist/input.mjs"), "utf8");
+    const sourceMap = await readSourceMap("dist/input.mjs.map");
+    const generatedColumn = output.indexOf("module.answer");
+    const mapping = sourceMap.findEntry(0, generatedColumn);
+
+    expect(writtenFiles.sort()).toEqual(
+      ["dist/input.mjs", "dist/input.mjs.map"]
+        .map((file) => resolve(mapRoot, file))
+        .sort(),
+    );
+    expect(output).toMatch(/\n\/\/# sourceMappingURL=input.mjs.map$/);
+    expect(sourceMap.payload.sources).toEqual(["../src/input.js"]);
+    expect(mapping).toMatchObject({
+      generatedColumn,
+      originalLine: 0,
+      originalColumn: 61,
+    });
+  });
+
+  it("mkdist (keeps sourcemaps aligned after static import rewrites)", async () => {
+    await mkdist({
+      rootDir: mapRoot,
+      pattern: ["input.js", "native-esm.mjs", "static.js"],
+      esbuild: {
+        sourcemap: true,
+        minifyWhitespace: true,
+      },
+    });
+
+    const output = await readFile(resolve(mapRoot, "dist/static.mjs"), "utf8");
+    const sourceMap = await readSourceMap("dist/static.mjs.map");
+    const generatedColumn = output.indexOf("value=answer+Number(native)");
+
+    expect(output).toContain('from"./input.mjs"');
+    expect(output).toContain('from"./native-esm.mjs"');
+    expect(output).toContain('from "./input"');
+    expect(output).not.toContain('from "./input.mjs"');
+    expect(output).toContain('import("./input.mjs",{with:{type:"json"}})');
+    expect(output).toContain('import("./input"+part)');
+    expect(sourceMap.findEntry(0, generatedColumn)).toMatchObject({
+      generatedColumn,
+      originalLine: 2,
+      originalColumn: 13,
+    });
+
+    await mkdist({ rootDir: mapRoot, pattern: ["input.js", "static.js"] });
+    const commentedOutput = await readFile(
+      resolve(mapRoot, "dist/static.mjs"),
+      "utf8",
+    );
+    expect(commentedOutput).toContain(
+      'import(/* chunk */ "./input.mjs" /* @vite-ignore */, {',
+    );
+  });
+
+  it("mkdist (keep sourcemaps aligned after CJS conversion)", async () => {
+    await mkdist({
+      rootDir: mapRoot,
+      pattern: "input.js",
+      format: "cjs",
+      ext: "cjs",
+      esbuild: {
+        sourcemap: "linked",
+        sourceRoot: "https://host/root/",
+      },
+    });
+
+    const output = await readFile(resolve(mapRoot, "dist/input.cjs"), "utf8");
+    const sourceMap = await readSourceMap("dist/input.cjs.map");
+    const generatedIndex = output.indexOf("module.answer");
+    const generatedLine =
+      output.slice(0, generatedIndex).split("\n").length - 1;
+    const generatedColumn =
+      generatedIndex - output.lastIndexOf("\n", generatedIndex) - 1;
+    const mapping = sourceMap.findEntry(generatedLine, generatedColumn);
+
+    expect(output).toContain('require("./input.cjs")');
+    expect(output).toContain('require("./input")');
+    expect(output).not.toContain("module.exports =  void 0;");
+    expect(sourceMap.payload).toMatchObject({
+      sourceRoot: "https://host/root/",
+      sources: ["../src/input.js"],
+    });
+    expect(mapping).toMatchObject({
+      generatedLine,
+      generatedColumn,
+      originalLine: 0,
+      originalColumn: 61,
+    });
+
+    const fixtureRootDir = resolve(__dirname, "fixture");
+    await mkdist({
+      rootDir: fixtureRootDir,
+      pattern: "bar.ts",
+      format: "cjs",
+      ext: "cjs",
+    });
+
+    const plainOutput = await readFile(
+      resolve(fixtureRootDir, "dist/bar.cjs"),
+      "utf8",
+    );
+    expect(plainOutput).not.toContain("module.exports = void 0;");
+  });
+
+  it("mkdist (ignores loader sourcemaps when disabled)", async () => {
+    const { writtenFiles } = await mkdist({
+      rootDir: mapRoot,
+      pattern: "input.js",
+      loaders: [
+        () => [
+          {
+            path: "input.js",
+            extension: ".mjs",
+            contents: "",
+            sourceMap: '{"version":3,"sources":[],"names":[],"mappings":""}',
+          },
+        ],
+      ],
+    });
+
+    expect(writtenFiles).toEqual([resolve(mapRoot, "dist/input.mjs")]);
+  });
+
+  it("mkdist (emits a valid linked source map on collision)", async () => {
+    const generatedSourceMap =
+      '{"version":3,"sources":[],"names":[],"mappings":""}';
+    const { writtenFiles } = await mkdist({
+      rootDir: mapRoot,
+      pattern: "input.js",
+      loaders: [
+        () => [
+          {
+            path: "input !'().js",
+            extension: ".mjs",
+            contents: "",
+            sourceMap: generatedSourceMap,
+          },
+          {
+            path: "input !'().mjs.map",
+            contents: "existing",
+          },
+        ],
+      ],
+      esbuild: {
+        sourcemap: "linked",
+      },
+    });
+
+    expect(writtenFiles.sort()).toEqual(
+      ["dist/input !'().mjs", "dist/input !'().mjs.map"]
+        .map((file) => resolve(mapRoot, file))
+        .sort(),
+    );
+    expect(
+      await readFile(resolve(mapRoot, "dist/input !'().mjs.map"), "utf8"),
+    ).toBe(generatedSourceMap);
+    expect(
+      await readFile(resolve(mapRoot, "dist/input !'().mjs"), "utf8"),
+    ).toMatch(/\n\/\/# sourceMappingURL=input%20%21%27%28%29.mjs.map$/);
+  });
 
   describe("mkdist (sass compilation)", () => {
     const rootDir = resolve(__dirname, "fixture");
@@ -626,12 +921,14 @@ describe("mkdist", () => {
 });
 
 describe("mkdist with fallback vue loader", () => {
+  let createFallbackLoader: typeof createLoader;
   const consoleWarnSpy = vi.spyOn(console, "warn");
   beforeAll(async () => {
     vi.resetModules();
     vi.doMock("vue-sfc-transformer/mkdist", async () => {
       throw new Error("vue-sfc-transformer is not installed");
     });
+    createFallbackLoader = (await import("../src/loader")).createLoader;
   });
 
   afterAll(() => {
@@ -707,7 +1004,7 @@ describe("mkdist with fallback vue loader", () => {
   });
 
   async function fixture(input: string) {
-    const { loadFile } = createLoader({
+    const { loadFile } = createFallbackLoader({
       loaders: ["vue", "js", "sass"],
     });
     const results = await loadFile({
@@ -724,12 +1021,11 @@ describe("mkdist with fallback vue loader (emit types)", () => {
 
   const consoleWarnSpy = vi.spyOn(console, "warn");
   beforeAll(async () => {
-    mkdist = (await import("../src/make")).mkdist;
-
     vi.resetModules();
     vi.doMock("vue-sfc-transformer/mkdist", async () => {
       throw new Error("vue-sfc-transformer is not installed");
     });
+    mkdist = (await import("../src/make")).mkdist;
   });
 
   afterAll(() => {
@@ -894,10 +1190,13 @@ describe("mkdist with fallback vue loader (emit types)", () => {
       "
     `);
 
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      "[mkdist] vue-sfc-transformer is not installed. mkdist will not transform typescript syntax in Vue SFCs.",
-    );
-    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+    expect(
+      consoleWarnSpy.mock.calls.filter(
+        ([message]) =>
+          message ===
+          "[mkdist] vue-sfc-transformer is not installed. mkdist will not transform typescript syntax in Vue SFCs.",
+      ),
+    ).toHaveLength(1);
   }, 50_000);
 });
 

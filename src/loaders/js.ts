@@ -7,6 +7,8 @@ const DECLARATION_RE = /\.d\.[cm]?ts$/;
 const CM_LETTER_RE = /(?<=\.)(c|m)(?=[jt]s$)/;
 
 const KNOWN_EXT_RE = /\.(c|m)?[jt]sx?$/;
+const INLINE_SOURCE_MAP_RE =
+  /\n?\/\/# sourceMappingURL=data:application\/json(?:;charset=utf-8)?;base64,([^\n]+)\n?$/;
 
 const TS_EXTS = new Set([".ts", ".mts", ".cts"]);
 
@@ -18,6 +20,7 @@ export const jsLoader: Loader = async (input, { options }) => {
   const output: LoaderResult = [];
 
   let contents = await input.getContents();
+  let sourceMapping = "";
 
   // declaration
   if (options.declaration && !input.srcPath?.match(DECLARATION_RE)) {
@@ -33,26 +36,97 @@ export const jsLoader: Loader = async (input, { options }) => {
   }
 
   // typescript => js
+  const isCjs = options.format === "cjs";
+  const sourceMap = options.esbuild?.sourcemap;
+  const sourceMapEnabled =
+    sourceMap === true ||
+    sourceMap === "linked" ||
+    sourceMap === "inline" ||
+    sourceMap === "external" ||
+    sourceMap === "both";
+  const sourcemap = sourceMapEnabled ? "external" : sourceMap;
+  let loader: "ts" | "tsx" | "jsx" | "js" | undefined;
   if (TS_EXTS.has(input.extension)) {
-    contents = await transform(contents, {
+    loader = "ts";
+  } else if (input.extension === ".tsx") {
+    loader = "tsx";
+  } else if (input.extension === ".jsx") {
+    loader = "jsx";
+  } else if (sourcemap) {
+    loader = "js";
+  }
+  if (loader) {
+    const result = await transform(contents, {
       ...options.esbuild,
-      loader: "ts",
-    }).then((r) => r.code);
-  } else if ([".tsx", ".jsx"].includes(input.extension)) {
-    contents = await transform(contents, {
-      loader: input.extension === ".tsx" ? "tsx" : "jsx",
-      ...options.esbuild,
-    }).then((r) => r.code);
+      sourcemap,
+      sourcefile: input.srcPath,
+      loader,
+    });
+    contents = result.code;
+    sourceMapping = result.map;
   }
 
   // esm => cjs
-  const isCjs = options.format === "cjs";
   if (isCjs) {
-    contents = jiti("")
-      .transform({ source: contents, retainLines: false })
-      .replace(/^exports.default = /gm, "module.exports = ")
-      .replace(/^var _default = exports.default = /gm, "module.exports = ")
-      .replace("module.exports = void 0;", "");
+    const inputSourceMap = sourceMapEnabled
+      ? JSON.parse(sourceMapping)
+      : undefined;
+    const sourceRoot = inputSourceMap?.sourceRoot;
+    // Babel resolves sourceRoot into each source during map composition.
+    if (inputSourceMap) {
+      delete inputSourceMap.sourceRoot;
+    }
+    const stackTraceLimit = Error.stackTraceLimit;
+    try {
+      // Prevent caller source-map hooks from breaking Jiti's synchronous transform.
+      if (sourceMapEnabled) {
+        Error.stackTraceLimit = 0;
+      }
+      contents = jiti(
+        "",
+        sourceMapEnabled
+          ? {
+              cache: false,
+              sourceMaps: true,
+              transformOptions: {
+                babel: { inputSourceMap },
+              },
+            }
+          : undefined,
+      ).transform({
+        source: contents,
+        retainLines: false,
+        ...(sourceMapEnabled && { filename: input.path }),
+      });
+    } finally {
+      Error.stackTraceLimit = stackTraceLimit;
+    }
+
+    if (sourceMapEnabled) {
+      const match = contents.match(INLINE_SOURCE_MAP_RE);
+      if (!match || match.index === undefined) {
+        throw new Error(
+          `[mkdist] Failed to generate source map for ${input.path}`,
+        );
+      }
+      sourceMapping = Buffer.from(match[1], "base64").toString("utf8");
+      if (sourceRoot !== undefined) {
+        const parsed = JSON.parse(sourceMapping);
+        parsed.sourceRoot = sourceRoot;
+        sourceMapping = JSON.stringify(parsed);
+      }
+      contents = contents.slice(0, match.index);
+    }
+    const replaceWith = (replacement: string) => (value: string) =>
+      sourceMapEnabled ? replacement.padEnd(value.length) : replacement;
+    contents = contents
+      .replace("exports.default = void 0;", replaceWith(""))
+      .replace("module.exports = void 0;", replaceWith(""))
+      .replace(/^exports.default = /gm, replaceWith("module.exports = "))
+      .replace(
+        /^var _default = exports.default = /gm,
+        replaceWith("module.exports = "),
+      );
   }
 
   let extension = isCjs ? ".js" : ".mjs"; // TODO: Default to .cjs in next major version
@@ -62,6 +136,7 @@ export const jsLoader: Loader = async (input, { options }) => {
 
   output.push({
     contents,
+    sourceMap: sourceMapping || undefined,
     path: input.path,
     extension,
   });
