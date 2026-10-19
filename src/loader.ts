@@ -23,6 +23,7 @@ export interface OutputFile {
   srcPath?: string;
   extension?: string;
   contents?: string;
+  sourceMap?: string;
   declaration?: boolean;
   errors?: Error[];
   raw?: boolean;
