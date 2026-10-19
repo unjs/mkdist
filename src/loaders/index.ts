@@ -1,21 +1,12 @@
 import type { Loader } from "../loader";
 import { jsLoader } from "./js";
-import { vueLoader } from "./vue";
-import { sassLoader } from "./sass";
 import { postcssLoader } from "./postcss";
-
-let cachedVueLoader: Loader | undefined;
+import { sassLoader } from "./sass";
+import { vueLoader } from "./vue";
 
 export const loaders = {
   js: jsLoader,
-  vue:
-    cachedVueLoader ||
-    (async (...args) => {
-      cachedVueLoader = await import("vue-sfc-transformer/mkdist")
-        .then((r) => r.vueLoader)
-        .catch(() => vueLoader);
-      return cachedVueLoader(...args);
-    }),
+  vue: vueLoader,
   sass: sassLoader,
   postcss: postcssLoader,
 };
