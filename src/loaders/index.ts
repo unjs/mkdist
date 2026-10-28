@@ -4,17 +4,18 @@ import { vueLoader } from "./vue";
 import { sassLoader } from "./sass";
 import { postcssLoader } from "./postcss";
 
-let cachedVueLoader: Loader | undefined;
-
 export const loaders = {
   js: jsLoader,
-  vue:
-    cachedVueLoader ||
-    (async (...args) => {
-      cachedVueLoader = await import("vue-sfc-transformer/mkdist")
-        .then((r) => r.vueLoader)
-        .catch(() => vueLoader);
-      return cachedVueLoader(...args);
+  vue: async (input, context) =>
+    vueLoader(input, {
+      ...context,
+      options: {
+        ...context.options,
+        esbuild: context.options.esbuild && {
+          ...context.options.esbuild,
+          sourcemap: false,
+        },
+      },
     }),
   sass: sassLoader,
   postcss: postcssLoader,

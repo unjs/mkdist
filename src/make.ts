@@ -1,4 +1,12 @@
-import { resolve, extname, join, basename, dirname } from "pathe";
+import {
+  resolve,
+  extname,
+  join,
+  basename,
+  dirname,
+  relative,
+  isAbsolute,
+} from "pathe";
 import fsp from "node:fs/promises";
 import type { TSConfig } from "pkg-types";
 import defu from "defu";
@@ -18,6 +26,65 @@ import {
 import { getVueDeclarations } from "./utils/vue-dts";
 import { LoaderName } from "./loaders";
 import { glob, type GlobOptions } from "tinyglobby";
+import { decode, encode } from "@jridgewell/sourcemap-codec";
+import { findDynamicImports, findExports, findStaticImports } from "mlly";
+
+interface SourceMapEdit {
+  end: number;
+  delta: number;
+}
+
+const IMPORT_TRIVIA_RE = /^(?:\s|\/\*[\s\S]*?\*\/|\/\/[^\n]*(?:\n|$))*/;
+
+function findImportIds(contents: string) {
+  return findDynamicImports(contents).flatMap(({ code, expression, start }) => {
+    const leadingTrivia = expression.match(IMPORT_TRIVIA_RE)?.[0] || "";
+    const literal = expression
+      .slice(leadingTrivia.length)
+      .match(/^(["'])((?:\\.|[^\\])*?)\1/);
+    if (!literal) {
+      return [];
+    }
+    const rest = expression.slice(leadingTrivia.length + literal[0].length);
+    const trailingTrivia = rest.match(IMPORT_TRIVIA_RE)?.[0] || "";
+    const remainder = rest.slice(trailingTrivia.length);
+    if (remainder && !remainder.startsWith(",")) {
+      return [];
+    }
+    return [
+      {
+        id: literal[2],
+        index: start + code.indexOf(expression) + leadingTrivia.length + 1,
+      },
+    ];
+  });
+}
+
+function shiftSourceMap(
+  sourceMap: string | undefined,
+  contents: string,
+  edits: SourceMapEdit[],
+) {
+  if (!sourceMap || edits.length === 0) {
+    return sourceMap;
+  }
+
+  const parsed = JSON.parse(sourceMap) as { mappings: string };
+  const mappings = decode(parsed.mappings);
+  // Apply edits right-to-left so each threshold stays in original coordinates.
+  for (const edit of edits.sort((a, b) => b.end - a.end)) {
+    const before = contents.slice(0, edit.end);
+    const line = before.split("\n").length - 1;
+    const column = edit.end - before.lastIndexOf("\n") - 1;
+    for (const segment of mappings[line] || []) {
+      if (segment[0] >= column) {
+        segment[0] += edit.delta;
+      }
+    }
+  }
+  parsed.mappings = encode(mappings);
+  return JSON.stringify(parsed);
+}
 
 export interface MkdistOptions extends LoaderOptions {
   rootDir?: string;
@@ -145,6 +212,28 @@ export async function mkdist(
     }
     return id;
   };
+  const rewriteIds = (
+    output: OutputFile,
+    ids: Array<{ id: string; index: number }>,
+    resolveExtensions: string[],
+  ) => {
+    const contents = output.contents;
+    const edits: SourceMapEdit[] = [];
+    for (const { id, index } of ids.sort((a, b) => b.index - a.index)) {
+      const resolved = resolveId(output.path, id, resolveExtensions);
+      if (resolved !== id) {
+        edits.push({
+          end: index + id.length,
+          delta: resolved.length - id.length,
+        });
+        output.contents =
+          output.contents.slice(0, index) +
+          resolved +
+          output.contents.slice(index + id.length);
+      }
+    }
+    output.sourceMap = shiftSourceMap(output.sourceMap, contents, edits);
+  };
   const esmResolveExtensions = [
     "",
     "/index.mjs",
@@ -156,36 +245,63 @@ export async function mkdist(
   for (const output of outputs.filter(
     (o) => o.extension === ".mjs" || o.extension === ".js",
   )) {
-    // Resolve import statements
-    output.contents = output.contents
-      .replace(
-        /(import|export)(\s+(?:.+|{[\s\w,]+})\s+from\s+["'])(.*)(["'])/g,
-        (_, type, head, id, tail) =>
-          type + head + resolveId(output.path, id, esmResolveExtensions) + tail,
-      )
-      // Resolve dynamic import
-      .replace(
-        /import\((["'])(.*)(["'])\)/g,
-        (_, head, id, tail) =>
-          "import(" +
-          head +
-          resolveId(output.path, id, esmResolveExtensions) +
-          tail +
-          ")",
-      );
+    const ids = [
+      ...findStaticImports(output.contents),
+      ...findExports(output.contents),
+    ].flatMap(({ code, start, specifier }) =>
+      specifier
+        ? [{ id: specifier, index: start + code.lastIndexOf(specifier) }]
+        : [],
+    );
+    ids.push(...findImportIds(output.contents));
+    rewriteIds(output, ids, esmResolveExtensions);
   }
   const cjsResolveExtensions = ["", "/index.cjs", ".cjs"];
   for (const output of outputs.filter((o) => o.extension === ".cjs")) {
-    // Resolve require statements
-    output.contents = output.contents.replace(
-      /require\((["'])(.*)(["'])\)/g,
-      (_, head, id, tail) =>
-        "require(" +
-        head +
-        resolveId(output.path, id, cjsResolveExtensions) +
-        tail +
-        ")",
+    // Reuse mlly's token filtering while preserving the original offsets.
+    const importCode = output.contents.replace(
+      /(^|[^\w$.])require\b/g,
+      "$1import ",
     );
+    rewriteIds(output, findImportIds(importCode), cjsResolveExtensions);
+  }
+
+  // Emit source maps after all output rewrites.
+  const sourcemap = options.esbuild?.sourcemap;
+  for (const output of sourcemap
+    ? outputs.filter((o) => o.sourceMap && !o.skip)
+    : []) {
+    const sourceMap = JSON.parse(output.sourceMap) as { sources: string[] };
+    const sourceMapDir = dirname(join(options.distDir, `${output.path}.map`));
+    sourceMap.sources = sourceMap.sources.map((source) =>
+      isAbsolute(source) ? relative(sourceMapDir, source) : source,
+    );
+    output.sourceMap = JSON.stringify(sourceMap);
+
+    if (sourcemap !== "inline") {
+      const path = `${output.path}.map`;
+      const existing = outputs.find(
+        (output) => !output.skip && output.path === path,
+      );
+      if (existing) {
+        existing.contents = output.sourceMap;
+        existing.raw = false;
+      } else {
+        outputs.push({ path, contents: output.sourceMap });
+      }
+    }
+    if (sourcemap === "inline" || sourcemap === "both") {
+      const encoded = Buffer.from(output.sourceMap).toString("base64");
+      output.contents += `\n//# sourceMappingURL=data:application/json;base64,${encoded}`;
+    } else if (sourcemap === true || sourcemap === "linked") {
+      const sourceMapUrl = encodeURIComponent(
+        `${basename(output.path)}.map`,
+      ).replace(
+        /[!'()*]/g,
+        (character) => `%${character.charCodeAt(0).toString(16).toUpperCase()}`,
+      );
+      output.contents += `\n//# sourceMappingURL=${sourceMapUrl}`;
+    }
   }
 
   // Write outputs
