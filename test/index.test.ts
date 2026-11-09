@@ -10,6 +10,7 @@ import {
   afterAll,
 } from "vitest";
 import { createLoader } from "../src/loader";
+import { extractDeclarations } from "../src/utils/dts";
 
 describe("mkdist", () => {
   let mkdist: typeof import("../src/make").mkdist;
@@ -256,6 +257,59 @@ describe("mkdist", () => {
       "
     `);
   }, 50_000);
+
+  it("extractDeclarations (relative extensions with output extension)", () => {
+    const vfs = new Map<string, string>([
+      ["/src/index.d.ts", 'export * from "./other";'],
+      ["/src/other.d.ts", "export const other = 1;"],
+    ]);
+
+    const outputCjs = extractDeclarations(vfs, ["/src/index.ts"], {
+      addRelativeDeclarationExtensions: true,
+      ext: "cjs",
+    });
+    expect(outputCjs["/src/index.ts"].contents).toBe(
+      'export * from "./other.cjs";',
+    );
+
+    vfs.set("/src/index.d.ts", 'export * from "./other";');
+    const outputMjs = extractDeclarations(vfs, ["/src/index.ts"], {
+      addRelativeDeclarationExtensions: true,
+      ext: "mjs",
+    });
+    expect(outputMjs["/src/index.ts"].contents).toBe(
+      'export * from "./other.mjs";',
+    );
+  });
+
+  it("mkdist (addRelativeDeclarationExtensions with custom ext)", async () => {
+    const rootDir = resolve(__dirname, "fixture");
+    const { writtenFiles } = await mkdist({
+      rootDir,
+      distDir: resolve(rootDir, "dist/custom-ext"),
+      cleanDist: true,
+      pattern: "star/**",
+      declaration: true,
+      addRelativeDeclarationExtensions: true,
+      ext: "cjs",
+    });
+    expect(writtenFiles.sort()).toEqual(
+      [
+        "dist/custom-ext/star/index.cjs",
+        "dist/custom-ext/star/index.d.ts",
+        "dist/custom-ext/star/other.cjs",
+        "dist/custom-ext/star/other.d.ts",
+      ]
+        .map((f) => resolve(rootDir, f))
+        .sort(),
+    );
+    expect(
+      await readFile(
+        resolve(rootDir, "dist/custom-ext/star/index.d.ts"),
+        "utf8",
+      ),
+    ).toContain('export * from "./other.cjs";');
+  });
 
   describe("mkdist (sass compilation)", () => {
     const rootDir = resolve(__dirname, "fixture");
