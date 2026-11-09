@@ -74,7 +74,11 @@ export function extractDeclarations(
     const dtsFilename = filename.replace(JSX_EXT_RE, ".d.$1ts");
     let contents = vfs.get(dtsFilename) || "";
     if (opts?.addRelativeDeclarationExtensions) {
-      const ext = filename.match(JS_EXT_RE)?.[0].replace(/ts$/, "js") || ".js";
+      let ext = filename.match(JS_EXT_RE)?.[0].replace(/ts$/, "js") || ".js";
+      if (opts?.ext) {
+        const rawExt = opts.ext.startsWith(".") ? opts.ext : `.${opts.ext}`;
+        ext = rawExt.replace(/ts$/, "js");
+      }
       const imports = findStaticImports(contents);
       const exports = findExports(contents);
       const typeExports = findTypeExports(contents);
@@ -108,7 +112,12 @@ export function extractDeclarations(
         const srcDtsPath = srcPath + ext.replace(JS_EXT_RE, ".d.$1ts");
         let specifier = spec.specifier;
         try {
-          if (!vfs.get(srcDtsPath)) {
+          if (
+            !vfs.get(srcDtsPath) &&
+            !vfs.get(`${srcPath}.d.ts`) &&
+            !vfs.get(`${srcPath}.d.mts`) &&
+            !vfs.get(`${srcPath}.d.cts`)
+          ) {
             const stat = statSync(srcPath);
             if (stat.isDirectory()) {
               specifier += "/index";
