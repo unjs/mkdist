@@ -550,6 +550,39 @@ describe("mkdist", () => {
       );
     });
 
+    it("jsLoader preserves named exports with a default export in cjs", async () => {
+      const { loadFile } = createLoader({
+        loaders: ["js"],
+        format: "cjs",
+      });
+      const results =
+        (await loadFile({
+          extension: ".ts",
+          getContents: () =>
+            "export enum Type { Foo, Bar }\nexport default class Action {}",
+          path: "test.ts",
+        })) || [];
+
+      expect(results[0].contents).toContain("exports.Type");
+      expect(results[0].contents).toContain("exports.default = Action");
+      expect(results[0].contents).not.toContain("module.exports = Action");
+    });
+
+    it("jsLoader keeps direct default export for default-only cjs", async () => {
+      const { loadFile } = createLoader({
+        loaders: ["js"],
+        format: "cjs",
+      });
+      const results =
+        (await loadFile({
+          extension: ".ts",
+          getContents: () => "export default class Action {}",
+          path: "test.ts",
+        })) || [];
+
+      expect(results[0].contents).toContain("module.exports = Action");
+    });
+
     it("jsLoader: respect esbuild options", async () => {
       const { loadFile } = createLoader({
         loaders: ["js"],

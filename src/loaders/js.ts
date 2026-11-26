@@ -10,6 +10,9 @@ const KNOWN_EXT_RE = /\.(c|m)?[jt]sx?$/;
 
 const TS_EXTS = new Set([".ts", ".mts", ".cts"]);
 
+const NAMED_EXPORT_RE =
+  /\bexports\.(?!default\b)[A-Za-z_$][\w$]*|\bexports\[(?!["']default["']\])|Object\.defineProperty\(exports,(?!\s*["']__esModule["'])\s*/;
+
 export const jsLoader: Loader = async (input, { options }) => {
   if (!KNOWN_EXT_RE.test(input.path) || DECLARATION_RE.test(input.path)) {
     return;
@@ -48,11 +51,16 @@ export const jsLoader: Loader = async (input, { options }) => {
   // esm => cjs
   const isCjs = options.format === "cjs";
   if (isCjs) {
-    contents = jiti("")
-      .transform({ source: contents, retainLines: false })
-      .replace(/^exports.default = /gm, "module.exports = ")
-      .replace(/^var _default = exports.default = /gm, "module.exports = ")
-      .replace("module.exports = void 0;", "");
+    const cjsContents = jiti("").transform({
+      source: contents,
+      retainLines: false,
+    });
+    contents = NAMED_EXPORT_RE.test(cjsContents)
+      ? cjsContents
+      : cjsContents
+          .replace(/^exports.default = /gm, "module.exports = ")
+          .replace(/^var _default = exports.default = /gm, "module.exports = ")
+          .replace("module.exports = void 0;", "");
   }
 
   let extension = isCjs ? ".js" : ".mjs"; // TODO: Default to .cjs in next major version
